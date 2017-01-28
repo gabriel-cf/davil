@@ -19,7 +19,7 @@ class Reader(object):
                          to an existing dataframe
             [first_index]: (int) first column with dimensional
                                      data, default=first numeric data            
-            header: (bool) if the first line of the file is a header 
+            [header]: (bool) if the first line of the file is a header 
         """
         if not file_path is None:
             self._df = FileReader.read_file(file_path, header=header)
@@ -43,12 +43,24 @@ class Reader(object):
     # Static method for intializing Reader objects
     @staticmethod
     def init_from_file(file_path, first_index=None, header=True):
-        """Returns a Reader object that gets it dataframe from a file"""
+        """Returns a Reader object that gets it dataframe from a file
+            file_path: (String) path to source file to be read
+            [first_index]: (int) first column with dimensional
+                                     data, default=first numeric data            
+            [header]: (bool) if the first line of the file is a header
+        """
         return Reader(file_path=file_path, first_index=first_index, header=header)
 
     @staticmethod
     def init_from_dataframe(dataframe, first_index=None, header=True):
-        """Returns a Reader object that uses a given dataframe"""
+        """Returns a Reader object that uses a given dataframe
+            dataframe: (Pandas Dataframe) set in case you want to access
+                         to an existing dataframe
+            [first_index]: (int) first column with dimensional
+                                     data, default=first numeric data            
+            [header]: (bool) if the first line of the file is a header
+
+        """
         return Reader(dataframe=dataframe, first_index=first_index, header=header)
 
     def set_first_index(self, index):
@@ -60,7 +72,10 @@ class Reader(object):
                              .format(no_columns))
 
         self._first_index = index
-
-    def get_dimensional_values(self):
+    
+    def get_dimension_values(self):
         """Gets A COPY the numeric values associated to each dimension"""
         return self._df.ix[:,self._first_index:-1].copy()
+
+    def get_dimension_labels(self):
+        return list(self._df.columns.values[self._first_index:-1])
