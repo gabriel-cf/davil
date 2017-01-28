@@ -1,13 +1,20 @@
 """
     Axis module
 """
+import logging
 from sympy import Segment
 
 
 class Axis(object):
-    """Axis holding a segment, a label and the dimension identifier"""
+    """ Axis holding a segment, a label and the dimension identifier
+        All axis share a CENTRE point where they part from
+    """
 
-    def __init__(self, label, dimension, segment):
+    CENTRE = (0, 0)
+    LOGGER = logging.getLogger("Axis")
+    LOGGER.setLevel(logging.DEBUG)
+
+    def __init__(self, label, dimension, segment, show=True):
         """ label --> (String) displayable name of this axis
             dimension --> (String) id of the dimension that the axis represents
             segment --> (sympy.geometry.line.Segment) segment of this axis
@@ -15,6 +22,7 @@ class Axis(object):
         self._label = label
         self._dimension = dimension
         self._segment = segment
+        self._show = show
 
     def get_angle(self):
         """Returns the angle in radians"""
@@ -23,6 +31,7 @@ class Axis(object):
     def get_label(self):
         """Returns the (String) label of the axis"""
         return self._label
+
 
     def get_segment(self):
         """Returns the (sympy.geometry.line.Segment) segment of the axis"""
@@ -51,3 +60,16 @@ class Axis(object):
         p0 = convert_points(self._segment.p1)
         p1 = convert_points(self._segment.p2)
         return p0, p1
+
+    def get_segment_end_point(self):
+        """Returns the end point of the axis as a tuple of (float, float)"""
+        p0, p1 = self.get_segment_points()
+        if self._segment.length == 0:
+            Axis.LOGGER.warning("Returning end point of a segment of length 0")
+            return p0
+        # Return the edge point (not the centre)
+        return p1 if Axis.CENTRE == p0 else p0
+
+    def is_visible(self):
+        """Determines whether the axis should be visible or not"""
+        return self._show and self._segment.length > 0
