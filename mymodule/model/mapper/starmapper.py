@@ -1,9 +1,6 @@
 """ Star Coordinates Mapper module
 """
-import random
-import pandas as pd
 import numpy as np
-from sympy import Point, Segment
 from mapper import Mapper
 
 class StarMapper(Mapper):

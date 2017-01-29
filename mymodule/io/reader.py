@@ -78,7 +78,7 @@ class Reader(object):
         """Gets A COPY of the numeric values associated to each dimension
             [normalized]: if True, normalizes the value between 0 and 1
         """
-        dimension_values_df = self._df.ix[:,self._first_index:-1].copy()
+        dimension_values_df = self._df.ix[:,self._first_index:].copy()
         if normalized:
             def normalize_column(column):
                 """Normalize taking the maximum value as reference"""
@@ -89,4 +89,4 @@ class Reader(object):
         return dimension_values_df
 
     def get_dimension_labels(self):
-        return list(self._df.columns.values[self._first_index:-1])
+        return list(self._df.columns.values[self._first_index:])
