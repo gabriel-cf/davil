@@ -4,6 +4,7 @@ from __future__ import division
 import random
 from math import cos, sin, radians
 import pandas as pd
+import numpy as np
 
 class AxisGenerator(object):
     """Static class with methods to generate DataFrames representing axis"""
@@ -21,7 +22,7 @@ class AxisGenerator(object):
                 cos_ = 0
             if abs(sin_) < 0.00000000:
                 sin_ = 0
-            r = random.randint(1,9) ##
+            r = random.uniform(0, 3) ##
             x1 = x0 + r * cos_
             y1 = y0 + r * sin_
             segment = [x0, x1, y0, y1]
@@ -30,9 +31,18 @@ class AxisGenerator(object):
         return segment_list
 
     @staticmethod
-    def generate_star_axis(axis_labels):
-        n_lines = len(axis_labels)
-        segment_list = AxisGenerator._subdivide_circle((0,0), n_lines)
-        df = pd.DataFrame(segment_list, axis_labels)
-        print df
+    def _generate_weights(no_weights, random_weights=False):
+        if random_weights:
+            return np.random.rand(no_weights)
+        return np.zeros(no_weights)
+
+    @staticmethod
+    def generate_star_axis(axis_labels, random_weights=True):
+        no_axis = len(axis_labels)
+        segment_list = AxisGenerator._subdivide_circle((0,0), no_axis)
+        df = pd.DataFrame(segment_list, axis_labels, columns=["x0", "x1", "y0", "y1"])
+        # Add weights
+        weights = AxisGenerator._generate_weights(no_axis, random_weights)
+        df['weight'] = pd.Series(weights, index=df.index)
+        return df
         

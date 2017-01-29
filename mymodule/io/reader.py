@@ -1,5 +1,6 @@
 """Reader Module
 """
+from __future__ import division
 import numbers
 import pandas as pd
 from filereader import FileReader
@@ -73,9 +74,19 @@ class Reader(object):
 
         self._first_index = index
     
-    def get_dimension_values(self):
-        """Gets A COPY the numeric values associated to each dimension"""
-        return self._df.ix[:,self._first_index:-1].copy()
+    def get_dimension_values(self, normalized=True):
+        """Gets A COPY of the numeric values associated to each dimension
+            [normalized]: if True, normalizes the value between 0 and 1
+        """
+        dimension_values_df = self._df.ix[:,self._first_index:-1].copy()
+        if normalized:
+            def normalize_column(column):
+                """Normalize taking the maximum value as reference"""
+                return [x / max(column) for x in column]
+            
+            dimension_values_df = dimension_values_df.apply(lambda column: normalize_column(column), axis=0)
+
+        return dimension_values_df
 
     def get_dimension_labels(self):
         return list(self._df.columns.values[self._first_index:-1])
