@@ -18,11 +18,11 @@ class AxisGenerator(object):
             cos_ = cos(angle)
             sin_ = sin(angle)
             # Float problem: cos(90), sin(180) != 0.0
-            if abs(cos_) < 0.00000000:
+            if abs(cos_) < 0.000000001:
                 cos_ = 0
-            if abs(sin_) < 0.00000000:
+            if abs(sin_) < 0.000000001:
                 sin_ = 0
-            r = random.uniform(0, 3) ##
+            r = random.uniform(1, 3) ##
             x1 = x0 + r * cos_
             y1 = y0 + r * sin_
             segment = [x0, x1, y0, y1]

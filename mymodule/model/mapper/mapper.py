@@ -9,9 +9,10 @@ class Mapper(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def map_points(self, axis_l):
+    def map_points(self, axis_vectors_df, dimensional_values_df):
         """Calls the mapping algorithm of the subclass
-			axis_l --> (model.axis Axis) object representing an Axis
+            axis_vectors: pandas.Dataframe no_axisx2 
+            dimensional_values: pandas.Dataframe no_productsxno_axis
         """
         # Check types
         #if (! axis_l):
