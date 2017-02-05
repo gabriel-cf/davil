@@ -10,7 +10,7 @@ class AxisGenerator(object):
     """Static class with methods to generate DataFrames representing axis"""
 
     @staticmethod
-    def _subdivide_circle(centre, n_lines):
+    def _subdivide_circle(centre, n_lines, random_radius=False):
         segment_list = []
         for i in xrange(0, n_lines):
             angle = radians(i * (360/n_lines))
@@ -22,7 +22,7 @@ class AxisGenerator(object):
                 cos_ = 0
             if abs(sin_) < 0.000000001:
                 sin_ = 0
-            r = random.uniform(1, 3) ##
+            r = 1 if not random_radius else random.uniform(1, 3)
             x1 = x0 + r * cos_
             y1 = y0 + r * sin_
             segment = [x0, x1, y0, y1]
