@@ -82,7 +82,15 @@ class Reader(object):
         if normalized:
             def normalize_column(column):
                 """Normalize taking the maximum value as reference"""
-                return [x / max(column) for x in column]
+                column_norm = []
+                for x in column:
+                    max_value = max(column)
+                    if max_value == 0:
+                        column_norm.append(0)
+                    else:
+                        column_norm.append(x / max_value)                    
+
+                return column_norm
             
             dimension_values_df = dimension_values_df.apply(lambda column: normalize_column(column), axis=0)
 
