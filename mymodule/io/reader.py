@@ -93,7 +93,6 @@ class Reader(object):
                 return column_norm
             
             dimension_values_df = dimension_values_df.apply(lambda column: normalize_column(column), axis=0)
-
         return dimension_values_df
 
     def get_dimension_labels(self):
