@@ -1,0 +1,757 @@
+Name;PClass;Age;SexCode;Survived
+Allen, Miss Elisabeth Walton;1;29;1;1
+Allison, Miss Helen Loraine;1;2;1;0
+Allison, Mr Hudson Joshua Creighton;1;30;0;0
+Allison, Mrs Hudson JC (Bessie Waldo Daniels);1;25;1;0
+Allison, Master Hudson Trevor;1;0.92;0;1
+Anderson, Mr Harry;1;47;0;1
+Andrews, Miss Kornelia Theodosia;1;63;1;1
+Andrews, Mr Thomas, jr;1;39;0;0
+Appleton, Mrs Edward Dale (Charlotte Lamson);1;58;1;1
+Artagaveytia, Mr Ramon;1;71;0;0
+Astor, Colonel John Jacob;1;47;0;0
+Astor, Mrs John Jacob (Madeleine Talmadge Force);1;19;1;1
+Baxter, Mrs James (Helene DeLaudeniere Chaput);1;50;1;1
+Baxter, Mr Quigg Edmond;1;24;0;0
+Beattie, Mr Thomson;1;36;0;0
+Beckwith, Mr Richard Leonard;1;37;0;1
+Beckwith, Mrs Richard Leonard (Sallie Monypeny);1;47;1;1
+Behr, Mr Karl Howell;1;26;0;1
+Birnbaum, Mr Jakob;1;25;0;0
+Bishop, Mr Dickinson H;1;25;0;1
+Bishop, Mrs Dickinson H (Helen Walton);1;19;1;1
+Bjornstrm-Steffansson, Mr Mauritz Hakan;1;28;0;1
+Blackwell, Mr Stephen Weart;1;45;0;0
+Blank, Mr Henry;1;39;0;1
+Bonnell, Miss Caroline;1;30;1;1
+Bonnell, Miss Elizabeth;1;58;1;1
+Bowen, Miss Grace Scott;1;45;1;1
+Bowerman, Miss Elsie Edith;1;22;1;1
+Brady, Mr John Bertram;1;41;0;0
+Brandeis, Mr Emil;1;48;0;0
+Brown, Mrs James Joseph (Margaret Molly" Tobin)";1;44;1;1
+Brown, Mrs John Murray (Caroline Lane Lamson);1;59;1;1
+Bucknell, Mrs William Robert (Emma Eliza Ward);1;60;1;1
+Butt, Major Archibald Willingham;1;45;0;0
+Candee, Mrs Edward (Helen Churchill Hungerford);1;53;1;1
+Cardeza, Mrs James Warburton Martinez (Charlotte Wardle Drake);1;58;1;1
+Cardeza, Mr Thomas Drake Martinez;1;36;0;1
+Carlsson, Mr Frans Olof;1;33;0;0
+Carter, Mr William Ernest;1;36;0;1
+Carter, Mrs William Ernest (Lucile Polk);1;36;1;1
+Carter, Miss Lucile Polk;1;14;1;1
+Carter, Master William T II;1;11;0;1
+Case, Mr Howard Brown;1;49;0;0
+Cavendish, Mr Tyrell William;1;36;0;0
+Chaffee, Mr Herbert Fuller;1;46;0;0
+Chaffee, Mrs Herbert Fuller (Carrie Constance Toogood);1;47;1;1
+Chambers, Mr Norman Campbell;1;27;0;1
+Chambers, Mrs Norman Campbell (Bertha Griggs);1;31;1;1
+Clark, Mr Walter Miller;1;27;0;0
+Clark, Mrs Walter Miller (Virginia McDowell);1;26;1;1
+Compton, Mrs Alexander Taylor (Mary Eliza Ingersoll);1;64;1;1
+Compton, Mr Alexander Taylor, Jr;1;37;0;0
+Compton, Miss Sara Rebecca;1;39;1;1
+Cornell, Mrs Robert Clifford (Malvina Helen Lamson);1;55;1;1
+Crosby, Captain Edward Gifford;1;70;0;0
+Crosby, Mrs Edward Gifford (Catherine Elizabeth Halstead);1;69;1;1
+Crosby, Miss Harriet R;1;36;1;1
+Cumings, Mr John Bradley;1;39;0;0
+Cumings, Mrs John Bradley (Florence Briggs Thayer);1;38;1;1
+Daniel, Mr Robert Williams;1;27;0;1
+Davidson, Mr Thornton;1;31;0;0
+Davidson, Mrs Thornton (Orian Hays);1;27;1;1
+Dick, Mr Albert Adrian;1;31;0;1
+Dick, Mrs Albert Adrian Vera Gillespie;1;17;1;1
+Dodge, Master Washington;1;4;0;1
+Douglas, Mrs Frederick Charles (Suzette Baxter);1;27;1;1
+Douglas, Mr Walter Donald;1;50;0;0
+Douglas, Mrs Walter Donald (Mahala Dutton);1;48;1;1
+Duff Gordon, Sir Cosmo Edmund;1;49;0;1
+Duff Gordon, Lady (Lucille Wallace Sutherland);1;48;1;1
+Dulles, Mr William Crothers;1;39;0;0
+Earnshaw, Mrs Boulton (Olive Potter);1;23;1;1
+Eustis, Miss Elizabeth Mussey;1;53;1;1
+Evans, Miss Edith Corse;1;36;1;0
+Foreman, Mr Benjamin Laventall;1;30;0;0
+Fortune, Miss Alice Elizabeth;1;24;1;1
+Fortune, Mr Charles Alexander;1;19;0;0
+Fortune, Miss Ethel Flora;1;28;1;1
+Fortune, Miss Mabel;1;23;1;1
+Fortune, Mr Mark;1;64;0;0
+Fortune, Mrs Mark (Mary McDougald);1;60;1;1
+Frauenthal, Dr Henry William;1;49;0;1
+Frauenthal, Mr Isaac Gerald;1;44;0;1
+Frolicher, Miss Marguerite;1;22;1;1
+Frolicher-Stehli, Mr Maxmillian;1;60;0;1
+Frolicher-Stehli, Mrs Maxmillian (Margaretha Emerentia Stehli);1;48;1;1
+Futrelle, Mr Jacques;1;37;0;0
+Futrelle, Mrs Jacques (May Peel);1;35;1;1
+Gee, Mr Arthur H;1;47;0;0
+Gibson, Miss Dorothy;1;22;1;1
+Gibson, Mrs Leonard (Pauline C Boeson);1;45;1;1
+Goldenberg, Mr Samuel L;1;49;0;1
+Goldschmidt, Mr George B;1;71;0;0
+Gracie, Colonel Archibald IV;1;54;0;1
+Graham, Mr George Edward;1;38;0;0
+Graham, Miss Margaret Edith;1;19;1;1
+Graham, Mrs William Thompson (Edith Junkins);1;58;1;1
+Greenfield, Mrs Leo David (Blanche Strouse);1;45;1;1
+Greenfield, Mr William Bertram;1;23;0;1
+Guggenheim, Mr Benjamin;1;46;0;0
+Harder, Mr George Achilles;1;25;0;1
+Harder, Mrs George Achilles (Dorothy Annan);1;21;1;1
+Harper, Mr Henry Sleeper;1;48;0;1
+Harper, Mrs Henry Sleeper (Myna Haxtun);1;49;1;1
+Harris, Mr Henry Birkhardt;1;45;0;0
+Harris, Mrs Henry Birkhardt (Irene Wallach);1;36;1;1
+Hays, Mr Charles Melville;1;55;0;0
+Hays, Mrs Charles Melville (Clara Jennings Gregg);1;52;1;1
+Hays, Miss Margaret Bechstein;1;24;1;1
+Hippach, Miss Jean Gertrude;1;16;1;1
+Hippach, Mrs Louis Albert (Ida Sophia Fischer);1;44;1;1
+Hogeboom, Mrs John C (Anna Andrews);1;51;1;1
+Holverson, Mr Alexander Oskar;1;42;0;0
+Holverson, Mrs Alexander Oskar (Mary Aline Towner);1;35;1;1
+Homer, Mr Harry;1;35;0;1
+Hoyt, Mr Frederick Maxfield;1;38;0;1
+Hoyt, Mrs Frederick Maxfield (Jane Anne Forby);1;35;1;1
+Isham, Miss Anne Elizabeth;1;50;1;0
+Ismay, Mr Joseph Bruce;1;49;0;1
+Jones, Mr Charles Cresson;1;46;0;0
+Kent, Mr Edward Austin;1;58;0;0
+Kenyon, Mr Frederick R;1;41;0;0
+Kimball, Mr Edwin Nelson Jr;1;42;0;1
+Kimball, Mrs Edwin Nelson Jr (Gertrude Parsons);1;40;1;1
+Lindeberg-Lind, Mr Erik Gustaf;1;42;0;0
+Lindstrom, Mrs Carl Johan (Sigrid Posse);1;55;1;1
+Lines, Mrs Ernest H (Elizabeth Lindsey James);1;50;1;1
+Lines, Miss Mary Conover;1;16;1;1
+Long, Mr Milton Clyde;1;29;0;0
+Longley, Miss Gretchen Fiske;1;21;1;1
+Loring, Mr Joseph Holland;1;30;0;0
+Madill, Miss Georgette Alexandra;1;15;1;1
+Maguire, Mr John Edward;1;30;0;0
+McCaffry, Mr Thomas Francis;1;46;0;0
+McCarthy, Mr Timothy J;1;54;0;0
+McGough, Mr James R;1;36;0;1
+Meyer, Mr Edgar Joseph;1;28;0;0
+Millet, Mr Francis Davis;1;65;0;0
+Minahan, Miss Daisy E;1;33;1;1
+Minahan, Dr William Edward;1;44;0;0
+Minahan, Mrs William Edward (Lillian E Thorpe);1;37;1;1
+Molson, Mr Harry Markland;1;55;0;0
+Moore, Mr Clarence Bloomfield;1;47;0;0
+Natsch, Mr Charles H;1;36;0;0
+Newell, Mr Arthur Webster;1;58;0;0
+Newell, Miss Madeleine;1;31;1;1
+Newell, Miss Marjorie;1;23;1;1
+Newsom, Miss Helen Monypeny;1;19;1;1
+Nicholson, Mr Arthur Ernest;1;64;0;0
+Ostby, Mr Engelhart Cornelius;1;64;0;0
+Ostby, Miss Helen Raghnild;1;22;1;1
+Ovies y Rodriguez, Mr Servando;1;28;0;0
+Payne, Mr Vivian Ponsonby;1;22;0;0
+Penasco, Mr Victor de Satode;1;18;0;0
+Penasco, Mrs Victor de Satode (Josefa de Soto);1;17;1;1
+Peuchen, Major Arthur Godfrey;1;52;0;1
+Porter, Mr Walter Chamberlain;1;46;0;0
+Potter, Mrs Thomas, Jr (Lily Alexenia Wilson);1;56;1;1
+Robert, Mrs Edward Scott (Elisabeth Walton McMillan);1;43;1;1
+Roebling, Mr Washington Augustus 2;1;31;0;0
+Rosenbaum (Russell), Miss Edith Louise;1;33;1;1
+Rothes, the Countess of (Noel Lucy Martha Dyer-Edwardes);1;27;1;1
+Rothschild, Mr Martin;1;55;0;0
+Rothschild, Mrs Martin (Elizabeth L Barrett);1;54;1;1
+Ryerson, Mr Arthur Larned;1;61;0;0
+Ryerson, Mrs Arthur Larned (Emily Maria Borie);1;48;1;1
+Ryerson, Miss Emily Borie;1;18;1;1
+Ryerson, Master John Borie;1;13;0;1
+Ryerson, Miss Susan (Suzette) Parker;1;21;1;1
+Seward, Mr Frederic Kimber;1;34;0;1
+Shutes, Miss Elizabeth W;1;40;1;1
+Silverthorne, Mr Spencer Victor;1;36;0;1
+Silvey, Mr William Baird;1;50;0;0
+Silvey, Mrs William Baird (Alice Munger);1;39;1;1
+Simonius-Blumer, Col Alfons;1;56;0;1
+Sloper, Mr William Thompson;1;28;0;1
+Smart, Mr John Montgomery;1;56;0;0
+Smith, Mr James Clinch;1;56;0;0
+Smith, Mr Lucien Philip;1;24;0;0
+Smith, Mrs Lucien Philip (Mary Eloise Hughes;1;18;1;1
+Snyder, Mr John Pillsbury;1;24;0;1
+Snyder, Mrs John Pillsbury (Nelle Stevenson);1;23;1;1
+Spedden, Mr Frederick Oakley;1;45;0;1
+Spedden, Mrs Frederick Oakley (Margaretta Corning Stone);1;40;1;1
+Spedden, Master Robert Douglas;1;6;0;1
+Spencer, Mr William Augustus;1;57;0;0
+Staehlin, Dr Max;1;32;0;1
+Stead, Mr William Thomas;1;62;0;0
+Stengel, Mr Charles Emil Henry;1;54;0;1
+Stengel, Mrs Charles Emil Henry (Annie May Morris);1;43;1;1
+Stephenson, Mrs Walter Bertram (Martha Eustis);1;52;1;1
+Stone, Mrs George Nelson (Martha E);1;62;1;1
+Straus, Mr Isidor;1;67;0;0
+Straus, Mrs Isidor (Ida Blun);1;63;1;0
+Sutton, Mr Frederick;1;61;0;0
+Swift, Mrs Frederick Joel (Margaret Welles Barron);1;46;1;1
+Taussig, Mr Emil;1;52;0;0
+Taussig, Mrs Emil (Tillie Mandelbaum);1;39;1;1
+Taussig, Miss Ruth;1;18;1;1
+Taylor, Mr Elmer Zebley;1;48;0;1
+Thayer, Mr John Borland;1;49;0;0
+Thayer, Mrs John Borland (Marian Longstreth Morris);1;39;1;1
+Thayer, Mr John Borland, jr;1;17;0;1
+Thorne, Mr George (alias of: Mr George Rosenshine);1;46;0;0
+Tucker, Mr Gilbert Milligan, jr;1;31;0;1
+Van Derhoef, Mr Wyckoff;1;61;0;0
+Walker, Mr William Anderson;1;47;0;0
+Warren, Mr Frank Manley;1;64;0;0
+Warren, Mrs Frank Manley (Anna S Atkinson);1;60;1;1
+Weir, Col John;1;60;0;0
+White, Mrs J Stuart (Ella Holmes);1;55;1;1
+White, Mr Percival Wayland;1;54;0;0
+White, Mr Richard Frasar;1;21;0;0
+Wick, Mr George Dennick;1;57;0;0
+Wick, Mrs George Dennick (Martha Hitchcock);1;45;1;1
+Wick, Miss Mary Natalie;1;31;1;1
+Widener, Mr George Dunton;1;50;0;0
+Widener, Mrs George Dunton (Eleanor Elkins);1;50;1;1
+Widener, Mr Harry Elkins;1;27;0;0
+Willard, Miss Constance;1;20;1;1
+Williams, Mr Charles Duane;1;51;0;0
+Williams, Mr Richard Norris II;1;21;0;1
+Young, Miss Marie Grice;1;36;1;1
+Harrison, Mr William   Henry;1;40;0;0
+Keeping, Mr Edwin;1;32;0;0
+Ringhini, Mr Sante;1;33;0;0
+Abelson, Mr Samuel;2;30;0;0
+Abelson, Mrs Samuel (Anna);2;28;1;1
+Andrew, Mr Edgar Samuel;2;18;0;0
+Angle, Mr William A;2;34;0;0
+Angle, Mrs William A (Florence);2;32;1;1
+Ashby, Mr John;2;57;0;0
+Bailey, Mr Percy Andrew;2;18;0;0
+Baimbrigge, Mr Charles R;2;23;0;0
+Balls, Mrs Ada E Hall;2;36;1;1
+Banfield, Mr Frederick J;2;28;0;0
+Bateman, Rev Robert James;2;51;0;0
+Beane, Mr Edward;2;32;0;1
+Beane, Mrs Edward (Ethel Clarke);2;19;1;1
+Beauchamp, Mr Henry James;2;28;0;0
+Becker, Mrs Allen Oliver (Nellie E Baumgardner);2;36;1;1
+Becker, Miss Marion Louise;2;4;1;1
+Becker, Master Richard F;2;1;0;1
+Becker, Miss Ruth Elizabeth;2;12;1;1
+Beesley, Mr Lawrence;2;34;0;1
+Bentham, Miss Lilian W;2;19;1;1
+Berriman, Mr William S;2;23;0;0
+Botsford, Mr William Hull;2;26;0;0
+Bracken, Mr James H;2;27;0;0
+Brown, Miss Edith E;2;15;1;1
+Brown, Mr Thomas William Solomon;2;45;0;0
+Brown, Mrs Thomas William Solomon (Elizabeth C);2;40;1;1
+Bryhl, Miss Dagmar;2;20;1;1
+Bryhl, Mr Kurt Arnold Gottfrid;2;25;0;0
+Buss, Miss Kate;2;36;1;1
+Butler, Mr Reginald Fenton;2;25;0;0
+Bystrom, Mrs Carolina;2;42;1;1
+Caldwell, Mr Albert Francis;2;26;0;1
+Caldwell, Mrs Albert Francis (Sylvia Mae Harbaugh);2;26;1;1
+Caldwell, Master Alden Gates;2;0.83;0;1
+Cameron, Miss Clear;2;31;1;1
+Carbines, Mr William;2;19;0;0
+Carter, Rev Ernest Courtenay;2;54;0;0
+Carter, Mrs Ernest Courtenay (Lillian Hughes);2;44;1;0
+Chapman, Mr Charles Henry;2;52;0;0
+Chapman, Mr John Henry;2;30;0;0
+Chapman, Mrs John Henry (Elizabeth Lawry);2;30;1;0
+Clarke, Mr Charles V;2;29;0;0
+Coleridge, Mr Reginald Charles;2;29;0;0
+Collander, Mr Erik;2;27;0;0
+Collett, Mr Sidney C Stuart;2;24;0;1
+Collyer, Mr Harvey;2;35;0;0
+Collyer, Mrs Harvey (Charlotte Tate);2;31;1;1
+Collyer, Miss Marjorie;2;8;1;1
+Cook, Mrs Selena Rogers;2;22;1;0
+Corbett, Mrs Walter H (Irene Colvin);2;30;1;0
+Cotterill, Mr Harry;2;20;0;0
+Davies, Mr Charles Henry;2;21;0;0
+Davis, Mrs Agnes;2;49;1;1
+Davis, Master John Morgan;2;8;0;1
+Davis, Miss Mary;2;28;1;1
+Deacon, Mr Percy;2;18;0;0
+del Carlo, Mr Sebastiano;2;28;0;0
+del Carlo, Mrs Sebastiano (Argenia Genovese);2;22;1;1
+Denbury, Mr Herbert;2;25;0;0
+Dibden, Mr William;2;18;0;0
+Doling, Mrs Ada;2;32;1;1
+Doling, Miss Elsie;2;18;1;1
+Drew, Mr James Vivian;2;42;0;0
+Drew, Mrs James Vivian (Lulu Thorne Christian);2;34;1;1
+Drew, Master Marshall Brines;2;8;0;1
+Eitemiller, Mr George Floyd;2;23;0;0
+Enander, Mr Ingvar;2;21;0;0
+Fahlstrom, Mr Arne Jonas;2;19;0;0
+Fox, Mr Stanley H;2;38;0;0
+Funk, Miss Annie C;2;38;1;0
+Fynney, Mr Joseph J;2;35;0;0
+Gale, Mr Harry;2;35;0;0
+Gale, Mr Shadrach;2;38;0;0
+Garside, Miss Ethel;2;24;1;1
+Gaskell, Mr Alfred;2;16;0;0
+Gavey, Mr Lawrence;2;26;0;0
+Gilbert, Mr William;2;45;0;0
+Giles, Mr Edgar;2;24;0;0
+Giles, Mr Frederick;2;21;0;0
+Giles, Mr Ralph;2;22;0;0
+Gillespie, Mr William;2;34;0;0
+Givard, Mr Hans Christensen;2;30;0;0
+Greenberg, Mr Samuel;2;50;0;0
+Hale, Mr Reginald;2;30;0;0
+Hamalainen, Mrs William (Anna);2;23;1;1
+Hamalainen, Master Viljo;2;1;0;1
+Harbeck, Mr William H;2;44;0;0
+Harper, Rev John;2;28;0;0
+Harper, Miss Nina;2;6;1;1
+Harris, Mr George;2;30;0;1
+Hart, Mr Benjamin;2;43;0;0
+Hart, Mrs Benjamin (Esther);2;45;1;1
+Hart, Miss Eva Miriam;2;7;1;1
+Herman, Miss Alice;2;24;1;1
+Herman, Miss Kate;2;24;1;1
+Herman, Mr Samuel;2;49;0;0
+Herman, Mrs Samuel (Jane Laver);2;48;1;1
+Hickman, Mr Leonard Mark;2;34;0;0
+Hickman, Mr Lewis;2;32;0;0
+Hickman, Mr Stanley George;2;21;0;0
+Hiltunen, Miss Marta;2;18;1;0
+Hocking, Mrs Elizabeth;2;53;1;1
+Hocking, Mr George;2;23;0;0
+Hocking, Miss Ellen (Nellie);2;21;1;1
+Hodges, Mr Henry Price;2;52;0;0
+Hold, Mr Stephen;2;42;0;0
+Hold, Mrs Stephen (Annie Margaret);2;36;1;1
+Hood, Mr Ambrose, Jr;2;21;0;0
+Hosono, Mr Masafumi;2;41;0;1
+Hunt, Mr George Henry;2;33;0;0
+Ilett, Miss Bertha;2;17;1;1
+Jerwan, Mrs Amin S (Marie Thuillard);2;23;1;1
+Kantor, Mr Sinai;2;34;0;0
+Karnes, Mrs J Frank (Claire Bennett);2;22;1;0
+Kelly, Mrs Florence (Fannie);2;45;1;1
+Kvillner, Mr Johan Henrik Johannesson;2;31;0;0
+Lahtinen, Rev William;2;30;0;0
+Lahtinen, Mrs William (Anna Sylvan);2;26;1;0
+Lemore, Mrs Amelia;2;34;1;1
+LaRoche, Mr Joseph;2;26;0;0
+LaRoche, Mrs Joseph (Juliet);2;22;1;1
+LaRoche, Miss Louise;2;1;1;1
+LaRoche, Miss Simonne;2;3;1;1
+Leyson, Mr Robert William Norman;2;25;0;0
+Louch, Mr Charles Alexander;2;48;0;0
+Mack, Mrs Mary;2;57;1;0
+Mallet, Master Andre;2;2;0;1
+Mantvila, Rev Joseph;2;27;0;0
+Marshall, Mrs Kate Louise Phillips;2;19;1;1
+Matthews, Mr William John;2;30;0;0
+Maybery, Mr Frank H;2;20;0;0
+McCrae, Mr Arthur Gordon;2;45;0;0
+McKane, Mr Peter D;2;46;0;0
+Mellenger, Mrs Elizabeth Anne;2;41;1;1
+Mellenger, Miss Madeleine Violet;2;13;1;1
+Mellor, Mr William John;2;19;0;1
+Meyer, Mr August;2;30;0;0
+Milling, Mr Jacob Christian;2;48;0;0
+Mitchell, Mr Henry Michael;2;71;0;0
+Moraweck, Dr Ernest;2;54;0;0
+Myles, Mr Thomas Francis;2;64;0;0
+Nasser (Nasrallah), Mr Nicholas;2;32;0;0
+Nasser (Nasrallah), Mrs Nicholas;2;18;1;1
+Navratil, Master Edmond Roger;2;2;0;1
+Navratil, Mr Michel;2;32;0;0
+Navratil, Master Michel M;2;3;0;1
+Nesson, Mr Israel;2;26;0;0
+Nicholls, Mr Joseph Charles;2;19;0;0
+Nourney, Mr Alfred (aka Baron von Drachstedt);2;20;0;1
+Nye, Mrs Elizabeth Ramell;2;29;1;1
+Otter, Mr Richard;2;39;0;0
+Oxenham, Mr Percy Thomas;2;22;0;1
+Pain, Dr Alfred;2;24;0;0
+Parker, Mr Clifford R;2;28;0;0
+Parrish, Mrs Lutie Davis;2;50;1;1
+Pengelly, Mr Frederick;2;20;0;0
+Peruschitz, Rev Joseph M;2;40;0;0
+Phillips, Miss Alice;2;42;1;1
+Phillips, Mr Robert;2;21;0;0
+Pinsky, Miss Rosa;2;32;1;1
+Ponesell, Mr Martin;2;34;0;0
+Quick, Mrs Frederick C (Jane Richards);2;33;1;1
+Quick, Miss Phyllis May;2;2;1;1
+Quick, Miss Winifred Vera;2;8;1;1
+Reeves, Mr David;2;36;0;0
+Renouf, Mr Peter Henry;2;34;0;0
+Renouf, Mrs Peter Henry (Lillian Jefferys);2;30;1;1
+Reynaldo, Mrs Encarnacion;2;28;1;1
+Richard, Mr Emil;2;23;0;0
+Richards, Master George Sidney;2;0.8;0;1
+Richards, Mrs Sidney (Emily Hocking);2;25;1;1
+Richards, Master William Rowe;2;3;0;1
+Ridsdale, Miss Lucy;2;50;1;1
+Rugg, Miss Emily;2;21;1;1
+Shelley, Mrs William (Imanita);2;25;1;1
+Silven, Miss Lyyli;2;18;1;1
+Sincock, Miss Maude;2;20;1;1
+Siukonnen, Miss Anna;2;30;1;1
+Sjostedt, Mr Ernst Adolf;2;59;0;0
+Slayter, Miss Hilda Mary;2;30;1;1
+Slemen, Mr Richard James;2;35;0;0
+Smith (Schmidt), Mr Augustus;2;22;0;0
+Sobey, Mr Hayden;2;25;0;0
+Stanton, Mr Samuel Ward;2;41;0;0
+Stokes, Mr Philip Joseph;2;25;0;0
+Sweet, Mr George;2;14;0;0
+Toomey, Miss Ellen;2;50;1;1
+Troupiansky, Mr Moses Aaron;2;22;0;0
+Troutt, Miss Edwina Celia;2;27;1;1
+Turpin, Mr William John;2;29;0;0
+Turpin, Mrs William John (Dorothy Anne Wonnacott);2;27;1;0
+Veale, Mr James;2;30;0;0
+Waelens, Mr Achille;2;22;0;0
+Walcroft, Miss Nellie;2;35;1;1
+Ware, Mr John James;2;30;0;0
+Ware, Mrs John James (Florence Louise Long);2;28;1;1
+Ware, Mr William J;2;23;0;0
+Watt, Miss Bertha;2;12;1;1
+Watt, Mrs James (Bessie Inglis Milne);2;40;1;1
+Webber, Miss Susan;2;36;1;1
+Weisz, Mr Leopold;2;28;0;0
+Weisz, Mrs Leopold (Mathilde);2;32;1;1
+Wells, Mrs Arthur H (Addie Trevaskis);2;29;1;1
+Wells, Miss Joan;2;4;1;1
+Wells, Master Ralph Lester;2;2;0;1
+West, Mr Edwy Arthur;2;36;0;0
+West, Mrs Edwy Arthur (Ada Mary);2;33;1;1
+Wilhelms, Mr Charles;2;32;0;1
+Wright, Miss Marion;2;26;1;1
+Aldworth, Mr Charles Augustus;2;30;0;0
+Brown, Miss Mildred;2;24;1;1
+Swane, Mr George;2;18;0;0
+Abbing, Mr Anthony;3;42;0;0
+Abbott, Master Eugene Joseph;3;13;0;0
+Abbott, Mr Rossmore Edward;3;16;0;0
+Abbott, Mrs Stanton (Rosa);3;35;1;1
+Abelseth, Miss Anna Karen;3;16;1;1
+Abelseth, Mr Olaus;3;25;0;1
+Abraham, Mrs Joseph (Sophie Easu);3;18;1;1
+Abrahamsson, Mr August;3;20;0;1
+Adahl, Mr Mauritz Nils Martin;3;30;0;0
+Adams, Mr John;3;26;0;0
+Ahlin, Mrs Johanna Persdotter;3;40;1;0
+Ahmed, Mr Ali;3;24;0;0
+Aijo-Nirva, Mr Isak;3;41;0;0
+Aks, Mrs Sam (Leah Rosen);3;18;1;1
+Aks, Master Philip;3;0.83;0;1
+Alexander, Mr William;3;23;0;0
+Alhomaki, Mr Ilmari Rudolf;3;20;0;0
+Ali, Mr William;3;25;0;0
+Allen, Mr William Henry;3;35;0;0
+Allum, Mr Owen George;3;17;0;0
+Andersen, Mr Albert Karvin;3;32;0;0
+Andersen, Mr Thor Olsvigen;3;20;0;0
+Andersson, Mr Anders Johan;3;39;0;0
+Andersson, Mrs Anders Johan (Alfrida K Brogren);3;39;1;0
+Andersson, Miss Ebba Iris;3;6;1;0
+Andersson, Miss Ellis Anna Maria;3;2;1;0
+Andersson, Miss Erna;3;17;1;1
+Andersson, Miss Ida Augusta Margareta;3;38;1;0
+Andersson, Miss Ingeborg Constancia;3;9;1;0
+Andersson, Mr Johan Samuel;3;26;0;0
+Andersson, Miss Sigrid Elizabeth;3;11;1;0
+Andersson, Master Sigvard Harald Elias;3;4;0;0
+Andreasson, Mr Paul Edvin;3;20;0;0
+Angheloff, Mr Minko;3;26;0;0
+Arnold, Mr Josef;3;25;0;0
+Arnold, Mrs Josef (Josephine Frank);3;18;1;0
+Aronsson, Mr Ernst Axel Algot;3;24;0;0
+Asim, Mr Adola;3;35;0;0
+Asplund, Mr Carl Oscar Vilhelm Gustafsson;3;40;0;0
+Asplund, Mrs Carl Oscar (Selma Augusta Johansson);3;38;1;1
+Asplund, Master Carl Edgar;3;5;0;0
+Asplund, Master Clarence Gustaf Hugo;3;9;0;0
+Aspland, Master Edvin Rojj Felix;3;3;0;1
+Asplund, Master Filip Oscar;3;13;0;0
+Asplund, Mr John Charles;3;23;0;1
+Asplund, Miss Lillian Gertrud;3;5;1;1
+Assaf, Mrs Mariana;3;45;1;1
+Assam, Mr Ali;3;23;0;0
+Attalah, Miss Malaka;3;17;1;0
+Attala (Kalil), Mr Solomon;3;27;0;0
+Augustsson, Mr Albert;3;23;0;0
+Baccos, Mr Rafoul;3;20;0;0
+Backstrom, Mr Karl Alfred;3;32;0;0
+Backstrom, Mrs Karl Alfred (Maria Mathilda Gustafsson);3;33;1;1
+Baclini, Miss Eugenie;3;3;1;1
+Badman, Miss Emily Louisa;3;18;1;1
+Badt, Mr Mohamed;3;40;0;0
+Balkic, Mr Cerin;3;26;0;0
+Banoura, Miss Ayout;3;15;1;1
+Barbara, Mrs Catherine;3;45;1;0
+Barbara, Miss Saude;3;18;1;0
+Barry, Miss Julia;3;27;1;0
+Barton, Mr David;3;22;0;0
+Beavan, Mr William Thomas;3;19;0;0
+Bengtsson, Mr John Viktor;3;26;0;0
+Berglund, Mr Karl Ivar Sven;3;22;0;0
+Betros, Mr Tannous;3;20;0;0
+Bing, Mr Lee;3;32;0;1
+Birkeland, Mr Hans;3;21;0;0
+Bjorklund, Ernst Herbert;3;18;0;0
+Bostandyeff, Mr Guentcho;3;26;0;0
+Boulos, Master Akar;3;6;0;0
+Boulos, Miss Laura;3;9;1;0
+Bourke, Mr John;3;40;0;0
+Bourke, Mrs John (Catherine);3;32;1;0
+Bowen, Mr David;3;26;0;0
+Bradley, Miss Bridget Delia;3;18;1;1
+Braf, Miss Elin Ester Maria;3;20;1;0
+Braund, Mr Lewis Richard;3;29;0;0
+Braund, Mr Owen Harris;3;22;0;0
+Brobek, Mr Karl Rudolf;3;22;0;0
+Brocklebank, Mr William Alfred;3;35;0;0
+Buckley, Mr Daniel;3;21;0;1
+Buckley, Miss Katherine;3;20;1;0
+Burke, Mr Jeremiah;3;19;0;0
+Burns, Miss Mary Delia;3;18;1;0
+Cacic, Mr Grego;3;18;0;0
+Cacic, Mr Luka;3;38;0;0
+Cacic, Mr Maria;3;30;0;0
+Calic, Mr Peter;3;17;0;0
+Canavan, Miss Mary;3;21;1;0
+Canavan, Mr Patrick;3;21;0;0
+Cann, Mr Ernest;3;21;0;0
+Carlsson, Mr Carl Robert;3;24;0;0
+Carlsson, Mr Frans Olof;3;33;0;0
+Carlsson, Mr Julius;3;33;0;0
+Carlsson, Mr August Sigfrid;3;28;0;0
+Carr, Miss Helen;3;16;1;1
+Carr, Miss Jeannie;3;37;1;0
+Carver, Mr Alfred John;3;28;0;0
+Celotti, Mr Francesco;3;24;0;0
+Chartens, Mr David;3;21;0;0
+Chip, Mr Chang;3;32;0;0
+Christmann, Mr Emil;3;29;0;0
+Chronopoulos, Mr Apostolos;3;26;0;0
+Chronopoulos, Mr Demetrios;3;18;0;0
+Coelho, Mr Domingos Fernandes;3;20;0;0
+Cohen, Mr Gurshon (Gus);3;19;0;1
+Colbert, Mr Patrick;3;24;0;0
+Coleff, Mr Fotio;3;24;0;0
+Coleff, Mr Peyo;3;36;0;0
+Conlin, Mr Thomas Henry;3;31;0;0
+Connaghton, Mr Michael;3;31;0;0
+Connolly, Miss Kate;3;30;1;0
+Connolly, Miss Kate;3;22;1;1
+Cook, Mr Jacob;3;43;0;0
+Cor, Mr Bartol;3;35;0;0
+Cor, Mr Ivan;3;27;0;0
+Cor, Mr Ludovik;3;19;0;0
+Corn, Mr Harry;3;30;0;0
+Coutts, Mrs William (Minnie);3;36;1;1
+Coutts, Master Neville;3;3;0;1
+Coutts, Master William Leslie;3;9;0;1
+Coxon, Mr Daniel;3;59;0;0
+Crease, Mr Ernest James;3;19;0;0
+Cribb, Mr John Hatfield;3;44;0;0
+Cribb, Miss Laura Alice;3;17;1;1
+Dahl, Mr Charles Edward;3;45;0;1
+Dahlberg, Miss Gerda Ulrika;3;22;1;0
+Dakic, Mr Branko;3;19;0;0
+Daly, Mr Eugene;3;29;0;1
+Daly, Miss Marcella;3;30;1;1
+Danbom, Mr Ernst Gilbert;3;34;0;0
+Danbom, Mrs Ernst Gilbert (Anna Sigrid Maria Brogren);3;28;1;0
+Danbom, Master Gilbert Sigvard Emanuel;3;0.33;0;0
+Danoff, Mr Yoto;3;27;0;0
+Dantchoff, Mr Khristo;3;25;0;0
+Davies, Mr Alfred;3;24;0;0
+Davies, Mr Evan;3;22;0;0
+Davies, Mr John;3;21;0;0
+Davies, Mr Joseph;3;17;0;0
+Dean, Mr Bertram;3;26;0;0
+Dean, Mrs Bertram (Eva);3;33;1;1
+Dean, Master Bertram Vere;3;1;0;1
+Dean, Miss Elizabeth Gladys (Millvena);3;0.17;1;1
+Delalic, Mr Regyo;3;25;0;0
+De Messemaeker, Mr William Joseph;3;36;0;1
+De Messemaeker, Mrs William Joseph (Anna);3;36;1;1
+De Mulder, Mr Theo;3;30;0;1
+Dennis, Mr Samuel;3;23;0;0
+Dennis, Mr William;3;26;0;0
+Devaney, Miss Margaret;3;19;1;1
+Dewan, Mr Frank;3;65;0;0
+Dimic, Mr Jovan;3;42;0;0
+Dintcheff, Mr Valtcho;3;43;0;0
+Dooley, Mr Patrick;3;32;0;0
+Dorkings, Mr Edward Arthur;3;19;0;1
+Dowdell, Miss Elizabeth;3;30;1;1
+Doyle, Miss Elizabeth;3;24;1;0
+Drapkin, Miss Jennie;3;23;1;1
+Driscoll, Miss Bridget;3;24;1;1
+Duquemin, Mr Joseph;3;24;0;1
+Dyker, Mr Adolf Fredrik;3;23;0;0
+Dyker, Mrs Adolf Fredrik (Anna Elizabeth Judith Andersson);3;22;1;1
+Edvardsson, Mr Gustaf Hjalmar;3;18;0;0
+Eklund, Mr Hans Linus;3;16;0;0
+Ekstrom, Mr Johan;3;45;0;0
+Elsbury, Mr James;3;47;0;0
+Emanuel, Miss Virginia Ethel;3;5;1;1
+Ford, Miss Doolina Margaret;3;21;1;0
+Ford, Mr Edward Watson;3;18;0;0
+Ford, Miss Maggie;3;9;1;0
+Ford, Mrs Edward (Margaret Ann);3;48;1;0
+Ford, Mr Neil Watson;3;16;0;0
+Gallagher, Mr Martin;3;25;0;0
+Georges, Mrs Shahini Weappi;3;38;1;1
+Gilinski, Mr Leslie;3;22;0;0
+Gilnagh, Miss Katie;3;16;1;1
+Goldsmith, Mr Frank John;3;33;0;0
+Goldsmith, Master Frank John William;3;9;0;1
+Goldsmith, Mr Nathan;3;41;0;0
+Goncalves, Mr Manuel Estanslas;3;38;0;0
+Goodwin, Mr Frederick;3;40;0;0
+Goodwin, Mrs Frederick (Augusta);3;43;1;0
+Goodwin, Mr Charles E;3;14;0;0
+Goodwin, Miss Lillian A;3;16;1;0
+Goodwin, Master Harold V;3;9;0;0
+Goodwin, Miss Jessie A;3;10;1;0
+Goodwin, Master Sidney L;3;6;0;0
+Goodwin, Master William F;3;11;0;0
+Green, Mr George;3;40;0;0
+Gronnestad, Mr Daniel Danielsen;3;32;0;0
+Gustafsson, Mr Alfred Ossian;3;20;0;0
+Gustafsson, Mr Anders Vilhelm;3;37;0;0
+Gustafsson, Mr Johan Birger;3;28;0;0
+Gustafsson, Mr Karl Gideon;3;19;0;0
+Haas, Miss Aloisia;3;24;1;0
+Hagardon, Miss Kate;3;17;1;0
+Hakkarainen, Mr Pekko Pietari;3;28;0;0
+Hakkarainen, Mrs Pekko Pietari;3;24;1;1
+Hampe, Mr Leon;3;20;0;0
+Hansen, Mr Claus Peter;3;41;0;0
+Hansen, Mrs Claus Peter;3;45;1;1
+Hansen, Mr Henrik Juul;3;26;0;0
+Hansen, Mr Henry Damsgaard;3;21;0;0
+Hedman, Mr Oscar;3;27;0;1
+Hegarty, Miss Nora;3;18;1;0
+Heikkinen, Miss Laina;3;26;1;1
+Heininen, Miss Wendla Maria;3;23;1;0
+Hellstrom, Hilda Maria;3;22;1;1
+Henriksson, Jenny Lovisa;3;28;1;0
+Hirvonen, Mrs Alexander;3;22;1;1
+Hirvonen, Miss Hildur E;3;2;1;0
+Holm, Mr John Frederik Alexander;3;43;0;0
+Honkanen, Miss Eluna;3;27;1;1
+Humblin, Mr Adolf Mathias Nicolai Olsen;3;42;0;0
+Ilmakangas, Miss Ida Livija;3;27;1;0
+Ilmakangas, Miss Pieta Sofia;3;25;1;0
+Jansen, Mr Carl Olof;3;27;0;1
+Jensen, Miss Carla Christine;3;19;1;1
+Jensen, Mr Hans Peder;3;20;0;0
+Jensen, Mr Niels Peder;3;48;0;0
+Jensen, Mr Svend Lauritz;3;17;0;0
+Johanson, Mr Jakob Alfred;3;34;0;0
+Johansson, Mr Erik;3;22;0;0
+Johansson, Mr Gustaff Joel;3;33;0;0
+Johansson, Mr Karl Johan;3;32;0;1
+Johansson, Mr Nils;3;29;0;0
+Johansson, Oscar L;3;26;0;1
+Johnson, Mr Alfred;3;49;0;0
+Johnson, Miss Eleanor Ileen;3;1;1;1
+Johnson, Mr Malkolm Joackim;3;33;0;0
+Johnson, Master Harold Theodor;3;4;0;1
+Johnson, Mrs Oscar W;3;24;1;0
+Johnson, Mr William Cahoone Jr;3;19;0;0
+Jonsson, Mr Carl;3;32;0;1
+Jonsson, Nils Hilding;3;27;0;0
+Jussila, Miss Aina Maria;3;21;1;0
+Jussila, Mr Erik;3;32;0;1
+Jussila, Miss Katriina;3;20;1;0
+Kallio, Mr Nikolai Erland;3;17;0;0
+Kalvig, Mr Johannes K Halverson;3;21;0;0
+Karajic, Mr Milan;3;30;0;0
+Karlsson, Mr Einar Gervasius;3;21;0;1
+Karlsson, Mr Julius Konrad Eugen;3;23;0;0
+Karlsson, Mr Nils August;3;22;0;0
+Karun, Miss Anna Mary;3;4;1;1
+Karun, Mr Franz;3;39;0;0
+Keane, Mr Andrew;3;20;0;0
+Kelly, Miss Anna Kate;3;21;1;1
+Kelly, Mr James;3;44;0;0
+Kelly, Mr James;3;42;0;0
+Kelly, Miss Mary;3;21;1;1
+Kennedy, Mr John;3;24;0;0
+Kiernan, Mr John;3;25;0;0
+Kiernan, Mr Philip;3;22;0;0
+Kilgannon, Mr Thomas;3;22;0;0
+Kink, Mr Anton;3;39;0;1
+Kink, Mrs Anton (Louise Heilmann);3;26;1;0
+Kink, Miss Louise Gretchen;3;4;1;1
+Kink, Miss Maria;3;22;1;0
+Kink, Mr Vincenz;3;26;0;0
+Klasen, Miss Gertrud Emilia;3;1.5;1;0
+Klasen, Mrs Hulda Kristina;3;36;1;0
+Klasen, Mr Klas Albin;3;18;0;0
+Krekorian, Mr Neshan;3;25;0;1
+Laitinen, Miss Kritina Sofia;3;37;1;0
+Landegren, Miss Aurora Adelia;3;22;1;1
+Lane, Mr Patrick;3;20;0;0
+Lang, Mr Fang;3;26;0;1
+Larsson, Mr August Viktor;3;29;0;0
+Larsson, Mr Bengt Edvin;3;29;0;0
+Larsson-Rondberg, Mr Edvard;3;22;0;0
+Leinonen, Mr Antti Gustaf;3;32;0;0
+Lemom, Mr Denis;3;21;0;0
+Lemon, Miss Mary;3;21;1;0
+Leonard, Mr Lionel;3;36;0;0
+Lester, Mr James;3;39;0;0
+Lindahl, Miss Agda V;3;25;1;0
+Lindblom, Miss Augusta Charlotta;3;45;1;0
+Lindell, Mr Edvard Bengtsson;3;36;0;0
+Lindell, Mrs Edvard Bengtsson;3;30;1;0
+Lindqvist, Eino William;3;20;0;1
+Melkebuk, Mrs Philemon;3;23;1;0
+Salander, Mr Karl Johan;3;21;0;0
+Sandstrom, Miss Beatrice Irene;3;1.5;1;0
+Tornquist, Mr William Henry;3;25;0;1
+Turja, Miss Anna Sofia;3;18;1;1
+Turkula, Mrs Hedvig;3;63;1;1
+Van der Planke, Miss Augusta;3;18;1;0
+Van der Planke, Mr Jules;3;31;0;0
+Van der Planke, Mrs Jules;3;31;1;0
+Van der Planke, Mr Leon;3;15;0;0
+Van der Steen, Mr Leo Peter;3;28;0;0
+Van de Velde, Mr John Joseph;3;36;0;0
+Vandewalle, Mr Nestor Cyriel;3;28;0;0
+Van Impe, Miss Catharine;3;10;1;0
+Van Impe, Mr Jean Baptiste;3;36;0;0
+Van Impe, Mrs Jean Baptiste;3;30;1;0
+Vartunian, Mr David;3;22;0;1
+Vendel, Mr Olof Wdvin;3;29;0;0
+Vereruysse, Mr Victor;3;47;0;0
+Vestrom, Miss Hulda Amanda Adolfina;3;14;1;0
+Vonk, Mr Jenko;3;22;0;0
+Widegren, Mr Charles Peter;3;51;0;0
+Wiklund, Mr Jacob Alfred;3;18;0;0
+Wilkes, Mrs Ellen;3;45;1;1
+Williams, Mr Leslie;3;28;0;0
+Windelov, Mr Einar;3;21;0;0
+Wirz, Mr Albert;3;27;0;0
+Wittevrongel, Mr Camiel;3;36;0;0
+Yasbeck, Mr Antoni;3;27;0;0
+Yasbeck, Mrs Antoni;3;15;1;1
+Zakarian, Mr Artun;3;27;0;0
+Zakarian, Mr Maprieder;3;26;0;0
+Zenni, Mr Philip;3;22;0;0
+Lievens, Mr Rene;3;24;0;0
+Zimmerman, Leo;3;29;0;0

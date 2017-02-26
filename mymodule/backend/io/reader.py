@@ -3,7 +3,7 @@
 from __future__ import division
 import numbers
 import pandas as pd
-from filereader import FileReader
+from file_reader import FileReader
 
 
 class Reader(object):
@@ -74,26 +74,25 @@ class Reader(object):
 
         self._first_index = index
     
-    def get_dimension_values(self, normalized=True):
-        """Gets A COPY of the numeric values associated to each dimension
-            [normalized]: if True, normalizes the value between 0 and 1
+    def get_dimension_values(self):
+        """Returns: (pandas.Dataframe) read dimensional values
+                    (pandas.Dataframe) normalized dimensional values
         """
-        dimension_values_df = self._df.ix[:,self._first_index:].copy()
-        if normalized:
-            def normalize_column(column):
-                """Normalize taking the maximum value as reference"""
-                column_norm = []
-                for x in column:
-                    max_value = max(column)
-                    if max_value == 0:
-                        column_norm.append(0)
-                    else:
-                        column_norm.append(x / max_value)                    
+        dimension_values_df_cp = self._df.ix[:,self._first_index:].copy()
+        def normalize_column(column):
+            """Normalize taking the maximum value as reference"""
+            column_norm = []
+            for x in column:
+                max_value = max(column)
+                if max_value == 0:
+                    column_norm.append(0)
+                else:
+                    column_norm.append(x / max_value)                    
 
-                return column_norm
+            return column_norm
             
-            dimension_values_df = dimension_values_df.apply(lambda column: normalize_column(column), axis=0)
-        return dimension_values_df
+        dimension_values_df_cp_norm = dimension_values_df_cp.apply(lambda column: normalize_column(column), axis=0)
+        return dimension_values_df_cp, dimension_values_df_cp_norm
 
     def get_dimension_labels(self):
         return list(self._df.columns.values[self._first_index:])
