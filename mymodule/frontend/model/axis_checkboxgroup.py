@@ -53,17 +53,15 @@ class AxisCheckboxGroup(object):
             """This function will be called every time a checkbox is checked
                Will hide or show the selected axis and remap the points
             """
-            ignored_axis_ids = [] # Store column indexes of ignored axis
             # We iterate in the CheckboxGroup labels order because it is the
             # same used by the active_list parameter
             for i in xrange(0, len(self._cb_group.labels)):
                 element_id = self._cb_group.labels[i]
                 element = self._element_dict[element_id]
-                element.visible(i in active_list)
-                if not element.is_visible():
-                    ignored_axis_ids.append(element_id)
-            self._mapper_controller.execute_mapping(ignored_axis_ids=ignored_axis_ids)
-            push_notebook()
+                # element.visible() will call remapping by default
+                element.visible(i in active_list, remap=False)
+            # remap once all axis have been updated
+            self._mapper_controller.execute_mapping()
 
         self._cb_group.on_click(update_axis)
         print activation_list

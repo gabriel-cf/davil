@@ -8,20 +8,33 @@ class AxisFigureElement(AbstractFigureElement):
     """Axis figure element composed by the bokeh elements Segment, Square,
        and optionally Label
     """
-    def __init__(self, segment, square, label=None):
+    MAPPER_CONTROLLER = None
+
+    @staticmethod
+    def set_mapper_controller(mapper_controller):
+        """Sets the static mapper controller of the class"""
+        AxisFigureElement.MAPPER_CONTROLLER = mapper_controller
+
+    def __init__(self, segment, square, source, label=None):
         """Instantiates a new Axis element"""
         self._segment = segment
         self._square = square
         self._label = label
+        self._source = source
 
-    def visible(self, show):
+    def visible(self, show, remap=False):
         """Will mark as visible or invisible all children elements
-           show: (Boolean)
+           visible: (Boolean)
         """
-        self._segment.visible = show
-        self._square.visible = show
-        if self._label:
-            self._label.visible = show
+        if self._segment.visible != show:
+            AxisFigureElement.MAPPER_CONTROLLER.update_axis_status(self.get_identifier(), show)
+            self._segment.visible = show
+            self._square.visible = show
+            if self._label:
+                self._label.visible = show
+            if remap:
+                print "ATTEMPTING MAPPING"
+                AxisFigureElement.MAPPER_CONTROLLER.execute_mapping()
 
     def get_identifier(self):
         """Will return the identifier of the element"""

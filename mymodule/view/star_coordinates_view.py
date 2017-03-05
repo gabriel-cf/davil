@@ -21,6 +21,7 @@ from ..backend.util.df_matrix_utils import DFMatrixUtils
 from ..frontend.model.mapper_controller import MapperController
 from ..frontend.model.axis_checkboxgroup import AxisCheckboxGroup
 from ..frontend.model.figure_element.axis_figure_element import AxisFigureElement
+from ..frontend.extension.dragtool import DragTool
 
 class StarCoordinatesView(object):
 
@@ -54,6 +55,7 @@ class StarCoordinatesView(object):
         self._vectors_df = None
         # Figure elements
         self._figure = None
+        self._sources = None
         self._axis_elements = []
         self._segments = []
         self._points = []
@@ -84,11 +86,25 @@ class StarCoordinatesView(object):
 
       return data_table
 
+    def init_square_mapper(self):
+      def remap(attr, old, new):
+        print "REMAP - DRAG && DROP"
+        print self._square.glyph.name
+        print self._square.glyph.x
+        print self._square.glyph.y
+        modified_axis_id = self._square.glyph.name
+        self._mapper_controller.update_vector_values(modified_axis_id, self._square.glyph.x, self._square.glyph.y)
+        self._mapper_controller.execute_mapping()
+
+      square = self._figure.square(x=0, y=0, name='remap', size=0)
+      square.on_change('visible', remap)
+      return square
+
+
     def init(self):
         """Load data from file and initialize dataframe values
             Can be used to reset the original values
         """
-
         if self._reader is None:
             self._reader = Reader.init_from_file(self._file_path)
         # Get the dimension labels (i.e. the names of the columns with numeric values)
@@ -102,23 +118,27 @@ class StarCoordinatesView(object):
 
         self._mapper_controller = MapperController(self._dimension_values_df_norm, 
                                                   self._vectors_df)
-                
+        activation_list = []
+        start_activated = True
         self.init_figure()
-        self.init_axis()
+        # We need to provide the AxisFigureElement class with a mapper controller
+        # so it can execute mapping upon modification of its values
+        AxisFigureElement.set_mapper_controller(self._mapper_controller)
+        self.init_axis()        
+        self._square = self.init_square_mapper()
+        self._figure.add_tools(DragTool(sources=self._sources, remap_square=self._square))
         self._axis_checkboxes = AxisCheckboxGroup(axis_ids, self._axis_elements, 
                                                   self._mapper_controller,
-                                                  activation_list=None,
-                                                  start_activated=False)
-        source_points = self._mapper_controller.get_source_points()
-        self.init_points(source_points)
-
+                                                  activation_list=activation_list,
+                                                  start_activated=start_activated)        
         cb_group = self._axis_checkboxes.get_cb_group()
         data_table = self.init_table()
-        
+        # Initial mapping
+        source_points = self._mapper_controller.execute_mapping()
+        self.init_points(source_points)
         self._row_plot = column([row(self._figure, widgetbox(cb_group)), widgetbox(data_table)])
         curdoc().add_root(self._row_plot)
         curdoc().title = "Star Coordinates"
-        output_notebook()
 
     def init_figure(self, source_points=None):
         """Updates the visual elements on the figure"""
@@ -137,32 +157,48 @@ class StarCoordinatesView(object):
           )
         self._figure.add_tools(hover)
 
-    def init_axis(self):
+    def init_axis(self, activation_list=None):
       # Segments and squares
+      # Create a source of sources. This Data Structure will allow the Drag Tool
+      # to navigate through the available axis
+      self._sources = ColumnDataSource(dict(active_sources=[]))
       for i in xrange(0, len(self._axis_df['x0'])):
-          segment = self._figure.segment(x0=self._axis_df['x0'][i], 
-                                         y0=self._axis_df['y0'][i], 
-                                         x1=self._axis_df['x1'][i], 
-                                         y1=self._axis_df['y1'][i],
-                                         name=self._axis_df.index.values[i], 
-                                         color=StarCoordinatesView._SEGMENT_COLOR, 
-                                         line_width=StarCoordinatesView._SEGMENT_WIDTH)
-          
-          square = self._figure.square(x=self._axis_df['x1'][i], 
-                                       y=self._axis_df['y1'][i],
-                                       name=self._axis_df.index.values[i],
-                                       size=StarCoordinatesView._SQUARE_SIZE, 
-                                       color=StarCoordinatesView._SQUARE_COLOR, 
-                                       alpha=StarCoordinatesView._SQUARE_ALPHA)
+        source = ColumnDataSource(dict(x0=[self._axis_df['x0'][i]],
+                                       y0=[self._axis_df['y0'][i]],
+                                       x1=[self._axis_df['x1'][i]],
+                                       y1=[self._axis_df['y1'][i]],
+                                       name=[self._axis_df.index.values[i]]))
 
-          self._axis_elements.append(AxisFigureElement(segment, square))
-      # Axis labels
-      source_dimensions = ColumnDataSource(self._axis_df)
-      source_dimensions.add(self._axis_df.index, name='names')
-      labels_dimensions = LabelSet(x='x1', y='y1', text='names', name='names', level='glyph',
-                                   x_offset=5, y_offset=5, source=source_dimensions, 
-                                   render_mode='canvas')        
-      self._figure.add_layout(labels_dimensions)
+        segment = self._figure.segment(x0='x0',
+                                       y0='y0',
+                                       x1='x1', 
+                                       y1='y1',
+                                       source=source,
+                                       name=self._axis_df.index.values[i],
+                                       color=StarCoordinatesView._SEGMENT_COLOR,
+                                       line_width=StarCoordinatesView._SEGMENT_WIDTH)
+        
+        square = self._figure.square(x='x1', 
+                                     y='y1',
+                                     source=source,
+                                     name=self._axis_df.index.values[i],
+                                     size=StarCoordinatesView._SQUARE_SIZE, 
+                                     color=StarCoordinatesView._SQUARE_COLOR, 
+                                     alpha=StarCoordinatesView._SQUARE_ALPHA)
+
+        axis_figure_element = AxisFigureElement(segment, square, source)
+        is_visible = not activation_list or i in activation_list
+        # Configure visibility without remapping (will be executed afterwards)
+        axis_figure_element.visible(is_visible, remap=False)
+        if is_visible:
+          self._sources.data['active_sources'].append(source)
+
+        self._axis_elements.append(AxisFigureElement(segment, square, source))
+        # Axis labels
+        labels_dimensions = LabelSet(x='x1', y='y1', text='name', name='name', level='glyph',
+                                     x_offset=5, y_offset=5, source=source, 
+                                     render_mode='canvas')        
+        self._figure.add_layout(labels_dimensions)
         
     def init_points(self, source_points):
       # Mapped points
