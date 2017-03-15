@@ -37,7 +37,7 @@ class StarCoordinatesView(object):
     _CIRCLE_ALPHA = 0.5
 
     """A view with all the necessary logic for displaying it on bokeh"""
-    def __init__(self, file_path, random_weights=False, width=600, height=600):
+    def __init__(self, file_path, random_weights=False, width=600, height=600, doc=None):
         """Creates a new Star Coordinates View object and instantiates 
            its elements
         """
@@ -54,6 +54,7 @@ class StarCoordinatesView(object):
         self._dimension_values_df_norm = None
         self._vectors_df = None
         # Figure elements
+        self._doc = doc if doc else curdoc()
         self._figure = None
         self._sources = None
         self._axis_elements = []
@@ -61,7 +62,7 @@ class StarCoordinatesView(object):
         self._points = []
         self._squares = []
         self._checkboxes = None
-        self._row_plot = None
+        self._row_plot = None        
         self._source_points = None
         # Controllers
         self._mapper_controller = None
@@ -137,8 +138,9 @@ class StarCoordinatesView(object):
         source_points = self._mapper_controller.execute_mapping()
         self.init_points(source_points)
         self._row_plot = column([row(self._figure, widgetbox(cb_group)), widgetbox(data_table)])
-        curdoc().add_root(self._row_plot)
-        curdoc().title = "Star Coordinates"
+        self._doc.add_root(self._row_plot)
+        self._doc.title = "Star Coordinates"
+        return self._row_plot
 
     def init_figure(self, source_points=None):
         """Updates the visual elements on the figure"""
@@ -202,7 +204,7 @@ class StarCoordinatesView(object):
         
     def init_points(self, source_points):
       # Mapped points
-      self._figure.circle('x', 'y', size=StarCoordinatesView._CIRCLE_SIZE, 
-                                      color=StarCoordinatesView._CIRCLE_COLOR, 
-                                      alpha=StarCoordinatesView._CIRCLE_ALPHA, 
-                                      source=source_points)              
+      self._figure.circle('x', 'y', size=StarCoordinatesView._CIRCLE_SIZE,  
+                                    color='color',                                     
+                                    alpha=StarCoordinatesView._CIRCLE_ALPHA, 
+                                    source=source_points)              
