@@ -10,7 +10,7 @@ from bokeh.layouts import widgetbox, row, column
 from bokeh.io import output_notebook, curdoc, show, push_notebook
 from bokeh.plotting import figure, show
 from bokeh.models import Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool, CustomJS
-from bokeh.models.widgets import CheckboxGroup, DataTable, DateFormatter, TableColumn
+from bokeh.models.widgets import CheckboxGroup, DataTable, DateFormatter, TableColumn, Select
 from bokeh.models.layouts import HBox
 
 from ..backend.model.mapper.star_mapper import StarMapper
@@ -62,6 +62,7 @@ class StarCoordinatesView(object):
         self._points = []
         self._squares = []
         self._checkboxes = None
+        self._select = None
         self._row_plot = None        
         self._source_points = None
         # Controllers
@@ -101,6 +102,19 @@ class StarCoordinatesView(object):
       square.on_change('visible', remap)
       return square
 
+    def init_mapping_select(self):              
+      def select_mapping_algorithm(attr, old, new):
+        print "Updating mapping algorithm to {}".format(new)
+        self._mapper_controller.update_mapping_algorithm(new)
+        self._mapper_controller.execute_mapping()
+
+      active_mapper = self._mapper_controller.get_active_mapper_id()
+      select =  Select(title="Mapping Algorithm:",
+                      value=active_mapper,
+                      options=[MapperController.STAR_MAPPER_ID,
+                               MapperController.DEFAULT_MAPPER_ID])
+      select.on_change('value', select_mapping_algorithm)
+      return select
 
     def init(self):
         """Load data from file and initialize dataframe values
@@ -134,10 +148,11 @@ class StarCoordinatesView(object):
                                                   start_activated=start_activated)        
         cb_group = self._axis_checkboxes.get_cb_group()
         data_table = self.init_table()
+        select  = self.init_mapping_select()
         # Initial mapping
         source_points = self._mapper_controller.execute_mapping()
         self.init_points(source_points)
-        self._row_plot = column([row(self._figure, widgetbox(cb_group)), widgetbox(data_table)])
+        self._row_plot = column([row(widgetbox(select)), row(self._figure, widgetbox(cb_group)), widgetbox(data_table)])
         self._doc.add_root(self._row_plot)
         self._doc.title = "Star Coordinates"
         return self._row_plot
