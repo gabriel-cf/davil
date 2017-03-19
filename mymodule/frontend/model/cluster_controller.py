@@ -32,7 +32,7 @@ class ClusterController():
         else:
             #if 'color' in dimension_values_df.columns:
             #    self..drop('color', axis=1, inplace=True)            
-            labels = self._algorithm(dimension_values_df, n_clusters=5)
+            labels = self._algorithm(dimension_values_df, n_clusters=3)
             self._clustering_dic[algorithm_id] = labels
 
         colors = [self._label_colors[i] for i in labels]
