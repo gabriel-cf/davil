@@ -19,10 +19,12 @@ from ..backend.util.axis_generator import AxisGenerator
 from ..backend.util.df_matrix_utils import DFMatrixUtils
 
 from ..frontend.model.mapper_controller import MapperController
+from ..frontend.model.cluster_controller import ClusterController
 from ..frontend.model.axis_checkboxgroup import AxisCheckboxGroup
 from ..frontend.model.figure_element.axis_figure_element import AxisFigureElement
 from ..frontend.extension.dragtool import DragTool
 from ..frontend.animation.mapping_animator import MappingAnimator
+
 
 class StarCoordinatesView(object):
 
@@ -68,7 +70,10 @@ class StarCoordinatesView(object):
         self._source_points = None
         # Controllers
         self._mapper_controller = None
+        self._cluster_controller = None
         self._axis_checkboxes = None
+        # Clustering labels
+        
         
     #def init_mapping(self, ignored_axis_indexes = None):
     #    """Will return a ColumnDataSource with the mapped points"""
@@ -76,10 +81,6 @@ class StarCoordinatesView(object):
 
     def init_table(self):
       """Generates the info table"""
-      data = dict(
-            dates=[],
-            downloads=[],
-            )
       source = ColumnDataSource(self._dimension_values_df)
       source.add(self._dimension_values_df.index, name='name')
       columns = [TableColumn(field=field, title=field) 
@@ -117,6 +118,19 @@ class StarCoordinatesView(object):
       select.on_change('value', select_mapping_algorithm)
       return select
 
+    def init_clustering_select(self):              
+      def select_clustering_algorithm(attr, old, new):
+        print "Updating clustering algorithm to {}".format(new)
+        self._cluster_controller.update_clusters(self._dimension_values_df_norm, new)
+
+      active_algorithm = self._cluster_controller.get_active_algorithm_id()
+      select =  Select(title="Clustering Algorithm:",
+                      value=active_algorithm,
+                      options=[ClusterController.KMEANS_CLUSTERING_ID,
+                               ClusterController.DEFAULT_CLUSTERING_ID])
+      select.on_change('value', select_clustering_algorithm)
+      return select
+
     def init(self):
         """Load data from file and initialize dataframe values
             Can be used to reset the original values
@@ -130,17 +144,16 @@ class StarCoordinatesView(object):
                                                    random_weights=self._random_weights)
 
         # Map points using vectors from the axis
-        self._vectors_df = DFMatrixUtils.get_vectors(self._axis_df)
-        animator = MappingAnimator()
+        self._vectors_df = DFMatrixUtils.get_vectors(self._axis_df)                      
         self._mapper_controller = MapperController(self._dimension_values_df_norm, 
-                                                  self._vectors_df, animator=animator)
+                                                  self._vectors_df, animator=MappingAnimator())        
         activation_list = []
         start_activated = True
         self.init_figure()
         # We need to provide the AxisFigureElement class with a mapper controller
         # so it can execute mapping upon modification of its values
         AxisFigureElement.set_mapper_controller(self._mapper_controller)
-        self.init_axis()        
+        self.init_axis()
         self._square = self.init_square_mapper()
         self._figure.add_tools(DragTool(sources=self._sources, remap_square=self._square))
         self._axis_checkboxes = AxisCheckboxGroup(axis_ids, self._axis_elements, 
@@ -149,14 +162,19 @@ class StarCoordinatesView(object):
                                                   start_activated=start_activated)        
         cb_group = self._axis_checkboxes.get_cb_group()
         data_table = self.init_table()
-        select  = self.init_mapping_select()
+        select_mapping  = self.init_mapping_select()        
         # Initial mapping
         source_points = self._mapper_controller.execute_mapping()
+        self._cluster_controller = ClusterController(source=source_points)
+        self._cluster_controller.update_clusters(self._dimension_values_df_norm)
+        select_clustering = self.init_clustering_select() 
         self.init_points(source_points)
-        self._row_plot = column([row(widgetbox(select)), row(self._figure, widgetbox(cb_group)), widgetbox(data_table)])
+        self._row_plot = column([row(widgetbox(select_mapping), widgetbox(select_clustering)),
+                                row(self._figure, widgetbox(cb_group)), 
+                                widgetbox(data_table)])
         self._doc.add_root(self._row_plot)
         self._doc.title = "Star Coordinates"
-        return self._row_plot
+        return self._row_plot          
 
     def init_figure(self, source_points=None):
         """Updates the visual elements on the figure"""

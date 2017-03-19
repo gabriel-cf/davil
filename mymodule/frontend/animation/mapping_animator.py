@@ -42,7 +42,7 @@ class MappingAnimator(object):
         print "Freq: {}s".format(1/time_cost)
         return time_cost
 
-    def get_animation_sequence(self, original_points, mapped_points, max_time=3):
+    def get_animation_sequence(self, original_points, mapped_points, max_time=1.5):
         """Will map the points for every step of the sequence by updating
            the source
 
@@ -67,8 +67,8 @@ class MappingAnimator(object):
                 self.evaluate_y(original_points_cp, formula)            
                 self._source_points.data['x'] = original_points_cp['x']
                 self._source_points.data['y'] = original_points_cp['y']
+            print "FINISHED ANIMATION"
                 
-                time.sleep(0.01)
             #print original_points_cp['x']
             #print original_points_cp['y']
 

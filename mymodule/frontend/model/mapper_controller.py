@@ -77,12 +77,7 @@ class MapperController(object):
         print "EXECUTING MAPPING"
         if not self._source_points:            
             self._source_points = ColumnDataSource(mapped_points)
-            self._source_points.add(mapped_points.index, name='name')
-            av_colors = ['red', 'navy', 'green', 'orange']
-            colors = []
-            for i in xrange(0, len(mapped_points.index)):
-                colors.append(av_colors[i % len(av_colors)])
-            self._source_points.add(colors, name='color')    
+            self._source_points.add(mapped_points.index, name='name') 
             if self._animator:
                 self._animator.add_source_points(self._source_points)      
         else:
