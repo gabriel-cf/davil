@@ -22,6 +22,7 @@ from ..frontend.model.mapper_controller import MapperController
 from ..frontend.model.axis_checkboxgroup import AxisCheckboxGroup
 from ..frontend.model.figure_element.axis_figure_element import AxisFigureElement
 from ..frontend.extension.dragtool import DragTool
+from ..frontend.animation.mapping_animator import MappingAnimator
 
 class StarCoordinatesView(object):
 
@@ -130,9 +131,9 @@ class StarCoordinatesView(object):
 
         # Map points using vectors from the axis
         self._vectors_df = DFMatrixUtils.get_vectors(self._axis_df)
-
+        animator = MappingAnimator()
         self._mapper_controller = MapperController(self._dimension_values_df_norm, 
-                                                  self._vectors_df)
+                                                  self._vectors_df, animator=animator)
         activation_list = []
         start_activated = True
         self.init_figure()

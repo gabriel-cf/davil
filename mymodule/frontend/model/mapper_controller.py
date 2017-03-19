@@ -1,7 +1,6 @@
 """
     Mapper Controller Module
 """
-
 from bokeh.models import ColumnDataSource
 from ...backend.model.mapper.mapper import Mapper
 from ...backend.model.mapper.dummy_mapper import DummyMapper
@@ -17,12 +16,15 @@ class MapperController(object):
     STAR_MAPPER_ID = 'Star Coordinates'
     DEFAULT_MAPPER_ID = DUMMY_MAPPER_ID
     
-    def __init__(self, dimension_values_df, vectors_df, mapping_id=DEFAULT_MAPPER_ID):
+    def __init__(self, dimension_values_df, vectors_df, 
+                 mapping_id=DEFAULT_MAPPER_ID, animator=None):
         self._dimension_values_df = dimension_values_df
         self._vectors_df = vectors_df
         self._source_points = None
         self._ignored_axis_ids = set()
         self._mapper_id, self._mapper = self.get_mapping_algorithm(mapping_id)
+        self._animator = animator
+        self._last_mapped_points_df = None
 
     def update_axis_status(self, axis_id, visible):
         """Adds an ID to the list of ignored axis if not visible, remove from it
@@ -64,6 +66,7 @@ class MapperController(object):
         return self.get_dimension_values(), self.get_vectors()
 
     def execute_mapping(self):
+
         """Will recalculate the mapping for the points"""
         dimension_values_df = self._dimension_values_df
         vectors_df = self._vectors_df
@@ -72,18 +75,24 @@ class MapperController(object):
         mapped_points = self._mapper.map_points(dimension_values_df, vectors_df)
 
         print "EXECUTING MAPPING"
-        if not self._source_points:
+        if not self._source_points:            
             self._source_points = ColumnDataSource(mapped_points)
             self._source_points.add(mapped_points.index, name='name')
             av_colors = ['red', 'navy', 'green', 'orange']
             colors = []
             for i in xrange(0, len(mapped_points.index)):
                 colors.append(av_colors[i % len(av_colors)])
-            self._source_points.add(colors, name='color')          
+            self._source_points.add(colors, name='color')    
+            if self._animator:
+                self._animator.add_source_points(self._source_points)      
         else:
-            self._source_points.data['x'] = mapped_points['x']
-            self._source_points.data['y'] = mapped_points['y']
-
+            if self._animator:
+                self._animator.get_animation_sequence(self._last_mapped_points_df,
+                                                      mapped_points)
+            else:
+                self._source_points.data['x'] = mapped_points['x']
+                self._source_points.data['y'] = mapped_points['y']
+        self._last_mapped_points_df = mapped_points
         return self._source_points
 
     def get_source_points(self):
@@ -110,3 +119,5 @@ class MapperController(object):
 
     def update_mapping_algorithm(self, mapping_id):
         self._mapper_id, self._mapper = self.get_mapping_algorithm(mapping_id)
+        # recalculate cost in animator
+        #self._animator
