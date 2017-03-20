@@ -101,7 +101,7 @@ class StarCoordinatesView(object):
         self._mapper_controller = None
         self._cluster_controller = None
         self._axis_checkboxes = None
-        print "ALL CLEAR"
+
 
 
     def init_table(self):
@@ -165,8 +165,9 @@ class StarCoordinatesView(object):
         self.init()
 
       available_files = self._file_controller.get_available_files()
+      active_file = self._file_controller.get_active_file()
       select =  Select(title="Select source file:",
-                       value=available_files[0],
+                       value=active_file,
                        options=available_files)
       select.on_change('value', select_file)
       return select
@@ -180,7 +181,6 @@ class StarCoordinatesView(object):
             Can be used to reset the original values
         """
         self._reader = Reader.init_from_file(self._file_controller.get_active_file())
-        print "FILE READ"
         # Get the dimension labels (i.e. the names of the columns with numeric values)
         self._dimension_values_df, self._dimension_values_df_norm = self._reader.get_dimension_values()
         axis_ids = self._dimension_values_df_norm.columns.values.tolist()
@@ -205,7 +205,6 @@ class StarCoordinatesView(object):
                                                   self._mapper_controller,
                                                   activation_list=activation_list,
                                                   start_activated=start_activated) 
-        print "ALL OK"                                                        
         cb_group = self._axis_checkboxes.get_cb_group()
         data_table = self.init_table()
         select_mapping  = self.init_mapping_select()        
@@ -216,19 +215,16 @@ class StarCoordinatesView(object):
         select_clustering = self.init_clustering_select()
         self.init_points(source_points)
 
-        self._row_plot = column([row(widgetbox(self._file_select)), 
-                                row(widgetbox(select_mapping), widgetbox(select_clustering)),
-                                row(self._figure, widgetbox(cb_group)), 
-                                widgetbox(data_table)], responsive=True)
+        row_plot = column([row(widgetbox(select_mapping), widgetbox(select_clustering)),
+                           row(self._figure, widgetbox(cb_group)),
+                           widgetbox(data_table)])
 
         if self._root is None:
-            self._root = self._row_plot
+            self._root = column(row(widgetbox(self._file_select)), row_plot, responsive=True)
             self._doc.add_root(self._root)
         else:
             print self._root.children
-            #for i in xrange(0, len(self._root.children)):
-            self._root.children = self._row_plot.children
-            #self._root.children[0] = self._row_plot
+            self._root.children[1] = row_plot
         self._doc.title = "Star Coordinates"
         return self._row_plot
 
@@ -239,8 +235,7 @@ class StarCoordinatesView(object):
         resize_tool = ResizeTool()
         save_tool = SaveTool()
         reset_tool = ResetTool()
-        self._figure = figure(sizing_mode="scale_both", 
-                              tools=[wheel_zoom_tool, pan_tool, resize_tool, save_tool, reset_tool])
+        self._figure = figure(tools=[wheel_zoom_tool, pan_tool, resize_tool, save_tool, reset_tool])
         self._figure.toolbar.active_scroll = wheel_zoom_tool
         hover = HoverTool(
               tooltips=[

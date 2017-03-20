@@ -21,10 +21,10 @@ class FileController(object):
     def __init__(self, file=None, directory=DEFAULT_DIRECTORY):        
         self._directory = directory
         self._files = self.list_files(directory)
-        print self._files
+        print "Available files: {}".format(self._files)
         self._active_file = file
         if not self._active_file and len(self._files) > 0:
-            self._files[0]
+            self._active_file = self._files[0]
 
     def update_active_file(self, new_file):
         self._active_file = path.join(self._directory, new_file)
