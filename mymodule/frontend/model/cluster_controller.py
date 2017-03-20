@@ -39,7 +39,6 @@ class ClusterController():
         if self._source:
             self._source.data['color'] = pd.Series(colors, index=dimension_values_df.index)
 
-
     def get_clustering_algorithm(self, mapping_id):
         if mapping_id == ClusterController.KMEANS_CLUSTERING_ID:
             return ClusterController.KMEANS_CLUSTERING_ID, KMeansClustering.categorize_values
@@ -54,3 +53,6 @@ class ClusterController():
     def get_active_algorithm_id(self):
         return self._algorithm_id
 
+    def get_all_options(self):
+        return [ClusterController.KMEANS_CLUSTERING_ID, 
+               ClusterController.DEFAULT_CLUSTERING_ID]

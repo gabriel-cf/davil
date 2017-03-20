@@ -15,10 +15,22 @@ class MappingAnimator(object):
     def add_source_points(self, source_points):
         self._source_points = source_points
 
-    def step_x(self, step_points_df, final_points, step, total_steps):
+    def step_x_exponential(self, step_points_df, final_points, step, total_steps):
         #next_x_values = []
         for i in xrange(0, len(step_points_df['x'])):
             x0 = step_points_df['x'][i]
+            xf = final_points['x'][i]
+            step_points_df['x'][i] = x0 + step * (xf - x0) / total_steps
+            #next_x_values.append(xi)
+        #print next_x_values
+        #s = pd.Series(next_x_values)
+        #step_points_df['x'] = s
+        return step_points_df
+
+    def step_x_constant(self, original_points, step_points_df, final_points, step, total_steps):
+        #next_x_values = []
+        for i in xrange(0, len(original_points['x'])):
+            x0 = original_points['x'][i]
             xf = final_points['x'][i]
             step_points_df['x'][i] = x0 + step * (xf - x0) / total_steps
             #next_x_values.append(xi)
@@ -32,7 +44,7 @@ class MappingAnimator(object):
 
     def calculate_time_cost(self, points_df, mapped_points, formula, source_points):
         start_time = time.time()
-        self.step_x(points_df, mapped_points, 0, 1)
+        self.step_x_exponential(points_df, mapped_points, 0, 1)
         self.evaluate_y(points_df, formula)            
         source_points.data['x'] = points_df['x']
         source_points.data['y'] = points_df['y']
@@ -53,24 +65,24 @@ class MappingAnimator(object):
         # First, we get the cost time by simulating an animation from P0 to P'0
         # where P'0 has the same coordinates (this way we include the 
         # rendering time without modifying the position)
-        original_points_cp, formula = self._get_equation_dataframe(original_points, mapped_points)
-        self.evaluate_y(original_points_cp, formula)
-        original_points_cp.eval('y = {}'.format(formula), inplace=True)
+        step_points_cp, formula = self._get_equation_dataframe(original_points, mapped_points)
+        self.evaluate_y(step_points_cp, formula)
+        step_points_cp.eval('y = {}'.format(formula), inplace=True)
         if self._time_cost is None:
-            self._time_cost = self.calculate_time_cost(original_points_cp, mapped_points, formula, self._source_points)
+            self._time_cost = self.calculate_time_cost(step_points_cp, mapped_points, formula, self._source_points)
         else:
             total_steps = int(max_time // self._time_cost)
             print total_steps
             for step in xrange(0, total_steps):
-                #print original_points_cp['x']
-                self.step_x(original_points_cp, mapped_points, step, total_steps)
-                self.evaluate_y(original_points_cp, formula)            
-                self._source_points.data['x'] = original_points_cp['x']
-                self._source_points.data['y'] = original_points_cp['y']
+                #print step_points_cp['x']
+                self.step_x_exponential(step_points_cp, mapped_points, step, total_steps)
+                self.evaluate_y(step_points_cp, formula)            
+                self._source_points.data['x'] = step_points_cp['x']
+                self._source_points.data['y'] = step_points_cp['y']
             print "FINISHED ANIMATION"
                 
-            #print original_points_cp['x']
-            #print original_points_cp['y']
+            #print step_points_cp['x']
+            #print step_points_cp['y']
 
         self._source_points.data['x'] = mapped_points['x']
         self._source_points.data['y'] = mapped_points['y']

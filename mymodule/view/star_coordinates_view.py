@@ -10,7 +10,7 @@ from bokeh.layouts import widgetbox, row, column
 from bokeh.io import output_notebook, curdoc, show, push_notebook
 from bokeh.plotting import figure, show
 from bokeh.models import Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool, CustomJS
-from bokeh.models.widgets import CheckboxGroup, DataTable, DateFormatter, TableColumn, Select
+from bokeh.models.widgets import CheckboxGroup, DataTable, DateFormatter, TableColumn, Select, Button
 from bokeh.models.layouts import HBox
 
 from ..backend.model.mapper.star_mapper import StarMapper
@@ -77,6 +77,7 @@ class StarCoordinatesView(object):
         self._axis_checkboxes = None
         
         self.init_file_controller()
+        self._reset_button = self.init_reset_button()
         self._root = None
 
     def clear(self):
@@ -149,10 +150,10 @@ class StarCoordinatesView(object):
         self._cluster_controller.update_clusters(self._dimension_values_df_norm, new)
 
       active_algorithm = self._cluster_controller.get_active_algorithm_id()
+      all_options = self._cluster_controller.get_all_options()
       select =  Select(title="Clustering Algorithm:",
                       value=active_algorithm,
-                      options=[ClusterController.KMEANS_CLUSTERING_ID,
-                               ClusterController.DEFAULT_CLUSTERING_ID])
+                      options=all_options)
       select.on_change('value', select_clustering_algorithm)
       return select
 
@@ -172,9 +173,25 @@ class StarCoordinatesView(object):
       select.on_change('value', select_file)
       return select
 
+    def init_reset_button(self):
+      def reset_plot():
+        print "RESTARTING"
+        self.reset()
+
+      button = Button(label="Reset", button_type="danger", width=50)
+      button.on_click(reset_plot)
+      return button
+
     def init_file_controller(self):
         self._file_controller = FileController(file=self._file_path)
-        self._file_select = self.init_file_select()                
+        self._file_select = self.init_file_select()
+
+    def get_file_controller(self):
+        return self._file_controller        
+
+    def reset(self):
+        self.clear()
+        self.init()    
 
     def init(self):
         """Load data from file and initialize dataframe values
@@ -191,7 +208,7 @@ class StarCoordinatesView(object):
         self._mapper_controller = MapperController(self._dimension_values_df_norm,
                                                   self._vectors_df, animator=MappingAnimator())
         activation_list = []
-        start_activated = True
+        start_activated = True        
         self.init_figure()
         # We need to provide the AxisFigureElement class with a mapper controller
         # so it can execute mapping upon modification of its values
@@ -220,7 +237,7 @@ class StarCoordinatesView(object):
                            widgetbox(data_table)])
 
         if self._root is None:
-            self._root = column(row(widgetbox(self._file_select)), row_plot, responsive=True)
+            self._root = column(row(widgetbox(self._reset_button), widgetbox(self._file_select)), row_plot, responsive=True)
             self._doc.add_root(self._root)
         else:
             print self._root.children
