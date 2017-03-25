@@ -7,7 +7,7 @@ import math
 
 
 class DFMatrixUtils(object):
-    """Static methods for extracting data from a pandas.DataFrame"""
+    """Static methods for performing operations on a dataframe matrix"""
     
     @staticmethod
     def get_vectors(axis_points_df):

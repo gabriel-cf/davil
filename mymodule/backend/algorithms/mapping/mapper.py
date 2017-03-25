@@ -1,7 +1,6 @@
 """ Abstract Mapper module
 """
 from abc import ABCMeta, abstractmethod
-from ..axis import Axis
 
 
 class Mapper(object):

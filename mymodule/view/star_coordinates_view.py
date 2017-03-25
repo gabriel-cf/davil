@@ -9,11 +9,11 @@ from math import cos, sin, radians
 from bokeh.layouts import widgetbox, row, column
 from bokeh.io import output_notebook, curdoc, show, push_notebook
 from bokeh.plotting import figure, show
-from bokeh.models import Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool, CustomJS
-from bokeh.models.widgets import CheckboxGroup, DataTable, DateFormatter, TableColumn, Select, Button
+from bokeh.models import Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool
+from bokeh.models.widgets import CheckboxGroup, DataTable, TableColumn, Select, Button
 from bokeh.models.layouts import HBox
 
-from ..backend.model.mapper.star_mapper import StarMapper
+from ..backend.algorithms.mapping.star_mapper import StarMapper
 from ..backend.io.reader import Reader
 from ..backend.util.axis_generator import AxisGenerator
 from ..backend.util.df_matrix_utils import DFMatrixUtils
@@ -21,7 +21,7 @@ from ..backend.util.df_matrix_utils import DFMatrixUtils
 from ..frontend.model.mapper_controller import MapperController
 from ..frontend.model.cluster_controller import ClusterController
 from ..frontend.model.file_controller import FileController
-from ..frontend.model.axis_checkboxgroup import AxisCheckboxGroup
+from ..frontend.model.checkboxgroup_controller import CheckboxGroupController
 from ..frontend.model.figure_element.axis_figure_element import AxisFigureElement
 from ..frontend.extension.dragtool import DragTool
 from ..frontend.animation.mapping_animator import MappingAnimator
@@ -218,7 +218,7 @@ class StarCoordinatesView(object):
         self._square_mapper = self.init_square_mapper()
         self._figure.add_tools(DragTool(sources=self._sources, remap_square=self._square_mapper))
         
-        self._axis_checkboxes = AxisCheckboxGroup(axis_ids, self._axis_elements, 
+        self._axis_checkboxes = CheckboxGroupController(axis_ids, self._axis_elements, 
                                                   self._mapper_controller,
                                                   activation_list=activation_list,
                                                   start_activated=start_activated) 

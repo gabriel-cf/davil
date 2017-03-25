@@ -1,11 +1,11 @@
 """
-    AxisCheckboxGroup Module
+    CheckboxGroupController Module
 """
 
 from bokeh.io import push_notebook
 from bokeh.models.widgets import CheckboxGroup
 
-class AxisCheckboxGroup(object):
+class CheckboxGroupController(object):
     """Controller used to handle the bokeh widget CheckboxGroup"""
     def get_active_axis_list(self):
             return [self._element_dict[axis_id].is_visible() for axis_id in self._axis_ids]

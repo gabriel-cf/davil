@@ -2,8 +2,8 @@
     Clustering controller
 """
 
-from ...backend.clustering.kmeans_clustering import KMeansClustering
-from ...backend.clustering.dummy_clustering import DummyClustering
+from ...backend.algorithms.clustering.kmeans_clustering import KMeansClustering
+from ...backend.algorithms.clustering.dummy_clustering import DummyClustering
 import pandas as pd
 
 class ClusterController():

@@ -10,7 +10,6 @@ class MappingAnimator(object):
         """source_points: (ColumnDataSource) source where to update the values
         """
         self._source_points = source_points
-        self._time_cost = None
 
     def add_source_points(self, source_points):
         self._source_points = source_points
@@ -66,20 +65,16 @@ class MappingAnimator(object):
         # where P'0 has the same coordinates (this way we include the 
         # rendering time without modifying the position)
         step_points_cp, formula = self._get_equation_dataframe(original_points, mapped_points)
-        self.evaluate_y(step_points_cp, formula)
-        step_points_cp.eval('y = {}'.format(formula), inplace=True)
-        if self._time_cost is None:
-            self._time_cost = self.calculate_time_cost(step_points_cp, mapped_points, formula, self._source_points)
-        else:
-            total_steps = int(max_time // self._time_cost)
-            print total_steps
-            for step in xrange(0, total_steps):
-                #print step_points_cp['x']
-                self.step_x_exponential(step_points_cp, mapped_points, step, total_steps)
-                self.evaluate_y(step_points_cp, formula)            
-                self._source_points.data['x'] = step_points_cp['x']
-                self._source_points.data['y'] = step_points_cp['y']
-            print "FINISHED ANIMATION"
+        time_cost = self.calculate_time_cost(step_points_cp, mapped_points, formula, self._source_points)
+        total_steps = int(max_time // time_cost)
+        print "TOTAL STEPS: {}".format(total_steps)
+        for step in xrange(0, total_steps):
+            #print step_points_cp['x']
+            self.step_x_exponential(step_points_cp, mapped_points, step, total_steps)
+            self.evaluate_y(step_points_cp, formula)            
+            self._source_points.data['x'] = step_points_cp['x']
+            self._source_points.data['y'] = step_points_cp['y']
+        print "FINISHED ANIMATION"
                 
             #print step_points_cp['x']
             #print step_points_cp['y']
@@ -116,6 +111,3 @@ class MappingAnimator(object):
 
 
         return original_points_cp, formula
-
-
-

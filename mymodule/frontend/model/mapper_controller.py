@@ -2,9 +2,8 @@
     Mapper Controller Module
 """
 from bokeh.models import ColumnDataSource
-from ...backend.model.mapper.mapper import Mapper
-from ...backend.model.mapper.dummy_mapper import DummyMapper
-from ...backend.model.mapper.star_mapper import StarMapper
+from ...backend.algorithms.mapping.dummy_mapper import DummyMapper
+from ...backend.algorithms.mapping.star_mapper import StarMapper
 
 class MapperController(object):
     """Controller that handles mapping operations
