@@ -10,7 +10,7 @@ from bokeh.layouts import widgetbox, row, column
 from bokeh.io import output_notebook, curdoc, show, push_notebook
 from bokeh.plotting import figure, show
 from bokeh.models import Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool
-from bokeh.models.widgets import CheckboxGroup, DataTable, TableColumn, Select, Button
+from bokeh.models.widgets import CheckboxGroup, DataTable, TableColumn, Select, Button, TextInput
 from bokeh.models.layouts import HBox
 
 from ..backend.io.reader import Reader
@@ -170,6 +170,43 @@ class StarCoordinatesView(object):
       select.on_change('value', select_clustering_algorithm)
       return select
 
+    def init_error_select(self):             
+      def select_error_algorithm(attr, old, new):
+        print "Updating error algorithm to {}".format(new)
+        self._error_algorithm_controller.update_error_algorithm(new)
+        self.execute_mapping()
+
+      active_algorithm = self._error_algorithm_controller.get_active_algorithm_id()
+      options = self._error_algorithm_controller.get_all_options()
+      select =  Select(title="Error Algorithm:",
+                       value=active_algorithm,
+                       options=options)
+      select.on_change('value', select_error_algorithm)
+
+      return select
+
+    def init_initial_size_input(self):             
+      def introduce_initial_size(attr, old, new):
+        self._point_size_controller.set_initial_size(int(new))
+
+      active_initial_size = str(self._point_size_controller.get_initial_size())
+      text_input =  TextInput(title="Initial size:",
+                          value=active_initial_size)
+      text_input.on_change('value', introduce_initial_size)
+
+      return text_input
+
+    def init_final_size_input(self):             
+      def introduce_final_size(attr, old, new):
+        self._point_size_controller.set_final_size(int(new))
+
+      active_final_size = str(self._point_size_controller.get_final_size())
+      text_input =  TextInput(title="Final size:",
+                          value=active_final_size)
+      text_input.on_change('value', introduce_final_size)
+
+      return text_input
+
     def init_file_select(self):             
       def select_file(attr, old, new):
         print "Loading new file '{}'".format(new)        
@@ -238,7 +275,7 @@ class StarCoordinatesView(object):
         self._cluster_controller = ClusterController(source=source_points)
         self._cluster_controller.update_clusters(self._dimension_values_df_norm)
         select_clustering = self.init_clustering_select()
-        self._error_algorithm_controller = ErrorAlgorithmController(source_points, self._sources_list, algorithm_id=ErrorAlgorithmController.SQUARE_SUM_ID)
+        self._error_algorithm_controller = ErrorAlgorithmController(source_points, self._sources_list, algorithm_id=ErrorAlgorithmController.ABSOLUTE_SUM_ID)
         self._error_algorithm_controller.calculate_error(self._dimension_values_df_norm, 
                                                          self._vectors_df, 
                                                          mapped_points)
@@ -252,7 +289,12 @@ class StarCoordinatesView(object):
                                                         start_activated=start_activated) 
         cb_group = self._axis_checkboxes.get_cb_group()
 
+        error_select = self.init_error_select()
+        initial_size_input = self.init_initial_size_input()
+        final_size_input = self.init_final_size_input()
+
         row_plot = column([row(widgetbox(select_mapping), widgetbox(select_clustering)),
+                           row(widgetbox(error_select), widgetbox(initial_size_input, final_size_input)),
                            row(self._figure, widgetbox(cb_group)),
                            widgetbox(data_table)])
 

@@ -15,10 +15,10 @@ class ErrorAlgorithmController():
 
     def __init__(self, point_source, axis_sources, algorithm_id=None):
         self._point_source = point_source
-        self.set_error_algorithm(algorithm_id)
+        self.update_error_algorithm(algorithm_id)
         self._axis_sources = axis_sources
 
-    def set_error_algorithm(self, algorithm_id):
+    def update_error_algorithm(self, algorithm_id):
         """Updates the algorithm to the one matching the given ID or default
            if no match is possible
         """
