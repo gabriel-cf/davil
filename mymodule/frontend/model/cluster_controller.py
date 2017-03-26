@@ -47,7 +47,7 @@ class ClusterController():
         elif mapping_id == ClusterController.DEFAULT_CLUSTERING_ID:            
             raise ValueError("DEFAULT_CLUSTERING_ID should be assigned to an existing CLUSTERING_ID")
 
-        print "WARN: No valid clustering algorithm provided. Assigning default mapper "+"'{}'".format(ClusterController.DEFAULT_CLUSTERING_ID)
+        print "WARN: No valid clustering algorithm provided. Assigning default clustering algorithm "+"'{}'".format(ClusterController.DEFAULT_CLUSTERING_ID)
         return self.get_clustering_algorithm(ClusterController.DEFAULT_CLUSTERING_ID)
 
     def get_active_algorithm_id(self):

@@ -2,6 +2,7 @@ from __future__ import division
 import time
 import pandas as pd
 import numpy as np
+from ...backend.util.line_equation import calculate_line_equation
 
 class MappingAnimator(object):
     """Object that creates animations between two positions for points"""
@@ -102,8 +103,7 @@ class MappingAnimator(object):
         m_l = []
         c_l = []
         for x0x1, y0y1 in points:
-            A = np.stack([x0x1, np.ones(len(x0x1))]).T
-            m, c = np.linalg.lstsq(A, y0y1)[0]
+            m, c = calculate_line_equation(x0x1, y0y1)
             m_l.append(m)
             c_l.append(c)        
         original_points_cp['m'] = pd.Series(m_l, index=original_points_cp.index)

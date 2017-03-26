@@ -2,8 +2,8 @@
 """
 from __future__ import division
 import numbers
-import pandas as pd
 from file_reader import FileReader
+from ..algorithms.normalization.normalization_algorithms import NormalizationAlgorithms
 
 
 class Reader(object):
@@ -11,7 +11,7 @@ class Reader(object):
 
     def __init__(self, file_path=None, dataframe=None,
                  first_index=None, header=True):
-        """ ** It is recommended to initialize the Reader using 
+        """ ** It is recommended to initialize the Reader using
             the provided static methods **
             Instantiates a Reader taking the following parameters:
             [file_path]: (String) path to source file to be read
@@ -19,15 +19,15 @@ class Reader(object):
             [dataframe]: (Pandas Dataframe) set in case you want to access
                          to an existing dataframe
             [first_index]: (int) first column with dimensional
-                                     data, default=first numeric data            
-            [header]: (bool) if the first line of the file is a header 
+                                     data, default=first numeric data
+            [header]: (bool) if the first line of the file is a header
         """
         if not file_path is None:
             self._df = FileReader.read_file(file_path, header=header)
         else:
             if dataframe is None:
                 raise ValueError("A source must be provided either from a "+
-                    "pandas.DataFrame object or a file source")
+                                 "pandas.DataFrame object or a file source")
             #if not isinstance(dataframe, pd.DataFrame):
             #    raise TypeError("dataframe must be of value pandas.DataFrame")
             self._df = dataframe
@@ -35,7 +35,7 @@ class Reader(object):
         if first_index is None:
             self._first_index = 0
             for i in xrange(len(self._df.columns)):
-                if isinstance(self._df.iat[0,i], numbers.Number):
+                if isinstance(self._df.iat[0, i], numbers.Number):
                     self._first_index = i
                     break
         else:
@@ -79,19 +79,8 @@ class Reader(object):
                     (pandas.Dataframe) normalized dimensional values
         """
         dimension_values_df_cp = self._df.ix[:,self._first_index:].copy()
-        def normalize_column(column):
-            """Normalize taking the maximum value as reference"""
-            column_norm = []
-            for x in column:
-                max_value = max(column)
-                if max_value == 0:
-                    column_norm.append(0)
-                else:
-                    column_norm.append(x / max_value)                    
-
-            return column_norm
+        dimension_values_df_cp_norm = NormalizationAlgorithms.max_per_column(dimension_values_df_cp, inplace=False)
             
-        dimension_values_df_cp_norm = dimension_values_df_cp.apply(lambda column: normalize_column(column), axis=0)
         return dimension_values_df_cp, dimension_values_df_cp_norm
 
     def get_dimension_labels(self):

@@ -87,7 +87,7 @@ class MapperController(object):
                 self._source_points.data['x'] = mapped_points['x']
                 self._source_points.data['y'] = mapped_points['y']
         self._last_mapped_points_df = mapped_points
-        return self._source_points
+        return self._source_points, mapped_points
 
     def get_source_points(self):
         """Returns (ColumnDataSource) mapped source points"""
@@ -97,8 +97,8 @@ class MapperController(object):
         return self._mapper_id
 
     def update_vector_values(self, axis_id, x1, y1, x0=0, y0=0):
-        self._vectors_df.loc[axis_id:axis_id, 'v_x'] = x1 - x0
-        self._vectors_df.loc[axis_id:axis_id, 'v_y'] = y1 - y0  
+        self._vectors_df.loc[axis_id:axis_id, 'x'] = x1 - x0
+        self._vectors_df.loc[axis_id:axis_id, 'y'] = y1 - y0  
 
     def get_mapping_algorithm(self, mapping_id):
         if mapping_id == MapperController.STAR_MAPPER_ID:

@@ -64,7 +64,6 @@ class CheckboxGroupController(object):
             self._mapper_controller.execute_mapping()
 
         self._cb_group.on_click(update_axis)
-        print activation_list
         update_axis(activation_list_index)
 
     def get_cb_group(self):

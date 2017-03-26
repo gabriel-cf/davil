@@ -13,7 +13,6 @@ from bokeh.models import Label, ColumnDataSource, LabelSet, HoverTool, WheelZoom
 from bokeh.models.widgets import CheckboxGroup, DataTable, TableColumn, Select, Button
 from bokeh.models.layouts import HBox
 
-from ..backend.algorithms.mapping.star_mapper import StarMapper
 from ..backend.io.reader import Reader
 from ..backend.util.axis_generator import AxisGenerator
 from ..backend.util.df_matrix_utils import DFMatrixUtils
@@ -22,6 +21,8 @@ from ..frontend.model.mapper_controller import MapperController
 from ..frontend.model.cluster_controller import ClusterController
 from ..frontend.model.file_controller import FileController
 from ..frontend.model.checkboxgroup_controller import CheckboxGroupController
+from ..frontend.model.point_size_controller import PointSizeController
+from ..frontend.model.error_algorithm_controller import ErrorAlgorithmController
 from ..frontend.model.figure_element.axis_figure_element import AxisFigureElement
 from ..frontend.extension.dragtool import DragTool
 from ..frontend.animation.mapping_animator import MappingAnimator
@@ -61,6 +62,7 @@ class StarCoordinatesView(object):
         self._doc = doc if doc else curdoc()
         self._figure = None
         self._sources = None
+        self._sources_list = []
         self._axis_elements = []
         self._segments = []
         self._points = []
@@ -69,12 +71,14 @@ class StarCoordinatesView(object):
         self._checkboxes = None
         self._select = None
         self._row_plot = None        
-        self._source_points = None
+        self._source_points = None        
         # Controllers
         self._mapper_controller = None
         self._cluster_controller = None
         self._file_controller = None
         self._axis_checkboxes = None
+        self._point_size_controller = None
+        self._error_algorithm_controller = None
         
         self.init_file_controller()
         self._reset_button = self.init_reset_button()
@@ -90,6 +94,7 @@ class StarCoordinatesView(object):
         # Figure elements
         self._figure = None
         self._sources = None
+        self._sources_list = []
         self._axis_elements = []
         self._segments = []
         self._points = []
@@ -102,8 +107,15 @@ class StarCoordinatesView(object):
         self._mapper_controller = None
         self._cluster_controller = None
         self._axis_checkboxes = None
+        self._point_size_controller = None
+        self._error_algorithm_controller = None
 
-
+    def execute_mapping(self):
+        _, mapped_points = self._mapper_controller.execute_mapping()
+        self._error_algorithm_controller.calculate_error(self._dimension_values_df_norm,
+                                                         self._vectors_df,
+                                                         mapped_points)
+        self._point_size_controller.update_sizes()
 
     def init_table(self):
         """Generates the info table"""
@@ -124,7 +136,7 @@ class StarCoordinatesView(object):
         print self._square_mapper.glyph.y
         modified_axis_id = self._square_mapper.glyph.name
         self._mapper_controller.update_vector_values(modified_axis_id, self._square_mapper.glyph.x, self._square_mapper.glyph.y)
-        self._mapper_controller.execute_mapping()
+        self.execute_mapping()
 
       square = self._figure.square(x=0, y=0, name='remap', size=0)
       square.on_change('visible', remap)
@@ -134,7 +146,7 @@ class StarCoordinatesView(object):
       def select_mapping_algorithm(attr, old, new):
         print "Updating mapping algorithm to {}".format(new)
         self._mapper_controller.update_mapping_algorithm(new)
-        self._mapper_controller.execute_mapping()
+        self.execute_mapping()
 
       active_mapper = self._mapper_controller.get_active_mapper_id()
       select =  Select(title="Mapping Algorithm:",
@@ -142,6 +154,7 @@ class StarCoordinatesView(object):
                       options=[MapperController.STAR_MAPPER_ID,
                                MapperController.DEFAULT_MAPPER_ID])
       select.on_change('value', select_mapping_algorithm)
+
       return select
 
     def init_clustering_select(self):             
@@ -212,25 +225,32 @@ class StarCoordinatesView(object):
         self.init_figure()
         # We need to provide the AxisFigureElement class with a mapper controller
         # so it can execute mapping upon modification of its values
-
         AxisFigureElement.set_mapper_controller(self._mapper_controller)
         self.init_axis()
-        self._square_mapper = self.init_square_mapper()
-        self._figure.add_tools(DragTool(sources=self._sources, remap_square=self._square_mapper))
-        
-        self._axis_checkboxes = CheckboxGroupController(axis_ids, self._axis_elements, 
-                                                  self._mapper_controller,
-                                                  activation_list=activation_list,
-                                                  start_activated=start_activated) 
-        cb_group = self._axis_checkboxes.get_cb_group()
+        self._square_mapper = self.init_square_mapper()        
+        self._figure.add_tools(DragTool(sources=self._sources,
+                                        remap_square=self._square_mapper))                      
         data_table = self.init_table()
         select_mapping  = self.init_mapping_select()        
         # Initial mapping
-        source_points = self._mapper_controller.execute_mapping()
+        #TODO - Define source_points out of mapper
+        source_points, mapped_points = self._mapper_controller.execute_mapping()
         self._cluster_controller = ClusterController(source=source_points)
         self._cluster_controller.update_clusters(self._dimension_values_df_norm)
         select_clustering = self.init_clustering_select()
+        self._error_algorithm_controller = ErrorAlgorithmController(source_points, self._sources_list, algorithm_id=ErrorAlgorithmController.SQUARE_SUM_ID)
+        self._error_algorithm_controller.calculate_error(self._dimension_values_df_norm, 
+                                                         self._vectors_df, 
+                                                         mapped_points)
+        self._point_size_controller = PointSizeController(source_points)
+        self._point_size_controller.update_sizes()
         self.init_points(source_points)
+        self._axis_checkboxes = CheckboxGroupController(axis_ids, 
+                                                        self._axis_elements, 
+                                                        self,
+                                                        activation_list=activation_list,
+                                                        start_activated=start_activated) 
+        cb_group = self._axis_checkboxes.get_cb_group()
 
         row_plot = column([row(widgetbox(select_mapping), widgetbox(select_clustering)),
                            row(self._figure, widgetbox(cb_group)),
@@ -240,7 +260,6 @@ class StarCoordinatesView(object):
             self._root = column(row(widgetbox(self._reset_button), widgetbox(self._file_select)), row_plot, responsive=True)
             self._doc.add_root(self._root)
         else:
-            print self._root.children
             self._root.children[1] = row_plot
         self._doc.title = "Star Coordinates"
         return self._row_plot
@@ -256,7 +275,8 @@ class StarCoordinatesView(object):
         self._figure.toolbar.active_scroll = wheel_zoom_tool
         hover = HoverTool(
               tooltips=[
-                  ("name", "@name")
+                  ("name", "@name"),
+                  ("error", "@error")
               ]
           )
         self._figure.add_tools(hover)
@@ -267,20 +287,29 @@ class StarCoordinatesView(object):
       # to navigate through the available axis
       self._sources = ColumnDataSource(dict(active_sources=[]))
       for i in xrange(0, len(self._axis_df['x0'])):
-        source = ColumnDataSource(dict(x0=[self._axis_df['x0'][i]],
-                                       y0=[self._axis_df['y0'][i]],
-                                       x1=[self._axis_df['x1'][i]],
-                                       y1=[self._axis_df['y1'][i]],
-                                       name=[self._axis_df.index.values[i]]))
+        x0 = self._axis_df['x0'][i]
+        y0 = self._axis_df['y0'][i]
+        x1 = self._axis_df['x1'][i]
+        y1 = self._axis_df['y1'][i]
+        error = 0
+        name = self._axis_df.index.values[i]
+        source = ColumnDataSource(dict(x0=[x0],
+                                       y0=[y0],
+                                       x1=[x1],
+                                       y1=[y1],
+                                       name=[name],
+                                       error=[error],
+                                       color=[StarCoordinatesView._SEGMENT_COLOR],
+                                       line_width=[StarCoordinatesView._SEGMENT_WIDTH]))
 
         segment = self._figure.segment(x0='x0',
                                        y0='y0',
                                        x1='x1', 
-                                       y1='y1',
-                                       source=source,
-                                       name=self._axis_df.index.values[i],
-                                       color=StarCoordinatesView._SEGMENT_COLOR,
-                                       line_width=StarCoordinatesView._SEGMENT_WIDTH)
+                                       y1='y1',                                       
+                                       name=name,
+                                       color='color',
+                                       line_width='line_width',
+                                       source=source)
         
         square = self._figure.square(x='x1', 
                                      y='y1',
@@ -296,6 +325,7 @@ class StarCoordinatesView(object):
         axis_figure_element.visible(is_visible, remap=False)
         if is_visible:
           self._sources.data['active_sources'].append(source)
+          self._sources_list.append(source)
 
         self._axis_elements.append(AxisFigureElement(segment, square, source))
         # Axis labels
@@ -305,8 +335,10 @@ class StarCoordinatesView(object):
         self._figure.add_layout(labels_dimensions)
         
     def init_points(self, source_points):
-      # Mapped points
-      self._figure.circle('x', 'y', size=StarCoordinatesView._CIRCLE_SIZE,  
-                                    color='color',                                     
-                                    alpha=StarCoordinatesView._CIRCLE_ALPHA, 
-                                    source=source_points)              
+        # Mapped points
+        self._figure.circle('x',
+                            'y',
+                            size='size',
+                            color='color',
+                            alpha=StarCoordinatesView._CIRCLE_ALPHA,
+                            source=source_points)
