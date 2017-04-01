@@ -5,8 +5,8 @@ from mapper import Mapper
 
 class StarMapper(Mapper):
     """Star class defining the methods for mapping points"""
-
-    def map_points(self, dimensional_values_df, axis_vectors_df, weights_df=None,
+    @staticmethod
+    def map_points(dimensional_values_df, axis_vectors_df, weights_df=None,
                    normalized_weights=False, normalization_method=None):
         """ Map points according to Star Coordinates setting
             dimensional_values_df: pandas.Dataframe Values per axis per product

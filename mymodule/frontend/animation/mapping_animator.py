@@ -7,7 +7,7 @@ from ...backend.util.line_equation import calculate_line_equation
 class MappingAnimator(object):
     """Object that creates animations between two positions for points"""
 
-    def __init__(self, source_points=None):
+    def __init__(self, source_points):
         """source_points: (ColumnDataSource) source where to update the values
         """
         self._source_points = source_points

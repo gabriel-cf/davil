@@ -11,7 +11,8 @@ class DummyMapper(Mapper):
     MIN_RANGE = -2
     MAX_RANGE = 2
 
-    def map_points(self, dimensional_values_df, axis_vectors_df, weights_df=None,
+    @staticmethod
+    def map_points(dimensional_values_df, axis_vectors_df, weights_df=None,
                    normalized_weights=False, normalization_method=None):
         """ Maps the points to random coordinates
             dimensional_values_df: pandas.DataFrame Values per axis per product

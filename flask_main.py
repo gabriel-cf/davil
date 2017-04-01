@@ -14,6 +14,7 @@ from bokeh.server.server import Server
 from tornado.ioloop import IOLoop
 
 from mymodule.view.star_coordinates_view import StarCoordinatesView
+from mymodule.frontend.model.general_model import GeneralModel
 from os import path
 
 app = Flask(__name__)
@@ -26,9 +27,10 @@ UPLOAD_SUCCESS = "File successfully uploaded"
 UPLOAD_FAILURE = "Error while loading file"
 
 def modify_doc(doc):
-    
     file_path = "mymodule/resources/main.csv"
-    StarCoordinatesView(file_path, doc=doc).init()
+    model = GeneralModel(doc=doc)
+    model.add_star_coordinates_view("SC", file_path)
+    model.add_general_menu("SC")
 
 bokeh_app = Application(FunctionHandler(modify_doc))
 
