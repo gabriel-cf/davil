@@ -48,12 +48,15 @@ class MapperController(GenericAlgorithmController):
         else:
             self._ignored_axis_ids.add(axis_id)
 
+    def is_axis_visible(self, axis_id):
+        return not axis_id in self._ignored_axis_ids
+
     def get_axis_status(self):
         """Returns: list of tuples (axis_id, visible) generated from the
            correlation between the vectors dataframe' index and the
            ignored_axis_ids set
         """
-        return [(axis_id, axis_id in self._ignored_axis_ids) \
+        return [(axis_id, self.is_axis_visible(axis_id)) \
                 for axis_id in self._vectors_df.index.tolist()]
 
     def get_vectors(self):

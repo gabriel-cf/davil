@@ -31,13 +31,22 @@ class FileController(object):
         self._directory = directory
         self._files = FileController._list_files(directory=directory)
         print "Available files: {}".format(self._files)
-        self._active_file = file_
+        self.update_active_file(file_)
+        print "ACTIVE FILE: {}".format(file_)
         if not self._active_file and len(self._files) > 0:
             self._active_file = self._files[0]
 
     def update_active_file(self, new_file):
-        """Self explanatory"""
-        self._active_file = path.join(self._directory, new_file)
+        """Will update the active file with the new one. If it is just a name
+           it will try to complete it with the directory path
+        """
+
+        if path.isfile(new_file):
+            self._active_file = new_file
+        elif path.isfile(path.join(self._directory, new_file)):
+            self._active_file = path.join(self._directory, new_file)
+        else:
+            print "Could not find a valid file with name '{}'".format(new_file)
 
     def get_active_file(self):
         """Self explanatory"""

@@ -6,6 +6,6 @@
 from mymodule.frontend.model.general_model import GeneralModel
 
 file_path = "mymodule/resources/main.csv"
-model = GeneralModel()
-model.add_star_coordinates_view("SC", file_path)
-model.add_general_menu("SC")
+model = GeneralModel.star_coordinates_init("SC", file_path)
+#model.add_star_coordinates_view("SC", file_path)
+#model.add_general_menu("SC")

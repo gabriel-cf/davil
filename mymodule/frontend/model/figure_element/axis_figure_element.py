@@ -17,12 +17,16 @@ class AxisFigureElement(AbstractFigureElement):
 
     def visible(self, show):
         """Will mark as visible or invisible all elements
-           visible: (Boolean)
+           show: (Boolean) Self explanatory
+           Returns: (Boolean) True if its visibility has changed
         """
-        self._segment.visible = show
-        self._square.visible = show
-        if self._label:
-            self._label.visible = show
+        if show != self._segment.visible:
+            self._segment.visible = show
+            self._square.visible = show
+            if self._label:
+                self._label.visible = show
+            return True
+        return False
 
     def get_identifier(self):
         """Will return the identifier of the element"""

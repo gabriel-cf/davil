@@ -11,12 +11,14 @@ class ViewMenuHandler(object):
     def _get_from_alias(alias, alias_dict):
         if alias in alias_dict:
             return alias_dict[alias]
-        raise ValueError("No element could not be found with given alias '{}'".format(alias))
+        return None
+        #raise ValueError("No element could not be found with given alias '{}'".format(alias))
 
     @staticmethod
-    def _add_with_alias(alias, alias_dict, element):
+    def _add_with_alias(alias, alias_dict, element, override=False):
         if alias in alias_dict:
-            raise ValueError("Alias '{}' already present in dictionary".format(alias))
+            if not override:
+                raise ValueError("Alias '{}' already present in dictionary".format(alias))
         alias_dict[alias] = element
 
     @staticmethod
@@ -39,17 +41,22 @@ class ViewMenuHandler(object):
     def get_view_from_alias(self, alias):
         return ViewMenuHandler._get_from_alias(alias, self._views)
 
-    def add_menu(self, alias, menu):
+    def add_menu(self, alias, menu, override=False):
         # TODO: Control type
-        ViewMenuHandler._add_with_alias(alias, self._menus, menu)
+        ViewMenuHandler._add_with_alias(alias, self._menus, menu, override=override)
 
-    def add_view(self, alias, view):
+    def add_view(self, alias, view, override=False):
         # TODO: Control type
-        ViewMenuHandler._add_with_alias(alias, self._views, view)
+        ViewMenuHandler._add_with_alias(alias, self._views, view, override=override)
 
     def remove_menu(self, alias):
         ViewMenuHandler._remove_alias(alias, self._menus)
 
     def remove_view(self, alias):
         ViewMenuHandler._remove_alias(alias, self._views)
-        
+
+    def get_available_views(self):
+        return self._views.keys()
+    
+    def get_available_menus(self):
+        return self._menus.keys()

@@ -3,7 +3,7 @@
 """
 
 from bokeh.layouts import widgetbox, row, column
-from bokeh.models.widgets import CheckboxGroup, DataTable, TableColumn, Select, Button, TextInput
+from bokeh.models.widgets import Select, Button, TextInput
 
 class GeneralViewMenu(object):
     """Basic menu with the principal elements applicable to any view"""
@@ -27,20 +27,8 @@ class GeneralViewMenu(object):
         return select
 
     @staticmethod
-    def _checkbox_update_element(active_list, labels, model_action):
-        """Generic function designed to be executed every time a checkbox is checked
-           It will call the model informing that the element has been checked
-           or unchecked
-
-           active_list: (int[]) list provided by the on_click method of the
-                        checkboxgroup
-           labels: (String[]) ID labels matching the indexes of the active_list
-           model_action: (Func(String, Boolean)) call (to the model) to be executed
-        """
-        for i in xrange(0, len(labels)):
-            element_id = labels[i]
-            checked = i in active_list
-            model_action(element_id, checked)
+    def _trigger(widget):
+        widget.trigger('value', widget.value, widget.value)
 
     def __init__(self, model):
         self._model = model
@@ -51,39 +39,85 @@ class GeneralViewMenu(object):
         self._clustering_select = self.init_clustering_select()
         self._mapping_select = self.init_mapping_select()
         self._error_select = self.init_error_select()
+        self._axis_color_select = self.init_axis_color_select()
+        self._palette_select = self.init_palette_select()
         self._file_select = self.init_file_select()
         self._initial_size_input = self.init_initial_size_input()
         self._final_size_input = self.init_final_size_input()
-        self._reset_button = self.init_reset_button()
-        # The checkboxes are not included with the menu layout
-        # They must be placed in the row next to the figure
-        self._axis_checkboxes = self.init_axis_checkboxes()
+        #self._reset_button = self.init_reset_button()
+        self._view_select = self.init_view_select()
+        self._add_view_button = self.init_add_view_button()
 
-        self._higher_control = row(widgetbox(self._reset_button), widgetbox(self._file_select))
+        self._higher_control = row(#widgetbox(self._reset_button), 
+                                   widgetbox(self._file_select), 
+                                   widgetbox(self._view_select),
+                                   widgetbox(self._add_view_button))
         self._lower_control = column([row(widgetbox(self._mapping_select),
-                                          widgetbox(self._clustering_select)),
+                                          widgetbox(self._clustering_select),
+                                          widgetbox(self._axis_color_select, self._palette_select)),
                                       row(widgetbox(self._error_select),
                                           widgetbox(self._initial_size_input,
                                                     self._final_size_input))])
         self._layout = column(self._higher_control, self._lower_control)
+
+    def synchronize_view(self):
+        """Every widget will execute their callback with their current values
+           Except the file widget which will update its value
+        """
+
+        GeneralViewMenu._trigger(self._mapping_select)
+        GeneralViewMenu._trigger(self._error_select)
+        GeneralViewMenu._trigger(self._initial_size_input)
+        GeneralViewMenu._trigger(self._final_size_input)
+        GeneralViewMenu._trigger(self._palette_select)
+        self._view_select.options = self._model.get_available_views()
+        self._view_select.value = self._model.get_active_view_alias()
+        self.synchronize_colors(new_axis=not self._axis_color_select.value \
+                                         in self._model.get_available_axis_ids())
+
+        self._axis_color_select.options = ["None"] + self._model.get_available_axis_ids()
+
+    def synchronize_colors(self, new_axis=False):
+        if new_axis:
+           self._axis_color_select.value = "None"
+           self._axis_color_select.options = ["None"] + self._model.get_available_axis_ids()
 
     def init_reset_button(self):
         button = Button(label="Reset", button_type="danger", width=50)
         button.on_click(self._model.new_reset_action)
         return button
 
-    def init_mapping_select(self):        
+    def init_add_view_button(self):
+        def new_view():
+            #alias = self._model.new_add_view_action()
+            alias = "SC_{}".format(len(self._view_select.options))
+            new_options = []
+            for option in self._view_select.options:
+                new_options.append(option)
+            new_options.append(alias)
+            self._view_select.value = alias
+            self._view_select.options = new_options
+            
+        button = Button(label="Add View", button_type="success", width=50)
+        button.on_click(new_view)
+        return button
+
+    def init_mapping_select(self):
         title = "Mapping Algorithm:"
         value = self._model.get_mapping_algorithm()
         options = self._model.get_mapping_options()
         callback = self._model.new_mapping_select_action
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
-    def init_clustering_select(self):             
+    def init_clustering_select(self):
+        def new_clustering(new):
+            self._model.new_clustering_select_action(new)
+            if self._axis_color_select.value != "None":
+                self._axis_color_select.value = "None"
         title = "Clustering Algorithm:"
         value = self._model.get_clustering_algorithm()
         options = self._model.get_clustering_options()
-        callback = self._model.new_clustering_select_action
+        callback = new_clustering
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
     def init_error_select(self):
@@ -93,30 +127,38 @@ class GeneralViewMenu(object):
         callback = self._model.new_error_select_action
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
-    def init_file_select(self):             
+    def init_axis_color_select(self):
+        def select_axis_color(new):
+            if new == "None":
+                GeneralViewMenu._trigger(self._clustering_select)
+            else:
+                self._model.new_axis_color_select_action(new)
+        title = "Color by axis:"
+        value = "None"
+        options = ["None"] + self._model.get_available_axis_ids()
+        callback = select_axis_color
+        return GeneralViewMenu._init_select_widget(title, value, options, callback)
+
+    def init_palette_select(self):
+        title = "Palette:"
+        options = self._model.get_available_palettes()
+        value = options[0]
+        callback = self._model.new_palette_select_action
+        return GeneralViewMenu._init_select_widget(title, value, options, callback)
+
+    def init_file_select(self):
         title = "Select source file:"
         value = self._model.get_file()
         options = self._model.get_available_files()
         callback = self._model.new_file_select_action
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
-    def init_axis_checkboxes(self):
-        """Generates a group of checkboxes whose function is to activate or
-           deactivate the visibility of the axis of the view
-        """
-        # Get a zipped list of [(element_id, isVisible), ..]
-        axis_visibility_list = self._model.get_axis_status()
-        print axis_visibility_list
-        _ = zip(*axis_visibility_list)
-        axis_id_l = [element_id for element_id in _[0]]
-        axis_visibility_l = [i for i in xrange(0, len(_[1])) if _[1][i]]
-        cb_group = CheckboxGroup(
-            labels=axis_id_l,
-            active=axis_visibility_l
-            )
-        cb_group.on_click(lambda active_list: GeneralViewMenu._checkbox_update_element\
-                                              (active_list, cb_group.labels, 
-                                               self._model.new_axis_checkbox_action))
+    def init_view_select(self):
+        title = "Active view:"
+        value = self._model.get_active_view_alias()
+        options = self._model.get_available_views()
+        callback = self._model.new_view_select_action
+        return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
     def init_initial_size_input(self):
         active_initial_size = str(self._model.get_initial_size())
@@ -136,20 +178,5 @@ class GeneralViewMenu(object):
 
         return text_input
 
-    def get_axis_checkboxes(self):
-        return self._axis_checkboxes
-
     def get_layout(self):
         return self._layout
-
-    #def init_table(self):
-    #    """Generates the info table"""
-    #    source = self._model.new_table_action()
-    #    #source = ColumnDataSource(self._dimension_values_df)
-    #    #source.add(self._dimension_values_df.index, name='name')
-    #    columns = [TableColumn(field=field, title=field)
-    #               for field in self._dimension_values_df.columns.values]
-    #    columns.insert(0, TableColumn(field='name', title='name'))
-    #    data_table = DataTable(source=source, columns=columns, width=1000, height=600)
-    #
-    #    return data_table
