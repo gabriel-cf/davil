@@ -99,25 +99,38 @@ class MapperController(GenericAlgorithmController):
         vectors_df = self._vectors_df
         if self._ignored_axis_ids:
             dimension_values_df, vectors_df = self.get_filtered_mapping_df()
-        mapped_points = super(MapperController, self)\
+        mapped_points_df = super(MapperController, self)\
                         .execute_active_algorithm(dimension_values_df, vectors_df)
 
         if self._animator:
             self._animator.get_animation_sequence(self._last_mapped_points_df,
-                                                  mapped_points)
+                                                  mapped_points_df)
         elif self._source_points:
-            self._source_points.data['x'] = mapped_points['x']
-            self._source_points.data['y'] = mapped_points['y']
+            self._source_points.data['x'] = mapped_points_df['x']
+            self._source_points.data['y'] = mapped_points_df['y']
 
-        self._last_mapped_points_df = mapped_points
-        return mapped_points
+        self._last_mapped_points_df = mapped_points_df
+        return mapped_points_df
 
     def get_mapped_points(self):
+        """Returns (pandas.DataFrame) last calculated mapped points"""
         return self._last_mapped_points_df
 
-    def update_vector_values(self, axis_id, x1, y1, x0=0, y0=0):
-        self._vectors_df.loc[axis_id:axis_id, 'x'] = x1 - x0
-        self._vectors_df.loc[axis_id:axis_id, 'y'] = y1 - y0
+    def update_vector_values(self, axis_id, x1, y1):
+        """Updates the vectors dataframe with the new coordinates 
+           Typically used when an axis is resized
+           axis_id: (String) self explanatory
+           x1: (int) self explanatory
+           y1: (int) self explanatory
+        """
+        # We assume that all axis start from the point (0,0)
+        # Hence, all vectors are (x1 - 0), (y1 - 0)
+        self._vectors_df.loc[axis_id:axis_id, 'x'] = x1
+        self._vectors_df.loc[axis_id:axis_id, 'y'] = y1
 
     def update_animator(self, animator):
+        """ animator: (MappingAnimator) animator in charge of reproducing the
+            transition from the original points to the mapped ones
+
+        """
         self._animator = animator

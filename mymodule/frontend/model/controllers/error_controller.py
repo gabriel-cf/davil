@@ -8,7 +8,6 @@ from generic_algorithm_controller import GenericAlgorithmController
 
 class ErrorController(GenericAlgorithmController):
     """Controls the clustering of the values for the values dataframe"""
-
     ABSOLUTE_SUM_ID = "Absolute sum"
     SQUARE_SUM_ID = "Square sum"
     MAXIMUM_ID = "Maximum value"
@@ -30,28 +29,53 @@ class ErrorController(GenericAlgorithmController):
                                               active_algorithm_id=algorithm_id)
         self._point_source = point_source
         self._axis_sources = axis_sources
+        self._last_axis_error_s = None
+        self._last_point_error_s = None
 
-    def calculate_error(self, values_df, vectors_df, mapped_points_df, normalized=True):
-        """dimension_values_df: (pandas.Dataframe) values of the points
-           algorithm: (String) cluster algorithm id
+    def calculate_error(self, values_df, vectors_df, mapped_points_df):
+        """values_df: (pandas.DataFrame) product X dimension_value
+           vectors_df: (pandas.DataFrame) dimension X v_x,v_y columns
+           mapped_points_df: (pandas.DataFrame) product X x,y columns
+           Returns: (pandas.Series) error value for each axis
+                    (pandas.Series) error value for each point
         """
         axis_error_df, \
         point_error_df = super(ErrorController, self)\
                               .execute_active_algorithm(values_df,
                                                         vectors_df,
                                                         mapped_points_df)
-        if normalized:
-            axis_error_df = NormalizationAlgorithms.max_per_dataframe(axis_error_df)
-            point_error_df = NormalizationAlgorithms.max_per_dataframe(point_error_df)
+        axis_error_df = NormalizationAlgorithms.max_per_dataframe(axis_error_df)
+        point_error_df = NormalizationAlgorithms.max_per_dataframe(point_error_df)
 
-        self._point_source.data['error'] = point_error_df[0]
+        point_error_s = point_error_df[0]
+        axis_error_s = axis_error_df[0]
+        self._point_source.data['error'] = point_error_s
+        # Go through the axis sources and update (or initialize) the error
+        # Note: every axis has its own source
         for i in xrange(0, len(self._axis_sources)):
             if not 'error' in self._axis_sources[i].data:
-                self._axis_sources[i].data['error'] = [axis_error_df[0][i]]
+                self._axis_sources[i].data['error'] = [axis_error_s[i]]
             else:
                 patch_error = {
-                    'error': [(0, axis_error_df[0][i])]
+                    # (indexToReplace, newValue)
+                    'error': [(0, axis_error_s[i])]
                 }
                 self._axis_sources[i].patch(patch_error)
 
-        return axis_error_df, point_error_df
+        self._last_axis_error_s = axis_error_s
+        self._last_point_error_s = point_error_s
+        return axis_error_s, point_error_s
+
+    def get_last_axis_error(self):
+        """Returns (pandas.Series) last calculated error value for each axis"""
+        if self._last_axis_error_s is None or self._last_axis_error_s.empty:
+            print "WARN: Attempted to retrieve the latest axis error \
+                   calculation but there is none"
+        return self._last_axis_error_s
+
+    def get_last_point_error(self):
+        """Returns (pandas.Series) last calculated error value for each point"""
+        if self._last_point_error_s is None or self._last_point_error_s.empty:
+            print "WARN: Attempted to retrieve the latest point error \
+                   calculation but there is none"
+        return self._last_point_error_s

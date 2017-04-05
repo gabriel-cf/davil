@@ -100,18 +100,21 @@ class GeneralModel(object):
 
     def new_add_view_action(self, name=None):
         name = name
+        filename = self._active_view.get_file()
+        get_unique_name = lambda name: "{}_{}".format(name,
+                                      len(self._view_menu_handler.get_available_views()))
         if not name:
-            name = "{}_{}".format("SC", 
-                                  len(self._view_menu_handler.get_available_views()))
-        file_ = 'main.csv'#self._active_view.get_file()
-        print "ADDING NEW VIEW"
-        self.add_star_coordinates_view(name, file_)
+            name = get_unique_name(filename)
+        elif self._view_menu_handler.has_view_alias(name):
+            name = get_unique_name(name)
+        print "ADDING NEW VIEW '{}'".format(name)
+        self.add_star_coordinates_view(name, filename)
         self._set_active_view_layout()
         return name
 
     def new_mapping_select_action(self, new):
         print "Updating mapping algorithm to {}".format(new)
-        self._active_view.update_mapping_algorithm(new)        
+        self._active_view.update_mapping_algorithm(new)
 
     def new_clustering_select_action(self, new):
         print "Updating clustering algorithm to {}".format(new)
@@ -140,18 +143,12 @@ class GeneralModel(object):
         # If there is already a view for that file
         if view:
             self.set_active_view(alias)
-        else:
-            print "ADDING NEW VIEW '{}'".format(alias)
-            filename = self._active_view.get_file()
-            self.add_star_coordinates_view(alias, filename)
         self._set_active_view_layout()
 
     def new_initial_size_action(self, new):
-        print "Updating initial size to {}".format(new)
         self._active_view.update_initial_size_input(new)
 
     def new_final_size_action(self, new):
-        print "Updating final size to {}".format(new)
         self._active_view.update_final_size_input(new)    
 
     def new_table_action(self):

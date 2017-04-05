@@ -60,3 +60,9 @@ class ViewMenuHandler(object):
     
     def get_available_menus(self):
         return self._menus.keys()
+
+    def has_view_alias(self, alias):
+        return alias in self._views
+
+    def has_menu_alias(self, alias):
+        return alias in self._menus

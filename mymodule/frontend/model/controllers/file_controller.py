@@ -13,26 +13,26 @@ class FileController(object):
     @staticmethod
     def _list_files(directory=DEFAULT_DIRECTORY):
         """Returns: (String[]) available files on the given directory"""
-        def has_valid_extension(file_):
+        def has_valid_extension(filename):
             """file: (String | File) filename
                Returns True if the file has an extension of AVAILABLE_EXTENSIONS
             """
-            return file_.split('.')[-1].upper() in FileController.AVAILABLE_EXTENSIONS
+            return filename.split('.')[-1].upper() in FileController.AVAILABLE_EXTENSIONS
         if not path.isdir(directory):
             raise ValueError("ERROR: '{}' is not a valid directory".format(directory))
         return [f for f in listdir(directory) if path.isfile(path.join(directory, f))
                 and has_valid_extension(f)]
 
-    def __init__(self, file_=None, directory=DEFAULT_DIRECTORY):
-        """[file_=None]: initial active file, if none specified then it will take
+    def __init__(self, filename=None, directory=DEFAULT_DIRECTORY):
+        """[filename=None]: initial active file, if none specified then it will take
            the first one of the given directory
            [directory=DEFAULT_DIRECTORY]: self explanatory
         """
         self._directory = directory
         self._files = FileController._list_files(directory=directory)
         print "Available files: {}".format(self._files)
-        self.update_active_file(file_)
-        print "ACTIVE FILE: {}".format(file_)
+        self.update_active_file(filename)
+        print "ACTIVE FILE: {}".format(filename)
         if not self._active_file and len(self._files) > 0:
             self._active_file = self._files[0]
 

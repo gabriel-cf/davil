@@ -3,7 +3,7 @@
 """
 
 from bokeh.layouts import widgetbox, row, column
-from bokeh.models.widgets import Select, Button, TextInput
+from bokeh.models.widgets import Select, Button, TextInput, Slider
 
 class GeneralViewMenu(object):
     """Basic menu with the principal elements applicable to any view"""
@@ -47,17 +47,25 @@ class GeneralViewMenu(object):
         #self._reset_button = self.init_reset_button()
         self._view_select = self.init_view_select()
         self._add_view_button = self.init_add_view_button()
+        self._new_view_name_input = self.init_view_name_input()
 
-        self._higher_control = row(#widgetbox(self._reset_button), 
-                                   widgetbox(self._file_select), 
-                                   widgetbox(self._view_select),
-                                   widgetbox(self._add_view_button))
-        self._lower_control = column([row(widgetbox(self._mapping_select),
-                                          widgetbox(self._clustering_select),
-                                          widgetbox(self._axis_color_select, self._palette_select)),
-                                      row(widgetbox(self._error_select),
-                                          widgetbox(self._initial_size_input,
-                                                    self._final_size_input))])
+        self._higher_control = row(widgetbox(self._file_select))
+
+        self._lower_control = column(row(column(widgetbox(self._mapping_select),
+                                                widgetbox(self._axis_color_select),
+                                                widgetbox(self._palette_select)
+                                               ),
+                                         column(widgetbox(self._clustering_select),
+                                                widgetbox(self._error_select),
+                                                widgetbox(self._initial_size_input,
+                                                          self._final_size_input)
+                                               ),
+                                        ),
+                                     row(widgetbox(self._new_view_name_input,
+                                                   self._add_view_button),
+                                         widgetbox(self._view_select)
+                                        )
+                                    )
         self._layout = column(self._higher_control, self._lower_control)
 
     def synchronize_view(self):
@@ -89,15 +97,10 @@ class GeneralViewMenu(object):
 
     def init_add_view_button(self):
         def new_view():
-            #alias = self._model.new_add_view_action()
-            alias = "SC_{}".format(len(self._view_select.options))
-            new_options = []
-            for option in self._view_select.options:
-                new_options.append(option)
-            new_options.append(alias)
-            self._view_select.value = alias
-            self._view_select.options = new_options
-            
+            self._model.new_add_view_action(self._new_view_name_input.value)
+            self._view_select.options = self._model.get_available_views()
+            self._view_select.value = self._model.get_active_view_alias()
+
         button = Button(label="Add View", button_type="success", width=50)
         button.on_click(new_view)
         return button
@@ -154,28 +157,36 @@ class GeneralViewMenu(object):
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
     def init_view_select(self):
+        def select_view(new):
+            # Try to select the view only if it is not active already
+            if new != self._model.get_active_view_alias():
+                self._model.new_view_select_action(new)
         title = "Active view:"
         value = self._model.get_active_view_alias()
         options = self._model.get_available_views()
-        callback = self._model.new_view_select_action
+        callback = select_view 
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
     def init_initial_size_input(self):
-        active_initial_size = str(self._model.get_initial_size())
-        text_input = TextInput(title="Initial size:",
-                               value=active_initial_size)
-        text_input.on_change('value', lambda attr, old, new:
-                             self._model.new_initial_size_action(int(new)))
+        active_initial_size = int(self._model.get_initial_size())
+        slider = Slider(start=1, end=40, value=active_initial_size, step=1, title="Initial size")
+        slider.on_change('value', lambda attr, old, new:
+                         self._model.new_initial_size_action(int(new)))
 
-        return text_input
+        return slider
 
-    def init_final_size_input(self):             
-        active_final_size = str(self._model.get_final_size())
-        text_input = TextInput(title="Final size:",
-                               value=active_final_size)
-        text_input.on_change('value', lambda attr, old, new:
-                             self._model.new_final_size_action(int(new)))
+    def init_final_size_input(self):
+        active_final_size = int(self._model.get_final_size())
+        slider = Slider(start=1, end=40, value=active_final_size, step=1, title="Final size")
+        slider.on_change('value', lambda attr, old, new:
+                         self._model.new_final_size_action(int(new)))
 
+        return slider
+
+    def init_view_name_input(self):
+        value = self._model.get_active_view_alias()
+        text_input = TextInput(title="New view:",
+                               value=value)
         return text_input
 
     def get_layout(self):

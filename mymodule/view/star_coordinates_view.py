@@ -35,7 +35,7 @@ class StarCoordinatesView(object):
     _CIRCLE_ALPHA = 0.5
 
     """A view with all the necessary logic for displaying it on bokeh"""
-    def __init__(self, alias, file_path, random_weights=False, width=600, height=600):
+    def __init__(self, alias, filename=None, random_weights=False, width=600, height=600):
         """Creates a new Star Coordinates View object and instantiates
            its elements
         """
@@ -44,7 +44,7 @@ class StarCoordinatesView(object):
         self._random_weights = random_weights
         self._width = width
         self._height = height
-        self._file_path = file_path
+        self._filename = filename
         self._reader = None
         # Elements generated from mapping
         self._axis_df = None
@@ -80,10 +80,10 @@ class StarCoordinatesView(object):
     
     def _execute_error_recalc(self):
         mapped_points_df = self._mapper_controller.get_mapped_points()
-        self._error_controller.calculate_error(self._dimension_values_df_norm,
-                                               self._vectors_df,
-                                               mapped_points_df)
-        self._point_size_controller.update_sizes()
+        _, point_error_s = self._error_controller.calculate_error(self._dimension_values_df_norm,
+                                                                  self._vectors_df,
+                                                                  mapped_points_df)
+        self._point_size_controller.update_sizes(point_error_s)
 
     def _update_layout(self):
         row1 = None
@@ -131,10 +131,12 @@ class StarCoordinatesView(object):
             self._execute_mapping()
 
     def update_initial_size_input(self, new):
-        self._point_size_controller.set_initial_size(int(new))
+        point_error_s = self._error_controller.get_last_point_error()
+        self._point_size_controller.set_initial_size(new, point_error_s)
 
     def update_final_size_input(self, new):
-        self._point_size_controller.set_final_size(int(new))    
+        point_error_s = self._error_controller.get_last_point_error()
+        self._point_size_controller.set_final_size(new, point_error_s)    
 
     # GET methods
     def get_alias(self):
@@ -233,7 +235,7 @@ class StarCoordinatesView(object):
 
     def _init(self):
         """Load data from file and initialize dataframe values"""
-        self._file_controller = FileController(self._file_path)
+        self._file_controller = FileController(filename=self._filename)
         self._reader = Reader.init_from_file(self._file_controller.get_active_file())
         # Get the dimension labels (i.e. the names of the columns with numeric values)
         self._dimension_values_df, self._dimension_values_df_norm = self._reader.get_dimension_values()
@@ -268,18 +270,18 @@ class StarCoordinatesView(object):
 
         self._error_controller = ErrorController(self._source_points, self._sources_list,
                                                  algorithm_id=ErrorController.ABSOLUTE_SUM_ID)
-        self._error_controller.calculate_error(self._dimension_values_df_norm,
-                                               self._vectors_df,
-                                               mapped_points_df)
+        _, point_error_s = self._error_controller.calculate_error(self._dimension_values_df_norm,
+                                                                  self._vectors_df,
+                                                                  mapped_points_df)
 
         self._point_size_controller = PointSizeController(self._source_points)
-        self._point_size_controller.update_sizes()
+        self._point_size_controller.update_sizes(point_error_s)
 
         self._axis_color_controller = AxisColorController(self._source_points, 
                                                           self._dimension_values_df_norm)
 
         self.init_points(self._source_points)
-        self._layout = row(self._figure)
+        self._layout = row(self._figure)        
 
     def init_figure(self):
         """Updates the visual elements on the figure"""
