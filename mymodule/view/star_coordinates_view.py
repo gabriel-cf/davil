@@ -5,7 +5,7 @@
 from __future__ import division
 from bokeh.layouts import row, column
 from bokeh.plotting import figure
-from bokeh.models import Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool
+from bokeh.models import Range1d, Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool
 
 from ..backend.io.reader import Reader
 from ..backend.util.axis_generator import AxisGenerator
@@ -95,7 +95,7 @@ class StarCoordinatesView(object):
         if self._table_widget:
             row2 = row(self._table_widget)
             self._layout = column(row1, row2)
-        self._layout = row1
+        self._layout = column(row1)
 
     # PUBLIC methods available to the model
 
@@ -185,9 +185,8 @@ class StarCoordinatesView(object):
     def get_available_palettes(self):
         return self._axis_color_controller.get_available_palettes()
 
-    def get_layout(self, update=False):
-        if update:
-            self._update_layout()
+    def get_layout(self):
+        self._update_layout()
         return self._layout
 
     def set_checkboxes(self, checkboxes):
@@ -222,6 +221,7 @@ class StarCoordinatesView(object):
     def redraw(self):
         # Redraw plot
         self._figure = self.init_figure()
+        #self._figure.x_range = Range1d(-100, 100)
         # Add tools to new plot
         self._figure.add_tools(DragTool(sources=self._drag_tool_sources,
                                         remap_square=self._square_mapper))
@@ -247,6 +247,7 @@ class StarCoordinatesView(object):
 
         # Initialize figure and axis
         self._figure = self.init_figure()
+
         self._sources_list = self.init_axis()        
 
         # Add our custom drag and drop tool for resizing axis
@@ -279,9 +280,8 @@ class StarCoordinatesView(object):
 
         self._axis_color_controller = AxisColorController(self._source_points, 
                                                           self._dimension_values_df_norm)
-
         self.init_points(self._source_points)
-        self._layout = row(self._figure)        
+        self._layout = column(self._figure)        
 
     def init_figure(self):
         """Updates the visual elements on the figure"""
@@ -290,14 +290,15 @@ class StarCoordinatesView(object):
         resize_tool = ResizeTool()
         save_tool = SaveTool()
         reset_tool = ResetTool()
-        figure_ = figure(tools=[wheel_zoom_tool, pan_tool, resize_tool, save_tool, reset_tool])
+        figure_ = figure(tools=[wheel_zoom_tool, pan_tool, resize_tool, save_tool, reset_tool], 
+                         width=self._width, height=self._height)
         figure_.toolbar.active_scroll = wheel_zoom_tool
         hover = HoverTool(
             tooltips=[
                 ("name", "@name"),
                 ("error", "@error")
             ])
-        figure_.add_tools(hover)
+        figure_.add_tools(hover)        
         return figure_
 
     def generate_drag_tool_sources(self, axis_sources):

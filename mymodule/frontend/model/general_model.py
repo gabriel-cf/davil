@@ -2,6 +2,7 @@
     General Model
 """
 from bokeh.io import curdoc
+from bokeh.layouts import row, column
 from handlers.view_menu_handler import ViewMenuHandler
 from ...view.star_coordinates_view import StarCoordinatesView
 from ...view.menu.general_view_menu import GeneralViewMenu
@@ -15,10 +16,9 @@ class GeneralModel(object):
         self._doc = doc if doc else curdoc()        
         # Handler with the logic for adding and retrieving views and menus
         self._view_menu_handler = ViewMenuHandler()
+        self._active_root = None
         self._active_menu = None
-        self._active_menu_root = None
         self._active_view = None
-        self._active_view_root = None
 
     @staticmethod
     def star_coordinates_init(alias, file, doc=None):
@@ -61,8 +61,13 @@ class GeneralModel(object):
         self.add_star_coordinates_view(alias, file_)
 
     def init_layouts(self):
-        self._set_active_menu_layout()
-        self._set_active_view_layout()
+        print "GENERATING LAYOUTS"
+        layout = self._get_layout()
+        if not self._active_root:
+            self._active_root = layout
+            self._doc.add_root(layout)
+        else:
+            self._active_root.children = layout.children
 
     def set_active_view(self, view_alias):
         new_view = self._view_menu_handler.get_view_from_alias(view_alias)
@@ -76,23 +81,12 @@ class GeneralModel(object):
 
     def set_active_menu(self, menu_alias):
         self._active_menu = self._view_menu_handler.get_menu_from_alias(menu_alias)
-        
-    def _set_active_view_layout(self):
-        print "RESTARTING VIEW LAYOUT"
-        layout = self._active_view.get_layout(update=True)
-        if self._active_view_root:
-            self._active_view_root.children = layout.children
-        else:
-            self._doc.add_root(layout)
-            self._active_view_root = layout            
 
-    def _set_active_menu_layout(self):
-        layout = self._active_menu.get_layout()
-        if self._active_menu_root:
-            self._active_menu_root.children = layout.children
-        else:
-            self._doc.add_root(layout)
-            self._active_menu_root = layout
+    def _get_layout(self):
+        return row(self._active_menu.get_lateral_menu_layout(),
+                   column(self._active_menu.get_view_control_layout(),
+                          self._active_view.get_layout())
+                  )
 
     def new_reset_action(self):
         print "RESTARTING"
@@ -109,7 +103,7 @@ class GeneralModel(object):
             name = get_unique_name(name)
         print "ADDING NEW VIEW '{}'".format(name)
         self.add_star_coordinates_view(name, filename)
-        self._set_active_view_layout()
+        self.init_layouts()
         return name
 
     def new_mapping_select_action(self, new):
@@ -135,7 +129,7 @@ class GeneralModel(object):
     def new_file_select_action(self, filename):
         print "Loading new file '{}'".format(filename)
         self.reset_active_view(filename)
-        self._set_active_view_layout()
+        self.init_layouts()
 
     def new_view_select_action(self, alias):
         print "NEW VIEW SELECTED: '{}'".format(alias)
@@ -143,7 +137,7 @@ class GeneralModel(object):
         # If there is already a view for that file
         if view:
             self.set_active_view(alias)
-        self._set_active_view_layout()
+        self.init_layouts()
 
     def new_initial_size_action(self, new):
         self._active_view.update_initial_size_input(new)

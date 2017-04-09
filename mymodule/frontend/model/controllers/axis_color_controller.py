@@ -18,7 +18,6 @@ class AxisColorController(object):
         self._last_selected_id = None
         self.update_palette(palette_id)
         
-
     def update_palette(self, palete_id):
         if palete_id == AxisColorController.INFERNO_PALETTE_ID:
             self._palette = AxisColorController.INFERNO_PALETTE

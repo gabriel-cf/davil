@@ -7,6 +7,11 @@ from bokeh.models.widgets import Select, Button, TextInput, Slider
 
 class GeneralViewMenu(object):
     """Basic menu with the principal elements applicable to any view"""
+    WIDGETBOX_WIDTH = 50
+
+    @staticmethod
+    def _widgetbox(widgets_list, width=WIDGETBOX_WIDTH):
+        return widgetbox(widgets_list, responsive=True)
 
     @staticmethod
     def _init_select_widget(title, value, options, on_change_callback):
@@ -44,29 +49,23 @@ class GeneralViewMenu(object):
         self._file_select = self.init_file_select()
         self._initial_size_input = self.init_initial_size_input()
         self._final_size_input = self.init_final_size_input()
-        #self._reset_button = self.init_reset_button()
         self._view_select = self.init_view_select()
         self._add_view_button = self.init_add_view_button()
         self._new_view_name_input = self.init_view_name_input()
 
-        self._higher_control = row(widgetbox(self._file_select))
-
-        self._lower_control = column(row(column(widgetbox(self._mapping_select),
-                                                widgetbox(self._axis_color_select),
-                                                widgetbox(self._palette_select)
-                                               ),
-                                         column(widgetbox(self._clustering_select),
-                                                widgetbox(self._error_select),
-                                                widgetbox(self._initial_size_input,
-                                                          self._final_size_input)
-                                               ),
-                                        ),
-                                     row(widgetbox(self._new_view_name_input,
-                                                   self._add_view_button),
-                                         widgetbox(self._view_select)
-                                        )
-                                    )
-        self._layout = column(self._higher_control, self._lower_control)
+        self._lateral_menu = column(GeneralViewMenu._widgetbox(self._file_select),
+                                    GeneralViewMenu._widgetbox(self._mapping_select),
+                                    GeneralViewMenu._widgetbox(self._clustering_select),
+                                    GeneralViewMenu._widgetbox(self._axis_color_select),
+                                    GeneralViewMenu._widgetbox(self._palette_select),
+                                    GeneralViewMenu._widgetbox(self._error_select),
+                                    GeneralViewMenu._widgetbox([self._initial_size_input,
+                                                                self._final_size_input],
+                                                               width=80),
+                                    GeneralViewMenu._widgetbox(self._new_view_name_input),
+                                    GeneralViewMenu._widgetbox(self._add_view_button)
+                                   )
+        self._view_control_row = row(GeneralViewMenu._widgetbox(self._view_select))
 
     def synchronize_view(self):
         """Every widget will execute their callback with their current values
@@ -89,11 +88,6 @@ class GeneralViewMenu(object):
         if new_axis:
            self._axis_color_select.value = "None"
            self._axis_color_select.options = ["None"] + self._model.get_available_axis_ids()
-
-    def init_reset_button(self):
-        button = Button(label="Reset", button_type="danger", width=50)
-        button.on_click(self._model.new_reset_action)
-        return button
 
     def init_add_view_button(self):
         def new_view():
@@ -189,5 +183,8 @@ class GeneralViewMenu(object):
                                value=value)
         return text_input
 
-    def get_layout(self):
-        return self._layout
+    def get_view_control_layout(self):
+        return self._view_control_row
+
+    def get_lateral_menu_layout(self):
+        return self._lateral_menu
