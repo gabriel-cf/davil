@@ -1,7 +1,10 @@
+"""
+    Mapping Animator
+"""
+
 from __future__ import division
 import time
 import pandas as pd
-import numpy as np
 from ...backend.util.line_equation import calculate_line_equation
 
 class MappingAnimator(object):
@@ -16,27 +19,17 @@ class MappingAnimator(object):
         self._source_points = source_points
 
     def step_x_exponential(self, step_points_df, final_points, step, total_steps):
-        #next_x_values = []
         for i in xrange(0, len(step_points_df['x'])):
             x0 = step_points_df['x'][i]
             xf = final_points['x'][i]
             step_points_df['x'][i] = x0 + step * (xf - x0) / total_steps
-            #next_x_values.append(xi)
-        #print next_x_values
-        #s = pd.Series(next_x_values)
-        #step_points_df['x'] = s
         return step_points_df
 
     def step_x_constant(self, original_points, step_points_df, final_points, step, total_steps):
-        #next_x_values = []
         for i in xrange(0, len(original_points['x'])):
             x0 = original_points['x'][i]
             xf = final_points['x'][i]
             step_points_df['x'][i] = x0 + step * (xf - x0) / total_steps
-            #next_x_values.append(xi)
-        #print next_x_values
-        #s = pd.Series(next_x_values)
-        #step_points_df['x'] = s
         return step_points_df
 
     def evaluate_y(self, points_df, formula):
@@ -54,7 +47,7 @@ class MappingAnimator(object):
         print "Freq: {}s".format(1/time_cost)
         return time_cost
 
-    def get_animation_sequence(self, original_points, mapped_points, max_time=1.5):
+    def get_animation_sequence(self, original_points, mapped_points, max_time=2):
         """Will map the points for every step of the sequence by updating
            the source
 
@@ -70,21 +63,13 @@ class MappingAnimator(object):
         total_steps = int(max_time // time_cost)
         print "TOTAL STEPS: {}".format(total_steps)
         for step in xrange(0, total_steps):
-            #print step_points_cp['x']
             self.step_x_exponential(step_points_cp, mapped_points, step, total_steps)
             self.evaluate_y(step_points_cp, formula)            
             self._source_points.data['x'] = step_points_cp['x']
             self._source_points.data['y'] = step_points_cp['y']
         print "FINISHED ANIMATION"
-                
-            #print step_points_cp['x']
-            #print step_points_cp['y']
-
         self._source_points.data['x'] = mapped_points['x']
         self._source_points.data['y'] = mapped_points['y']
-
-        #start_time = time.time()
-        #end_time = time.time()
 
     def _get_equation_dataframe(self, original_points, mapped_points):
         """Being the equation of the line: y = mx + c where m and c are
@@ -108,6 +93,5 @@ class MappingAnimator(object):
             c_l.append(c)        
         original_points_cp['m'] = pd.Series(m_l, index=original_points_cp.index)
         original_points_cp['c'] = pd.Series(c_l, index=original_points_cp.index)
-
 
         return original_points_cp, formula

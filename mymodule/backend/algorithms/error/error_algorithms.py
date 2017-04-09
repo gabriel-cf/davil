@@ -44,8 +44,8 @@ class ErrorAlgorithms():
             mapped_points_df: (pandas.DataFrame) product X x,y columns
             Returns:
                 (pandas.DataFrame) product X x,y columns where each cell contains
-            the error for that point on that coordenate component
-                (int) absolute total error value
+                    the error for that point on that coordenate component
+                (pandas.DataFrame) vector X error
         """
         general_error_df = _get_general_error_df(values_df, vectors_df, mapped_points_df)
         processed_error_df = DFMatrixUtils.sum_by_axis(general_error_df, 1)
