@@ -3,6 +3,7 @@
 """
 from __future__ import division
 import pandas as pd
+import numpy as np
 
 class DFMatrixUtils(object):
     """Static methods for performing operations on a dataframe matrix"""
@@ -27,36 +28,44 @@ class DFMatrixUtils(object):
 
     @staticmethod
     def get_total_sum(df):
-        """ df: (Number) dataframe holding the numeric values
-            Returns: (int) total sum of all the dataframe elements
+        """ df: (pandas.DataFrame || pandas.Series)
+            Returns: (int) total sum of the matrix
         """
-        if len(df.columns) == 1:
-            return int(df.sum(0))
-        return int(df.sum(0).sum(0))
+        return np.sum(df.as_matrix())
 
     @staticmethod
     def get_max_value(df):
-        """ df: (Number) dataframe holding the numeric values
-            Returns: (int) max value of the dataframe
+        """ df: (pandas.DataFrame || pandas.Series)
+            Returns: (int) max value of the matrix
         """
-        if len(df.columns) == 1:
-            return int(df.max(0))
-        return int(df.max(0).max(0))
+        return np.max(df.as_matrix())
 
     @staticmethod
     def get_min_value(df):
-        """ df: (Number) dataframe holding the numeric values
-            Returns: (int) min value of the dataframe
+        """ df: (pandas.DataFrame || pandas.Series)
+            Returns: (int) min value of the matrix
         """
-        if len(df.columns) == 1:
-            return int(df.min(0))
-        return int(df.min(0).min(0))
+        return np.min(df.as_matrix())
+
+    @staticmethod
+    def get_mean_value(df):
+        """ df: (pandas.DataFrame || pandas.Series)
+            Returns: (int) mean value of the matrix
+        """
+        return np.mean(df.as_matrix())
+
+    @staticmethod
+    def get_std_value(df):
+        """ df: (pandas.DataFrame || pandas.Series)
+            Returns: (int) std value of the matrix
+        """
+        return np.std(df.as_matrix())
 
     @staticmethod
     def sum_by_axis(df, axis):
         """ df: (Number) dataframe holding the numeric values
-            axis: (int) 0 -> sum columns ; 1 -> sum rows
-            Returns: (pandas.DataFrame) axis with the rows or columns added
+            axis: (int) 0 -> sum columns (up-down) ; 1 -> sum rows (left-right)
+            Returns: (pandas.DataFrame) column with the added value of each axis
         """
         return pd.DataFrame(df.sum(axis))
 
@@ -64,6 +73,23 @@ class DFMatrixUtils(object):
     def max_by_axis(df, axis):
         """ df: (Number) dataframe holding the numeric values
             axis: (int) 0 -> sum columns ; 1 -> sum rows
-            Returns: (pandas.DataFrame) axis with the rows or columns added
+            Returns: (pandas.DataFrame) column with max of the axis
         """
         return pd.DataFrame(df.max(axis))
+
+    @staticmethod
+    def mean_by_axis(df, axis):
+        """ df: (Number) dataframe holding the numeric values
+            axis: (int) 0 -> sum columns ; 1 -> sum rows
+            Returns: (pandas.DataFrame) column with the mean of the axis
+        """
+        return pd.DataFrame(df.mean(axis))
+
+    @staticmethod
+    def std_by_axis(df, axis):
+        """ df: (Number) dataframe holding the numeric values
+            axis: (int) 0 -> sum columns ; 1 -> sum rows
+            Returns: (pandas.DataFrame) column with the standard deviation 
+                     of the axis
+        """
+        return pd.DataFrame(df.std(axis))

@@ -12,13 +12,9 @@ from ...view.menu.table_generator import TableGenerator
 
 class GeneralModel(object):
     """docstring for GeneralModel"""
-    def __init__(self, doc=None):
-        self._doc = doc if doc else curdoc()        
-        # Handler with the logic for adding and retrieving views and menus
-        self._view_menu_handler = ViewMenuHandler()
-        self._active_root = None
-        self._active_menu = None
-        self._active_view = None
+    @staticmethod
+    def _should_update(new, old):
+        return new != old
 
     @staticmethod
     def star_coordinates_init(alias, file, doc=None):
@@ -27,6 +23,14 @@ class GeneralModel(object):
         model.add_general_menu(alias)
         model.init_layouts()
         return model
+
+    def __init__(self, doc=None):
+        self._doc = doc if doc else curdoc()        
+        # Handler with the logic for adding and retrieving views and menus
+        self._view_menu_handler = ViewMenuHandler()
+        self._active_root = None
+        self._active_menu = None
+        self._active_view = None
 
     def add_star_coordinates_view(self, alias, file, active=True):
         """Will generate a a new Star Coordinates view
@@ -107,12 +111,19 @@ class GeneralModel(object):
         return name
 
     def new_mapping_select_action(self, new):
-        print "Updating mapping algorithm to {}".format(new)
-        self._active_view.update_mapping_algorithm(new)
+        if GeneralModel._should_update(new, self._active_view.get_mapping_algorithm()):
+            print "Updating mapping algorithm to {}".format(new)
+            self._active_view.update_mapping_algorithm(new)
+
+    def new_normalization_select_action(self, new):
+        if GeneralModel._should_update(new, self._active_view.get_normalization_algorithm()):
+            print "Updating ormalization algorithm to {}".format(new)
+            self._active_view.update_normalization_algorithm(new)
 
     def new_clustering_select_action(self, new):
-        print "Updating clustering algorithm to {}".format(new)
-        self._active_view.update_clustering_algorithm(new) 
+        if GeneralModel._should_update(new, self._active_view.get_clustering_algorithm()):
+            print "Updating clustering algorithm to {}".format(new)
+            self._active_view.update_clustering_algorithm(new) 
 
     def new_error_select_action(self, new):
         print "Updating error algorithm to {}".format(new)
@@ -139,6 +150,10 @@ class GeneralModel(object):
             self.set_active_view(alias)
         self.init_layouts()
 
+    def new_number_of_clusters_action(self, new):
+        if GeneralModel._should_update(self.get_number_of_clusters(), new):
+            self._active_view.update_number_of_clusters(new)
+
     def new_initial_size_action(self, new):
         self._active_view.update_initial_size_input(new)
 
@@ -160,6 +175,12 @@ class GeneralModel(object):
 
     def get_mapping_options(self):
         return self._active_view.get_mapping_options()
+
+    def get_normalization_algorithm(self):
+        return self._active_view.get_normalization_algorithm()
+
+    def get_normalization_options(self):
+        return self._active_view.get_normalization_options()
 
     def get_clustering_algorithm(self):
         return self._active_view.get_clustering_algorithm()
@@ -190,6 +211,9 @@ class GeneralModel(object):
 
     def get_available_views(self):
         return self._view_menu_handler.get_available_views()
+
+    def get_number_of_clusters(self):
+        return self._active_view.get_number_of_clusters()
 
     def get_initial_size(self):
         return self._active_view.get_initial_size()

@@ -43,10 +43,12 @@ class GeneralViewMenu(object):
     def _init(self):
         self._clustering_select = self.init_clustering_select()
         self._mapping_select = self.init_mapping_select()
+        self._normalization_select = self.init_normalization_select()
         self._error_select = self.init_error_select()
         self._axis_color_select = self.init_axis_color_select()
         self._palette_select = self.init_palette_select()
         self._file_select = self.init_file_select()
+        self._number_of_clusters_input = self.init_number_of_clusters_input()
         self._initial_size_input = self.init_initial_size_input()
         self._final_size_input = self.init_final_size_input()
         self._view_select = self.init_view_select()
@@ -55,7 +57,9 @@ class GeneralViewMenu(object):
 
         self._lateral_menu = column(GeneralViewMenu._widgetbox(self._file_select),
                                     GeneralViewMenu._widgetbox(self._mapping_select),
+                                    GeneralViewMenu._widgetbox(self._normalization_select),
                                     GeneralViewMenu._widgetbox(self._clustering_select),
+                                    GeneralViewMenu._widgetbox(self._number_of_clusters_input),                                    
                                     GeneralViewMenu._widgetbox(self._axis_color_select),
                                     GeneralViewMenu._widgetbox(self._palette_select),
                                     GeneralViewMenu._widgetbox(self._error_select),
@@ -71,8 +75,8 @@ class GeneralViewMenu(object):
         """Every widget will execute their callback with their current values
            Except the file widget which will update its value
         """
-
         GeneralViewMenu._trigger(self._mapping_select)
+        GeneralViewMenu._trigger(self._normalization_select)
         GeneralViewMenu._trigger(self._error_select)
         GeneralViewMenu._trigger(self._initial_size_input)
         GeneralViewMenu._trigger(self._final_size_input)
@@ -104,6 +108,13 @@ class GeneralViewMenu(object):
         value = self._model.get_mapping_algorithm()
         options = self._model.get_mapping_options()
         callback = self._model.new_mapping_select_action
+        return GeneralViewMenu._init_select_widget(title, value, options, callback)
+
+    def init_normalization_select(self):
+        title = "Normalization Algorithm:"
+        value = self._model.get_normalization_algorithm()
+        options = self._model.get_normalization_options()
+        callback = self._model.new_normalization_select_action
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
     def init_clustering_select(self):
@@ -160,6 +171,15 @@ class GeneralViewMenu(object):
         options = self._model.get_available_views()
         callback = select_view 
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
+
+    def init_number_of_clusters_input(self):
+        active_number_of_clusters = int(self._model.get_number_of_clusters())
+        slider = Slider(start=1, end=7, value=active_number_of_clusters, step=1,
+                        title="Number of clusters")
+        slider.on_change('value', lambda attr, old, new:
+                         self._model.new_number_of_clusters_action(int(new)))
+
+        return slider
 
     def init_initial_size_input(self):
         active_initial_size = int(self._model.get_initial_size())

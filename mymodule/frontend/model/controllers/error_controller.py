@@ -22,13 +22,15 @@ class ErrorController(GenericAlgorithmController):
         algorithm_dict[ErrorController.MAXIMUM_ID] = ErrorAlgorithms.max_error
         return algorithm_dict
 
-    def __init__(self, point_source, axis_sources, algorithm_id=None):
+    def __init__(self, point_source, axis_sources, normalization_controller,
+                 algorithm_id=None):
         algorithm_dict = ErrorController._get_algorithm_dict()
         super(ErrorController, self).__init__(ErrorController.DEFAULT_ALGORITHM_ID,
                                               algorithm_dict,
                                               active_algorithm_id=algorithm_id)
         self._point_source = point_source
         self._axis_sources = axis_sources
+        self._normalization_controller = normalization_controller
         self._last_axis_error_s = None
         self._last_point_error_s = None
 
@@ -40,12 +42,12 @@ class ErrorController(GenericAlgorithmController):
                     (pandas.Series) error value for each point
         """
         axis_error_df, \
-        point_error_df = super(ErrorController, self)\
-                              .execute_active_algorithm(values_df,
-                                                        vectors_df,
-                                                        mapped_points_df)
-        axis_error_df = NormalizationAlgorithms.max_per_dataframe(axis_error_df)
-        point_error_df = NormalizationAlgorithms.max_per_dataframe(point_error_df)
+        point_error_df = self.execute_active_algorithm(values_df,
+                                                       vectors_df,
+                                                       mapped_points_df)
+        # Normalize the error values at DataFrame level (i.e. comparing all matrix values)
+        axis_error_df = self._normalization_controller.normalize_errors(axis_error_df)
+        point_error_df = self._normalization_controller.normalize_errors(point_error_df)
 
         point_error_s = point_error_df[0]
         axis_error_s = axis_error_df[0]
@@ -57,7 +59,7 @@ class ErrorController(GenericAlgorithmController):
                 self._axis_sources[i].data['error'] = [axis_error_s[i]]
             else:
                 patch_error = {
-                    # (indexToReplace, newValue)
+                    # Assigned as: (indexToReplace, newValue)
                     'error': [(0, axis_error_s[i])]
                 }
                 self._axis_sources[i].patch(patch_error)

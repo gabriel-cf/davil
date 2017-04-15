@@ -14,7 +14,7 @@ class ClusterController(GenericAlgorithmController):
     KMEANS_CLUSTERING_ID = "K-Means Clustering"
     DEFAULT_CLUSTERING_ID = DUMMY_CLUSTERING_ID
     CLUSTERING_COLOR_COLUMN = 'color'
-    DEFAULT_LABEL_COLORS = ["red", "navy", "green", "orange", "grey"]
+    DEFAULT_LABEL_COLORS = ["red", "navy", "green", "orange", "grey", "yellow", "black"]
 
     @staticmethod
     def _get_algorithm_dict():
@@ -26,7 +26,7 @@ class ClusterController(GenericAlgorithmController):
             = DummyClustering.categorize_values
         return algorithm_dict
 
-    def __init__(self, algorithm_id=None, source=None, label_colors=None):
+    def __init__(self, algorithm_id=None, source=None, label_colors=None, n_clusters=4):
         algorithm_dict = ClusterController._get_algorithm_dict()
         super(ClusterController, self).\
               __init__(ClusterController.DEFAULT_CLUSTERING_ID,
@@ -37,22 +37,31 @@ class ClusterController(GenericAlgorithmController):
         if not self._label_colors:
             self._label_colors = ClusterController.DEFAULT_LABEL_COLORS
         self._source = source
+        self._n_clusters = n_clusters
 
     def update_clusters(self, dimension_values_df):
         """dimension_values_df: (pandas.Dataframe) values of the points
         """
-        algorithm_id = super(ClusterController, self).get_active_algorithm_id()
-        super(ClusterController, self).update_algorithm(algorithm_id)
+        algorithm_id = self.get_active_algorithm_id()
         labels = None
-        if algorithm_id in self._clustering_dic:
-            labels = self._clustering_dic[algorithm_id]
+        pair_key = (algorithm_id, self._n_clusters)
+        if pair_key in self._clustering_dic:
+            labels = self._clustering_dic[pair_key]
         else:
-            labels = super(ClusterController, self).\
-                     execute_active_algorithm(dimension_values_df,
-                                              n_clusters=4)
-            self._clustering_dic[algorithm_id] = labels
+            labels = self.execute_active_algorithm(dimension_values_df,
+                                                   n_clusters=self._n_clusters)
+            self._clustering_dic[pair_key] = labels
 
         colors = [self._label_colors[i] for i in labels]
         if self._source:
             self._source.data['color'] \
                 = pd.Series(colors, index=dimension_values_df.index)
+
+    def update_number_of_clusters(self, n_clusters):
+        if n_clusters < 1:
+            raise ValueError('The number of clusters must be greater than 0.\
+                             Received {}'.format(n_clusters))
+        self._n_clusters = n_clusters        
+
+    def get_number_of_clusters(self):
+        return self._n_clusters

@@ -3,7 +3,7 @@
 import numpy as np
 from mapper import Mapper
 
-class StarMapper(Mapper):
+class StarMapper():
     """Star class defining the methods for mapping points"""
     @staticmethod
     def map_points(dimensional_values_df, axis_vectors_df, weights_df=None,

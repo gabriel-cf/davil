@@ -94,13 +94,13 @@ class MapperController(GenericAlgorithmController):
            Returns: (pandas.DataFrame) Mapped points with shape
                     (point_name X {x, y})
         """
-        print "EXECUTING MAPPING"
+        print "MAPPING WITH {}".format(self.get_active_algorithm_id())
         dimension_values_df = self._dimension_values_df
         vectors_df = self._vectors_df
         if self._ignored_axis_ids:
             dimension_values_df, vectors_df = self.get_filtered_mapping_df()
-        mapped_points_df = super(MapperController, self)\
-                        .execute_active_algorithm(dimension_values_df, vectors_df)
+        mapped_points_df = self.execute_active_algorithm(dimension_values_df, 
+                                                         vectors_df)
 
         if self._animator:
             self._animator.get_animation_sequence(self._last_mapped_points_df,
@@ -115,6 +115,9 @@ class MapperController(GenericAlgorithmController):
     def get_mapped_points(self):
         """Returns (pandas.DataFrame) last calculated mapped points"""
         return self._last_mapped_points_df
+
+    def update_dimension_values(self, dimension_values_df):
+        self._dimension_values_df = dimension_values_df
 
     def update_vector_values(self, axis_id, x1, y1):
         """Updates the vectors dataframe with the new coordinates 

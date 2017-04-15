@@ -5,7 +5,7 @@ import pandas as pd
 from mapper import Mapper
 from string import uppercase
 
-class DummyMapper(Mapper):
+class DummyMapper():
     """Dummy class defining the methods for mapping points"""
 
     MIN_RANGE = -2
@@ -24,9 +24,6 @@ class DummyMapper(Mapper):
         n_points = len(dimensional_values_df.index)
         x_l = [random.uniform(DummyMapper.MIN_RANGE, DummyMapper.MAX_RANGE) for i in xrange(0, n_points)]
         y_l = [random.uniform(DummyMapper.MIN_RANGE, DummyMapper.MAX_RANGE) for i in xrange(0, n_points)]
-        # Sequential names AA-ZZ
-        #name_l = ["".join(uppercase[i % len(uppercase)] + uppercase[i / len(uppercase)]) 
-        #         for i in xrange(0, n_points)]
         name_l = dimensional_values_df.index.tolist()
 
         return pd.DataFrame({'x':x_l, 'y':y_l}, index=name_l)

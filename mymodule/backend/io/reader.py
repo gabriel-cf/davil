@@ -78,10 +78,9 @@ class Reader(object):
         """Returns: (pandas.Dataframe) read dimensional values
                     (pandas.Dataframe) normalized dimensional values
         """
+        # TODO - Do not return a copy
         dimension_values_df_cp = self._df.ix[:,self._first_index:].copy()
-        dimension_values_df_cp_norm = NormalizationAlgorithms.max_per_column(dimension_values_df_cp, inplace=False)
-            
-        return dimension_values_df_cp, dimension_values_df_cp_norm
+        return dimension_values_df_cp
 
     def get_dimension_labels(self):
         return list(self._df.columns.values[self._first_index:])
