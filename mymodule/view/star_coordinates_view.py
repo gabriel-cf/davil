@@ -13,6 +13,7 @@ from ..backend.util.df_matrix_utils import DFMatrixUtils
 
 from ..frontend.model.controllers.mapper_controller import MapperController
 from ..frontend.model.controllers.normalization_controller import NormalizationController
+from ..frontend.model.controllers.classification_controller import ClassificationController
 from ..frontend.model.controllers.cluster_controller import ClusterController
 from ..frontend.model.controllers.file_controller import FileController
 from ..frontend.model.controllers.point_size_controller import PointSizeController
@@ -56,7 +57,7 @@ class StarCoordinatesView(object):
         self._figure = None
         self._layout = None
         self._drag_tool_sources = None
-        self._sources_list = []
+        self._axis_sources = []
         self._axis_elements = dict()
         self._square_mapper = None
         self._source_points = None
@@ -88,15 +89,15 @@ class StarCoordinatesView(object):
         self._axis_df = AxisGenerator.generate_star_axis(axis_ids,
                                                          random_weights=self._random_weights)
         # Get the vector dataframe from the axis dataframe
-        self._vectors_df = DFMatrixUtils.get_vectors(self._axis_df)
+        self._vectors_df = DFMatrixUtils.get_vectors(self._axis_df)        
 
         # Initialize figure and axis
         self._figure = self._init_figure()
 
-        self._sources_list = self._init_axis()        
+        self._axis_sources = self._init_axis()        
 
         # Add our custom drag and drop tool for resizing axis
-        self._drag_tool_sources = self._generate_drag_tool_sources(self._sources_list)
+        self._drag_tool_sources = self._generate_drag_tool_sources(self._axis_sources)
         self._square_mapper = self._init_square_mapper()
         self._figure.add_tools(DragTool(sources=self._drag_tool_sources,
                                         remap_square=self._square_mapper))
@@ -113,9 +114,11 @@ class StarCoordinatesView(object):
 
         self._cluster_controller = ClusterController(source=self._source_points)
         self._cluster_controller.update_clusters(self._dimension_values_df_norm)
+        self._classification_controller = ClassificationController(self._axis_sources,
+                                                                   self._cluster_controller)
 
         self._error_controller = ErrorController(self._source_points,
-                                                 self._sources_list,
+                                                 self._axis_sources,
                                                  self._normalization_controller,
                                                  algorithm_id=ErrorController.ABSOLUTE_SUM_ID)
         _, point_error_s = self._error_controller.calculate_error(self._dimension_values_df_norm,
@@ -137,10 +140,10 @@ class StarCoordinatesView(object):
             print self._square_mapper.glyph.x
             print self._square_mapper.glyph.y
             modified_axis_id = self._square_mapper.glyph.name
-            self._mapper_controller.update_vector_values(modified_axis_id, self._square_mapper.glyph.x, self._square_mapper.glyph.y)
+            self._mapper_controller.update_single_vector(modified_axis_id, self._square_mapper.glyph.x, self._square_mapper.glyph.y)
             # The axis position won't be persisted across views unless we
             # update the source's value on the python's side
-            for source in self._sources_list:
+            for source in self._axis_sources:
                 if source.data['name'][0] == modified_axis_id:
                     source.data['x1'][0] = self._square_mapper.glyph.x
                     source.data['y1'][0] = self._square_mapper.glyph.y
@@ -253,6 +256,11 @@ class StarCoordinatesView(object):
     def _execute_mapping(self):
         self._mapped_points = self._mapper_controller.execute_mapping()
         self._execute_error_recalc()
+
+    def _execute_classification(self):
+        self._vectors_df = self._classification_controller.relocate_axis(self._dimension_values_df_norm)
+        self._mapper_controller.update_vector_values(self._vectors_df)
+        self._execute_mapping()
     
     def _execute_error_recalc(self):
         mapped_points_df = self._mapper_controller.get_mapped_points()
@@ -286,7 +294,7 @@ class StarCoordinatesView(object):
         self._figure.add_tools(DragTool(sources=self._drag_tool_sources,
                                         remap_square=self._square_mapper))
         # Redraw axis elements
-        for source in self._sources_list:
+        for source in self._axis_sources:
             name = source.data['name'][0]
             is_visible = self._mapper_controller.is_axis_visible(name)
             self._add_axis_element(source, name, is_visible)
@@ -299,6 +307,11 @@ class StarCoordinatesView(object):
         self._mapper_controller.update_algorithm(new)
         self._execute_mapping()
 
+    def update_classification_algorithm(self, new):
+        print "Updating classification algorithm to {}".format(new)
+        self._classification_controller.update_algorithm(new)
+        self._execute_classification()
+
     def update_normalization_algorithm(self, new):
         print "Updating normalization algorithm to {}".format(new)
         self._normalization_controller.update_algorithm(new)
@@ -308,6 +321,7 @@ class StarCoordinatesView(object):
         print "Updating clustering algorithm to {}".format(new)
         self._cluster_controller.update_algorithm(new)
         self._cluster_controller.update_clusters(self._dimension_values_df_norm)
+        self._execute_classification()
 
     def update_error_algorithm(self, new):
         print "Updating error algorithm to {}".format(new)
@@ -331,8 +345,9 @@ class StarCoordinatesView(object):
 
     def update_number_of_clusters(self, new):
         print "Updating number of clusters to {}".format(new)
-        self._cluster_controller.update_number_of_clusters(new)
+        self._cluster_controller.update_number_of_clusters(new)        
         self._cluster_controller.update_clusters(self._dimension_values_df)
+        self._execute_classification()
 
     def update_initial_size_input(self, new):
         point_error_s = self._error_controller.get_last_point_error()
@@ -352,6 +367,12 @@ class StarCoordinatesView(object):
     def get_mapping_options(self):
         return self._mapper_controller.get_all_options()
 
+    def get_classification_algorithm(self):
+        return self._classification_controller.get_active_algorithm_id()
+
+    def get_classification_options(self):
+        return self._classification_controller.get_all_options()
+    
     def get_normalization_algorithm(self):
         return self._normalization_controller.get_active_algorithm_id()
 

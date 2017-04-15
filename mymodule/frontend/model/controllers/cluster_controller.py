@@ -58,10 +58,15 @@ class ClusterController(GenericAlgorithmController):
                 = pd.Series(colors, index=dimension_values_df.index)
 
     def update_number_of_clusters(self, n_clusters):
-        if n_clusters < 1:
-            raise ValueError('The number of clusters must be greater than 0.\
+        if n_clusters < 3:
+            raise ValueError('The number of clusters must be greater than 2.\
                              Received {}'.format(n_clusters))
         self._n_clusters = n_clusters        
 
     def get_number_of_clusters(self):
         return self._n_clusters
+
+    def get_classes(self):
+        pair_key = (self.get_active_algorithm_id(), self._n_clusters)
+        labels = self._clustering_dic[pair_key]
+        return labels

@@ -93,3 +93,11 @@ class DFMatrixUtils(object):
                      of the axis
         """
         return pd.DataFrame(df.std(axis))
+
+    @staticmethod
+    def get_diagonal_ones_matrix(df):
+        return np.diag(np.ones(len(df.columns)))
+
+    @staticmethod
+    def to_df(matrix, index=None, columns=None):
+        return pd.DataFrame(matrix, index=index, columns=columns)

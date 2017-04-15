@@ -119,7 +119,10 @@ class MapperController(GenericAlgorithmController):
     def update_dimension_values(self, dimension_values_df):
         self._dimension_values_df = dimension_values_df
 
-    def update_vector_values(self, axis_id, x1, y1):
+    def update_vector_values(self, vectors_df):
+        self._vectors_df = vectors_df
+
+    def update_single_vector(self, axis_id, x1, y1):
         """Updates the vectors dataframe with the new coordinates 
            Typically used when an axis is resized
            axis_id: (String) self explanatory
@@ -130,6 +133,7 @@ class MapperController(GenericAlgorithmController):
         # Hence, all vectors are (x1 - 0), (y1 - 0)
         self._vectors_df.loc[axis_id:axis_id, 'x'] = x1
         self._vectors_df.loc[axis_id:axis_id, 'y'] = y1
+
 
     def update_animator(self, animator):
         """ animator: (MappingAnimator) animator in charge of reproducing the

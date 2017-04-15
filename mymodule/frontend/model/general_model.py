@@ -88,7 +88,7 @@ class GeneralModel(object):
 
     def _get_layout(self):
         return row(self._active_menu.get_lateral_menu_layout(),
-                   column(self._active_menu.get_view_control_layout(),
+                   column(self._active_menu.get_upper_menu_layout(),
                           self._active_view.get_layout())
                   )
 
@@ -141,6 +141,10 @@ class GeneralModel(object):
         print "Loading new file '{}'".format(filename)
         self.reset_active_view(filename)
         self.init_layouts()
+
+    def new_classification_action(self, new):
+        print "Classifying with '{}'".format(new)
+        self._active_view.update_classification_algorithm(new)
 
     def new_view_select_action(self, alias):
         print "NEW VIEW SELECTED: '{}'".format(alias)
@@ -199,6 +203,12 @@ class GeneralModel(object):
 
     def get_available_files(self):
         return self._active_view.get_available_files()
+
+    def get_active_classification(self):
+        return self._active_view.get_classification_algorithm()
+
+    def get_classification_options(self):
+        return self._active_view.get_classification_options()
 
     def get_available_axis_ids(self):
         return self._active_view.get_available_axis_ids()

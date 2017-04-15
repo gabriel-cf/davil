@@ -51,6 +51,7 @@ class GeneralViewMenu(object):
         self._number_of_clusters_input = self.init_number_of_clusters_input()
         self._initial_size_input = self.init_initial_size_input()
         self._final_size_input = self.init_final_size_input()
+        self._classification_select = self.init_classification_select()
         self._view_select = self.init_view_select()
         self._add_view_button = self.init_add_view_button()
         self._new_view_name_input = self.init_view_name_input()
@@ -69,7 +70,8 @@ class GeneralViewMenu(object):
                                     GeneralViewMenu._widgetbox(self._new_view_name_input),
                                     GeneralViewMenu._widgetbox(self._add_view_button)
                                    )
-        self._view_control_row = row(GeneralViewMenu._widgetbox(self._view_select))
+        self._upper_menu = row(GeneralViewMenu._widgetbox(self._classification_select),
+                               GeneralViewMenu._widgetbox(self._view_select))
 
     def synchronize_view(self):
         """Every widget will execute their callback with their current values
@@ -161,6 +163,13 @@ class GeneralViewMenu(object):
         callback = self._model.new_file_select_action
         return GeneralViewMenu._init_select_widget(title, value, options, callback)
 
+    def init_classification_select(self):
+        title = "Axis classification method:"
+        value = self._model.get_active_classification()
+        options = self._model.get_classification_options()
+        callback = self._model.new_classification_action
+        return GeneralViewMenu._init_select_widget(title, value, options, callback)
+
     def init_view_select(self):
         def select_view(new):
             # Try to select the view only if it is not active already
@@ -174,7 +183,9 @@ class GeneralViewMenu(object):
 
     def init_number_of_clusters_input(self):
         active_number_of_clusters = int(self._model.get_number_of_clusters())
-        slider = Slider(start=1, end=7, value=active_number_of_clusters, step=1,
+        # LDA will not divide the space under n_components + 1 (n_components = 2)
+        # Hence: start = 3; end = 7 (max number of colors for categories)
+        slider = Slider(start=3, end=7, value=active_number_of_clusters, step=1,
                         title="Number of clusters")
         slider.on_change('value', lambda attr, old, new:
                          self._model.new_number_of_clusters_action(int(new)))
@@ -203,8 +214,8 @@ class GeneralViewMenu(object):
                                value=value)
         return text_input
 
-    def get_view_control_layout(self):
-        return self._view_control_row
+    def get_upper_menu_layout(self):
+        return self._upper_menu
 
     def get_lateral_menu_layout(self):
         return self._lateral_menu
