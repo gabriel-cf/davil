@@ -1,13 +1,13 @@
 """
     File Controller
 """
-
+import logging
 from os import path, listdir
 
 class FileController(object):
     """Controller for selecting the input file"""
+    LOGGER = logging.getLogger(__name__)
     DEFAULT_DIRECTORY = path.abspath(path.relpath(path.join('mymodule', 'resources')))
-    print "DEFAULT: {}".format(DEFAULT_DIRECTORY)
     AVAILABLE_EXTENSIONS = ["CSV"]
 
     @staticmethod
@@ -19,7 +19,7 @@ class FileController(object):
             """
             return filename.split('.')[-1].upper() in FileController.AVAILABLE_EXTENSIONS
         if not path.isdir(directory):
-            raise ValueError("ERROR: '{}' is not a valid directory".format(directory))
+            raise ValueError("ERROR: '%s' is not a valid directory", directory)
         return [f for f in listdir(directory) if path.isfile(path.join(directory, f))
                 and has_valid_extension(f)]
 
@@ -30,9 +30,9 @@ class FileController(object):
         """
         self._directory = directory
         self._files = FileController._list_files(directory=directory)
-        print "Available files: {}".format(self._files)
+        FileController.LOGGER.debug("Available files: %s", self._files)
         self.update_active_file(filename)
-        print "ACTIVE FILE: {}".format(filename)
+        FileController.LOGGER.debug("Active file: %s", filename)
         if not self._active_file and len(self._files) > 0:
             self._active_file = self._files[0]
 
@@ -46,7 +46,7 @@ class FileController(object):
         elif path.isfile(path.join(self._directory, new_file)):
             self._active_file = path.join(self._directory, new_file)
         else:
-            print "Could not find a valid file with name '{}'".format(new_file)
+            FileController.LOGGER.warn("Could not find a valid file with name '%s'", new_file)
 
     def get_active_file(self):
         """Self explanatory"""

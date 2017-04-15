@@ -1,6 +1,7 @@
 """
     General Model
 """
+import logging
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
 from handlers.view_menu_handler import ViewMenuHandler
@@ -12,6 +13,7 @@ from ...view.menu.table_generator import TableGenerator
 
 class GeneralModel(object):
     """docstring for GeneralModel"""
+    LOGGER = logging.getLogger(__name__)
     @staticmethod
     def _should_update(new, old):
         return new != old
@@ -65,20 +67,21 @@ class GeneralModel(object):
         self.add_star_coordinates_view(alias, file_)
 
     def init_layouts(self):
-        print "GENERATING LAYOUTS"
+        GeneralModel.LOGGER.debug("Generating layouts")
         layout = self._get_layout()
         if not self._active_root:
             self._active_root = layout
             self._doc.add_root(layout)
         else:
-            self._active_root.children = layout.children
+            self._update_checkboxes_layout(self._active_view)
+            self._update_view_layout(self._active_view)            
 
     def set_active_view(self, view_alias):
         new_view = self._view_menu_handler.get_view_from_alias(view_alias)
         # We need to redraw the view, otherwise bokeh won't visualize it
         new_view.redraw()
         self._active_view = new_view
-        print "ACTIVE VIEW SET TO '{}'".format(view_alias)
+        GeneralModel.LOGGER.info("Active view set to '%s'", view_alias)
         # Synchronize the new view with the values of the menu
         if self._active_menu:
             self._active_menu.synchronize_view()
@@ -86,15 +89,22 @@ class GeneralModel(object):
     def set_active_menu(self, menu_alias):
         self._active_menu = self._view_menu_handler.get_menu_from_alias(menu_alias)
 
+    def _update_view_layout(self, new_view):
+        layout = curdoc().get_model_by_name('view')
+        layout.children = new_view.get_layout().children
+
+    def _update_checkboxes_layout(self, new_view):
+        layout = curdoc().get_model_by_name('checkboxes')
+        layout.children = new_view.get_checkboxes_layout().children
+  
     def _get_layout(self):
         return row(self._active_menu.get_lateral_menu_layout(),
                    column(self._active_menu.get_upper_menu_layout(),
-                          self._active_view.get_layout())
-                  )
-
-    def new_reset_action(self):
-        print "RESTARTING"
-        self.reset_active_view()
+                          row(self._active_view.get_layout(),
+                              column(self._active_menu.get_upper_right_menu_layout(),
+                                     self._active_view.get_checkboxes_layout()),
+                              name='right_layout')
+                  ), name='main_layout')
 
     def new_add_view_action(self, name=None):
         name = name
@@ -105,49 +115,49 @@ class GeneralModel(object):
             name = get_unique_name(filename)
         elif self._view_menu_handler.has_view_alias(name):
             name = get_unique_name(name)
-        print "ADDING NEW VIEW '{}'".format(name)
+        GeneralModel.LOGGER.info("Adding new view '%s'", name)
         self.add_star_coordinates_view(name, filename)
         self.init_layouts()
         return name
 
     def new_mapping_select_action(self, new):
         if GeneralModel._should_update(new, self._active_view.get_mapping_algorithm()):
-            print "Updating mapping algorithm to {}".format(new)
+            GeneralModel.LOGGER.info("Updating mapping algorithm to '%s'", new)
             self._active_view.update_mapping_algorithm(new)
 
     def new_normalization_select_action(self, new):
         if GeneralModel._should_update(new, self._active_view.get_normalization_algorithm()):
-            print "Updating ormalization algorithm to {}".format(new)
+            GeneralModel.LOGGER.info("Updating normalization algorithm to '%s'", new)
             self._active_view.update_normalization_algorithm(new)
 
     def new_clustering_select_action(self, new):
         if GeneralModel._should_update(new, self._active_view.get_clustering_algorithm()):
-            print "Updating clustering algorithm to {}".format(new)
+            GeneralModel.LOGGER.info("Updating clustering algorithm to '%s'", new)
             self._active_view.update_clustering_algorithm(new) 
 
     def new_error_select_action(self, new):
-        print "Updating error algorithm to {}".format(new)
+        GeneralModel.LOGGER.info("Updating error algorithm to '%s'", new)
         self._active_view.update_error_algorithm(new)
 
     def new_axis_color_select_action(self, new):
-        print "Coloring by axis id {}".format(new)
+        GeneralModel.LOGGER.info("Coloring by axis id '%s'", new)
         self._active_view.update_axis_for_color(new)
 
     def new_palette_select_action(self, new):
-        print "Coloring using palette {}".format(new)
+        GeneralModel.LOGGER.info("Coloring using palette '%s'", new)
         self._active_view.update_palette(new)
 
     def new_file_select_action(self, filename):
-        print "Loading new file '{}'".format(filename)
+        GeneralModel.LOGGER.info("Loading new file '%s'", filename)
         self.reset_active_view(filename)
         self.init_layouts()
 
     def new_classification_action(self, new):
-        print "Classifying with '{}'".format(new)
+        GeneralModel.LOGGER.info("Classifying with '%s'", new)
         self._active_view.update_classification_algorithm(new)
 
     def new_view_select_action(self, alias):
-        print "NEW VIEW SELECTED: '{}'".format(alias)
+        GeneralModel.LOGGER.info("Setting active view: '%s'", alias)
         view = self._view_menu_handler.get_view_from_alias(alias)
         # If there is already a view for that file
         if view:
@@ -165,7 +175,7 @@ class GeneralModel(object):
         self._active_view.update_final_size_input(new)    
 
     def new_table_action(self):
-        print "NEW TABLE"
+        GeneralModel.LOGGER.info("NEW TABLE")
 
     def get_axis_status(self):
         """Calls the get_axis_status method of the active view

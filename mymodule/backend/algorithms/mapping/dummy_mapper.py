@@ -1,13 +1,11 @@
 """ Dummy Mapper module
 """
+import logging
 import random
 import pandas as pd
-from mapper import Mapper
-from string import uppercase
 
 class DummyMapper():
     """Dummy class defining the methods for mapping points"""
-
     MIN_RANGE = -2
     MAX_RANGE = 2
 
@@ -27,6 +25,3 @@ class DummyMapper():
         name_l = dimensional_values_df.index.tolist()
 
         return pd.DataFrame({'x':x_l, 'y':y_l}, index=name_l)
-
-    def __init__(self):
-        pass

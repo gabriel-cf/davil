@@ -1,6 +1,7 @@
 """Reader Module
 """
 from __future__ import division
+import logging
 import numbers
 from file_reader import FileReader
 from ..algorithms.normalization.normalization_algorithms import NormalizationAlgorithms
@@ -8,7 +9,7 @@ from ..algorithms.normalization.normalization_algorithms import NormalizationAlg
 
 class Reader(object):
     """Provides access to the data held in a DataFrame"""
-
+    LOGGER = logging.getLogger(__name__)
     def __init__(self, file_path=None, dataframe=None,
                  first_index=None, header=True):
         """ ** It is recommended to initialize the Reader using

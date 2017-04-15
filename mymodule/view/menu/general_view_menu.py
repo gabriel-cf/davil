@@ -2,11 +2,13 @@
     General View Menu
 """
 
+import logging
 from bokeh.layouts import widgetbox, row, column
 from bokeh.models.widgets import Select, Button, TextInput, Slider
 
 class GeneralViewMenu(object):
     """Basic menu with the principal elements applicable to any view"""
+    LOGGER = logging.getLogger(__name__)
     WIDGETBOX_WIDTH = 50
 
     @staticmethod
@@ -22,7 +24,6 @@ class GeneralViewMenu(object):
            on_change_callback: (Func(String) this is the code to be executed
                                 when a new selection is made)
         """
-        print options
         select = Select(title=title,
                         value=value,
                         options=options)
@@ -65,13 +66,14 @@ class GeneralViewMenu(object):
                                     GeneralViewMenu._widgetbox(self._palette_select),
                                     GeneralViewMenu._widgetbox(self._error_select),
                                     GeneralViewMenu._widgetbox([self._initial_size_input,
-                                                                self._final_size_input],
-                                                               width=80),
-                                    GeneralViewMenu._widgetbox(self._new_view_name_input),
-                                    GeneralViewMenu._widgetbox(self._add_view_button)
-                                   )
+                                                                self._final_size_input])
+                                   , name='lateral_menu')
         self._upper_menu = row(GeneralViewMenu._widgetbox(self._classification_select),
-                               GeneralViewMenu._widgetbox(self._view_select))
+                               GeneralViewMenu._widgetbox(self._view_select)
+                               , name='upper_menu')
+        self._upper_right_menu = column(GeneralViewMenu._widgetbox(self._new_view_name_input),
+                                  GeneralViewMenu._widgetbox(self._add_view_button)
+                                  , name='upper_right_menu')
 
     def synchronize_view(self):
         """Every widget will execute their callback with their current values
@@ -216,6 +218,9 @@ class GeneralViewMenu(object):
 
     def get_upper_menu_layout(self):
         return self._upper_menu
+
+    def get_upper_right_menu_layout(self):
+        return self._upper_right_menu
 
     def get_lateral_menu_layout(self):
         return self._lateral_menu

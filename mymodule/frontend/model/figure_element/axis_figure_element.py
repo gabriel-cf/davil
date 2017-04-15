@@ -2,12 +2,14 @@
     AxisFigureElement
 """
 
+import logging
 from abstract_figure_element import AbstractFigureElement
 
 class AxisFigureElement(AbstractFigureElement):
     """Axis figure element composed by the bokeh elements Segment, Square,
        and optionally Label
     """
+    LOGGER = logging.getLogger(__name__)
 
     def __init__(self, segment, square, label=None):
         """Instantiates a new Axis element"""

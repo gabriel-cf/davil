@@ -1,7 +1,7 @@
 """ 
     Error algorithms
 """
-
+import logging
 from ...util.df_matrix_utils import DFMatrixUtils
 
 def _get_general_error_df(values_df, vectors_df, mapped_points_df):
@@ -14,7 +14,7 @@ def _get_general_error_df(values_df, vectors_df, mapped_points_df):
     """
     def get_column_error(column, vectors_df, mapped_points_df_t):
         column_expected_x = (column * vectors_df['x']).abs()
-        column_expected_y = (column * vectors_df['y']).abs()        
+        column_expected_y = (column * vectors_df['y']).abs()
         column_index = column.name
         column_mapped_x = mapped_points_df_t[column_index]['x']
         column_mapped_y = mapped_points_df_t[column_index]['y']

@@ -3,13 +3,14 @@
 """
 
 from __future__ import division
+import logging
 import time
 import pandas as pd
 from ...backend.util.line_equation import calculate_line_equation
 
 class MappingAnimator(object):
     """Object that creates animations between two positions for points"""
-
+    LOGGER = logging.getLogger(__name__)
     def __init__(self, source_points):
         """source_points: (ColumnDataSource) source where to update the values
         """
@@ -43,8 +44,8 @@ class MappingAnimator(object):
         source_points.data['y'] = points_df['y']
         end_time = time.time()
         time_cost = end_time - start_time
-        print "TIME COST: {}s".format(time_cost)
-        print "Freq: {}s".format(1/time_cost)
+        MappingAnimator.LOGGER.debug("Time cost: {}s".format(time_cost))
+        MappingAnimator.LOGGER.debug("Freq: {}s".format(1/time_cost))
         return time_cost
 
     def get_animation_sequence(self, original_points, mapped_points, max_time=2):
@@ -61,13 +62,13 @@ class MappingAnimator(object):
         step_points_cp, formula = self._get_equation_dataframe(original_points, mapped_points)
         time_cost = self.calculate_time_cost(step_points_cp, mapped_points, formula, self._source_points)
         total_steps = int(max_time // time_cost)
-        print "TOTAL STEPS: {}".format(total_steps)
+        MappingAnimator.LOGGER.debug("Total steps: {}".format(total_steps))
         for step in xrange(0, total_steps):
             self.step_x_exponential(step_points_cp, mapped_points, step, total_steps)
             self.evaluate_y(step_points_cp, formula)            
             self._source_points.data['x'] = step_points_cp['x']
             self._source_points.data['y'] = step_points_cp['y']
-        print "FINISHED ANIMATION"
+        MappingAnimator.LOGGER.debug("Finished animation")
         self._source_points.data['x'] = mapped_points['x']
         self._source_points.data['y'] = mapped_points['y']
 

@@ -1,7 +1,7 @@
 """
     Clustering controller
 """
-
+import logging
 import pandas as pd
 from ....backend.algorithms.clustering.kmeans_clustering import KMeansClustering
 from ....backend.algorithms.clustering.dummy_clustering import DummyClustering
@@ -9,7 +9,7 @@ from generic_algorithm_controller import GenericAlgorithmController
 
 class ClusterController(GenericAlgorithmController):
     """Controls the clustering of the values for the values dataframe"""
-
+    LOGGER = logging.getLogger(__name__)
     DUMMY_CLUSTERING_ID = "Dummy Clustering"
     KMEANS_CLUSTERING_ID = "K-Means Clustering"
     DEFAULT_CLUSTERING_ID = DUMMY_CLUSTERING_ID

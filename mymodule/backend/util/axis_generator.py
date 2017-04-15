@@ -1,6 +1,7 @@
 """ Axis Generator Module
 """
 from __future__ import division
+import logging
 import random
 from math import cos, sin, radians
 import pandas as pd
@@ -8,7 +9,7 @@ import numpy as np
 
 class AxisGenerator(object):
     """Static class with methods to generate DataFrames representing axis"""
-
+    LOGGER = logging.getLogger(__name__)
     @staticmethod
     def _subdivide_circle(centre, n_lines, random_radius=False):
         segment_list = []

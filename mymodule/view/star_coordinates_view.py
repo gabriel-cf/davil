@@ -3,6 +3,7 @@
 """
 
 from __future__ import division
+import logging
 from bokeh.layouts import row, column
 from bokeh.plotting import figure
 from bokeh.models import Range1d, Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool
@@ -24,7 +25,7 @@ from ..frontend.extension.dragtool import DragTool
 from ..frontend.animation.mapping_animator import MappingAnimator
 
 class StarCoordinatesView(object):
-
+    LOGGER = logging.getLogger(__name__)
     _SEGMENT_COLOR = "#F4A582"
     _SEGMENT_WIDTH = 2
 
@@ -136,10 +137,11 @@ class StarCoordinatesView(object):
 
     def _init_square_mapper(self):
         def remap(attr, old, new):
-            print "REMAP - DRAG && DROP"
-            print self._square_mapper.glyph.name
-            print self._square_mapper.glyph.x
-            print self._square_mapper.glyph.y
+            StarCoordinatesView.LOGGER.debug("Remap - Drag && Drop")
+            StarCoordinatesView.LOGGER.debug("axis: {}; x: {}; y: {}"\
+                                            .format(self._square_mapper.glyph.name,
+                                                    self._square_mapper.glyph.x,
+                                                    self._square_mapper.glyph.y))
             modified_axis_id = self._square_mapper.glyph.name
             self._mapper_controller.update_single_vector(modified_axis_id, self._square_mapper.glyph.x, self._square_mapper.glyph.y)
             # The axis position won't be persisted across views unless we
@@ -261,7 +263,6 @@ class StarCoordinatesView(object):
     def _execute_classification(self):
         vectors_df = self._classification_controller.relocate_axis()
         self._mapper_controller.update_vector_values(vectors_df)
-        print "VECTOR VALUES UPDATED"
         self._execute_mapping()
     
     def _execute_error_recalc(self):
@@ -277,16 +278,7 @@ class StarCoordinatesView(object):
         self._execute_mapping()
 
     def _update_layout(self):
-        row1 = None
-        row2 = None
-        if self._checkboxes:
-            row1 = row(self._figure, self._checkboxes.get_widget())
-        else:
-            row1 = row(self._figure)
-        if self._table_widget:
-            row2 = row(self._table_widget)
-            self._layout = column(row1, row2)
-        self._layout = column(row1)
+        self._layout = row(self._figure, name='view')
 
     # PUBLIC methods available to the model
     def redraw(self):
@@ -302,36 +294,31 @@ class StarCoordinatesView(object):
             self._add_axis_element(source, name, is_visible)
         # Redraw points    
         self._init_points(self._source_points)
+        #self._checkboxes.update_view(self)
 
     # UPDATE methods
     def update_mapping_algorithm(self, new):
-        print "Updating mapping algorithm to {}".format(new)
         self._mapper_controller.update_algorithm(new)
         self._execute_mapping()
 
     def update_classification_algorithm(self, new):
-        print "Updating classification algorithm to {}".format(new)
         self._classification_controller.update_algorithm(new)
         self._execute_classification()
 
     def update_normalization_algorithm(self, new):
-        print "Updating normalization algorithm to {}".format(new)
         self._normalization_controller.update_algorithm(new)
         self._execute_normalization()
 
     def update_clustering_algorithm(self, new):
-        print "Updating clustering algorithm to {}".format(new)
         self._cluster_controller.update_algorithm(new)
         self._cluster_controller.update_clusters(self._dimension_values_df_norm)
         self._execute_classification()
 
     def update_error_algorithm(self, new):
-        print "Updating error algorithm to {}".format(new)
         self._error_controller.update_algorithm(new)
         self._execute_error_recalc()    
 
     def update_axis_for_color(self, new):
-        print "Updating base axis for color to {}".format(new)
         self._axis_color_controller.update_colors(new)
 
     def update_palette(self, new):
@@ -346,7 +333,6 @@ class StarCoordinatesView(object):
             self._execute_mapping()
 
     def update_number_of_clusters(self, new):
-        print "Updating number of clusters to {}".format(new)
         self._cluster_controller.update_number_of_clusters(new)        
         self._cluster_controller.update_clusters(self._dimension_values_df)
         self._execute_classification()
@@ -424,6 +410,9 @@ class StarCoordinatesView(object):
     def get_layout(self):
         self._update_layout()
         return self._layout
+
+    def get_checkboxes_layout(self):
+        return self._checkboxes.get_widget()
 
     def set_checkboxes(self, checkboxes):
         self._checkboxes = checkboxes

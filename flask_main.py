@@ -12,19 +12,18 @@ from bokeh.models import ColumnDataSource, Slider
 from bokeh.plotting import figure
 from bokeh.server.server import Server
 from tornado.ioloop import IOLoop
-
+from mymodule.logger.logger import Logger
 from mymodule.view.star_coordinates_view import StarCoordinatesView
 from mymodule.frontend.model.general_model import GeneralModel
 from os import path
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = path.join(path.dirname(path.realpath(__file__)), 'mymodule', 'resources')
-print app.config['UPLOAD_FOLDER']
-
 location = "http://localhost:5006/datavisualization"
-file_upload_success = None
 UPLOAD_SUCCESS = "File successfully uploaded"
 UPLOAD_FAILURE = "Error while loading file"
+# Initialize logging
+Logger.init_logging()
 
 def modify_doc(doc):
     file_path = "mymodule/resources/main.csv"
@@ -46,11 +45,7 @@ def bokeh_server():
 
     file_upload = "<html> <body> <form action=\"http://localhost:5000/uploader\" method=\"POST\" enctype=\"multipart/form-data\"> <input type=\"file\" name=\"file\"/> <input type=\"submit\"/> </form> </body></html>"
 
-    html = ""
-    if file_upload_success:
-        html = "<head><body><div>{}{}</div>{}</body></head>".format(file_upload, UPLOAD_SUCCESS, bokeh_embed)
-    else:
-        html = "<head><body><div>{}</div>{}</body></head>".format(file_upload, bokeh_embed)
+    html = "<head><body><div>{}</div>{}</body></head>".format(file_upload, bokeh_embed)
 
     return html
 

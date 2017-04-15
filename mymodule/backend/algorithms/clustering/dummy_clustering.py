@@ -1,6 +1,7 @@
 """ 
     Dummy Clustering algorithm
 """
+import logging
 
 class DummyClustering():
     """Cluster values of a dataframe using dummy implementation"""

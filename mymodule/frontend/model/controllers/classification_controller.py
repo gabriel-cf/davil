@@ -1,7 +1,7 @@
 """
     Classification controller
 """
-
+import logging
 from ....backend.algorithms.classification.classification_algorithms import ClassificationAlgorithms
 from generic_algorithm_controller import GenericAlgorithmController
 
@@ -10,6 +10,7 @@ class ClassificationController(GenericAlgorithmController):
        It can be configured with dimensionality reduction algorithms such as
        PCA or LDA
     """
+    LOGGER = logging.getLogger(__name__)
     PCA_CLASSIFICATION_ID = "PCA"
     LDA_CLASSIFICATION_ID = "LDA"
     DEFAULT_CLASSIFICATION_ID = LDA_CLASSIFICATION_ID
@@ -35,8 +36,9 @@ class ClassificationController(GenericAlgorithmController):
         self._cluster_controller = cluster_controller
 
     def relocate_axis(self):
-        print "RELOCATING AXIS CLASSIFYING WITH {}".format(self.get_active_algorithm_id())
-        relocated_axis = None        
+        ClassificationController.LOGGER.debug("Relocating axis classifying with %s",
+                                              self.get_active_algorithm_id())
+        relocated_axis = None
         dimension_values_df_norm, _ = self._mapper_controller.get_filtered_mapping_df()
         if self.get_active_algorithm_id() == ClassificationController.LDA_CLASSIFICATION_ID:
             relocated_axis = self.execute_active_algorithm(dimension_values_df_norm,
@@ -48,5 +50,5 @@ class ClassificationController(GenericAlgorithmController):
             if self._mapper_controller.is_axis_visible(axis_id):
                 source.data['x1'] = [relocated_axis['x'][axis_id]]
                 source.data['y1'] = [relocated_axis['y'][axis_id]]
-        print "RELOCATION COMPLETED"
+        ClassificationController.LOGGER.debug("Relocation completed")
         return relocated_axis

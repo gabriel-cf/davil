@@ -50,7 +50,7 @@ class CheckboxGroupWidget(object):
         self._checkboxes = CheckboxGroupWidget.init_axis_checkboxes(self._view, self._callback)
 
     def get_widget(self):
-        return widgetbox(self._checkboxes)
+        return widgetbox(self._checkboxes, name='checkboxes')
 
     def update_view(self, new_view):
         if self._view != new_view:

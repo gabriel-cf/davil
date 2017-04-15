@@ -1,10 +1,11 @@
-""" Star Coordinates Mapper module
+""" 
+    Star Coordinates Mapper module
 """
-import numpy as np
-from mapper import Mapper
+import logging
 
 class StarMapper():
     """Star class defining the methods for mapping points"""
+    
     @staticmethod
     def map_points(dimensional_values_df, axis_vectors_df, weights_df=None,
                    normalized_weights=False, normalization_method=None):

@@ -1,7 +1,7 @@
 """
     Point Size controller
 """
-
+import logging
 from ....backend.util.line_equation import calculate_line_equation
 
 class PointSizeController(object):
@@ -11,6 +11,7 @@ class PointSizeController(object):
        set for the maximum error, using a line function shaped by the points
        (0, initial_size) and (1, final_size)
     """
+    LOGGER = logging.getLogger(__name__)
     # Size of the point with MIN error
     DEFAULT_INITIAL_SIZE = 4
     # Size of the point with MAX error
@@ -79,5 +80,7 @@ class PointSizeController(object):
            We cannot use the error of the source because internally Bokeh turns
            it into an array.
         """
+        PointSizeController.LOGGER.debug("Updating sizes: %s-%s",
+                                         self._initial_size, self._final_size)
         self._m, self._c = self._calculate_line_equation(self._initial_size, self._final_size)
         self._source.data['size'] = self._m * point_error_s + self._c

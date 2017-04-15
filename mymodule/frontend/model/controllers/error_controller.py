@@ -1,13 +1,14 @@
 """
     Clustering controller
 """
-
+import logging
 from ....backend.algorithms.error.error_algorithms import ErrorAlgorithms
 from ....backend.algorithms.normalization.normalization_algorithms import NormalizationAlgorithms
 from generic_algorithm_controller import GenericAlgorithmController
 
 class ErrorController(GenericAlgorithmController):
     """Controls the clustering of the values for the values dataframe"""
+    LOGGER = logging.getLogger(__name__)
     ABSOLUTE_SUM_ID = "Absolute sum"
     SQUARE_SUM_ID = "Square sum"
     MAXIMUM_ID = "Maximum value"
@@ -71,13 +72,13 @@ class ErrorController(GenericAlgorithmController):
     def get_last_axis_error(self):
         """Returns (pandas.Series) last calculated error value for each axis"""
         if self._last_axis_error_s is None or self._last_axis_error_s.empty:
-            print "WARN: Attempted to retrieve the latest axis error \
-                   calculation but there is none"
+            ErrorController.LOGGER.warn("Attempted to retrieve the latest axis error \
+                   calculation but there is none")
         return self._last_axis_error_s
 
     def get_last_point_error(self):
         """Returns (pandas.Series) last calculated error value for each point"""
         if self._last_point_error_s is None or self._last_point_error_s.empty:
-            print "WARN: Attempted to retrieve the latest point error \
-                   calculation but there is none"
+            ErrorController.LOGGER.warn("Attempted to retrieve the latest point error \
+                   calculation but there is none")
         return self._last_point_error_s

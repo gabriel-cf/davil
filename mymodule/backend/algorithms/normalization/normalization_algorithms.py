@@ -2,11 +2,13 @@
     Normalization methods
 """
 from __future__ import division
+import logging
 from ...util.df_matrix_utils import DFMatrixUtils
 
 class NormalizationAlgorithms(object):
     """Algorithms to normalize pandas.DataFrame objects"""
-
+    LOGGER = logging.getLogger(__name__)
+    
     @staticmethod
     def feature_scaling(df, df_level=False):
         """Feature scaling normalization

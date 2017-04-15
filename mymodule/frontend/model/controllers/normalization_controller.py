@@ -2,6 +2,7 @@
     Normalization controller
 """
 
+import logging
 import pandas as pd
 from ....backend.algorithms.normalization.normalization_algorithms import NormalizationAlgorithms
 from ....backend.algorithms.clustering.dummy_clustering import DummyClustering
@@ -9,7 +10,7 @@ from generic_algorithm_controller import GenericAlgorithmController
 
 class NormalizationController(GenericAlgorithmController):
     """Controls the normalization applied to the values dataframe"""
-
+    LOGGER = logging.getLogger(__name__)
     FEATURE_SCALING_NORMALIZATION_ID = "Feature Scaling"
     STANDARDIZED_NORMALIZATION_ID = "Standardization"
     CENTERED_NORMALIZATION_ID = "Centered"
@@ -40,7 +41,8 @@ class NormalizationController(GenericAlgorithmController):
         """values_df: (pandas.Dataframe)
            [df_level=False]: (Boolean) Whether values maximum/minimum
         """
-        print "NORMALIZING VALUES WITH {}".format(self.get_active_algorithm_id())
+        NormalizationController.LOGGER.debug("Normalizing values using %s",
+                                             self.get_active_algorithm_id())
         normalized_df = self.execute_active_algorithm(values_df,
                                                       df_level=df_level)
         return normalized_df

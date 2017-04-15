@@ -1,10 +1,12 @@
 """
     Axis Color Controller
 """
+import logging
 from bokeh.palettes import inferno, grey, viridis
 
 class AxisColorController(object):
     """docstring for AxisColorController"""
+    LOGGER = logging.getLogger(__name__)
     INFERNO_PALETTE_ID = 'inferno'
     GREY_PALETTE_ID = 'grey'
     VIRIDIS_PALETTE_ID = 'viridis'

@@ -1,7 +1,7 @@
 """
     Generic algorithm controller
 """
-
+import logging
 from abc import ABCMeta
 
 class GenericAlgorithmController(object):
@@ -9,6 +9,7 @@ class GenericAlgorithmController(object):
        like the MapperController or the ClusterController
        Works based on a dictionary of algorithm ids with algorithm functions
     """
+    LOGGER = logging.getLogger(__name__)
     __metaclass__ = ABCMeta
 
     def __init__(self, default_algorithm_id, algorithm_dict,

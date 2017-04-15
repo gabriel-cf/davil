@@ -2,11 +2,13 @@
     View and Menu Handler
 """
 
+import logging
 class ViewMenuHandler(object):
     """This class holds dictionaries and methods storing references
        to available axis and menu items. This architecture allows
        for the easy swapping between menus or views from the model
     """
+    LOGGER = logging.getLogger(__name__)
     @staticmethod
     def _get_from_alias(alias, alias_dict):
         if alias in alias_dict:
@@ -27,7 +29,8 @@ class ViewMenuHandler(object):
            It will only log if the alias is not found
         """
         if not alias in alias_dict:
-            print "Alias '{}' not found while trying to remove it".format(alias)
+            ViewMenuHandler.LOGGER.warn("Alias '%s' not found while trying to remove it",
+                                        alias)
         alias_dict.pop(alias, None)
 
     def __init__(self):
@@ -43,11 +46,13 @@ class ViewMenuHandler(object):
 
     def add_menu(self, alias, menu, override=False):
         # TODO: Control type
-        ViewMenuHandler._add_with_alias(alias, self._menus, menu, override=override)
+        ViewMenuHandler._add_with_alias(alias, self._menus, menu,
+                                        override=override)
 
     def add_view(self, alias, view, override=False):
         # TODO: Control type
-        ViewMenuHandler._add_with_alias(alias, self._views, view, override=override)
+        ViewMenuHandler._add_with_alias(alias, self._views, view,
+                                        override=override)
 
     def remove_menu(self, alias):
         ViewMenuHandler._remove_alias(alias, self._menus)

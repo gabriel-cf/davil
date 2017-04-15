@@ -1,7 +1,7 @@
 """ 
     K-Means Clustering algorithm
 """
-
+import logging
 from sklearn.cluster import KMeans
 
 class KMeansClustering():

@@ -2,6 +2,7 @@
     DataFrame Matrix Utils module
 """
 from __future__ import division
+import logging
 import pandas as pd
 import numpy as np
 

@@ -1,6 +1,7 @@
 """
     Mapper Controller Module
 """
+import logging
 from bokeh.models import ColumnDataSource
 from ....backend.algorithms.mapping.dummy_mapper import DummyMapper
 from ....backend.algorithms.mapping.star_mapper import StarMapper
@@ -11,7 +12,7 @@ class MapperController(GenericAlgorithmController):
        It keeps the original dimension values and vectors and enables options
        to perform remapping by modifying particular vectors (e.g hiding an axis)
     """
-
+    LOGGER = logging.getLogger(__name__)
     DUMMY_MAPPER_ID = 'Dummy Coordinates'
     STAR_MAPPER_ID = 'Star Coordinates'
     DEFAULT_MAPPER_ID = DUMMY_MAPPER_ID
@@ -44,8 +45,10 @@ class MapperController(GenericAlgorithmController):
            visible: (Boolean) self explanatory
         """
         if visible:
+            MapperController.LOGGER.debug("Updating axis '%s' to visible", axis_id)
             self._ignored_axis_ids.discard(axis_id)
         else:
+            MapperController.LOGGER.debug("Updating axis '%s' to NOT visible", axis_id)
             self._ignored_axis_ids.add(axis_id)
 
     def is_axis_visible(self, axis_id):
@@ -94,13 +97,14 @@ class MapperController(GenericAlgorithmController):
            Returns: (pandas.DataFrame) Mapped points with shape
                     (point_name X {x, y})
         """
-        print "MAPPING WITH {}".format(self.get_active_algorithm_id())
+        MapperController.LOGGER.debug("Mapping with %s", self.get_active_algorithm_id())
         dimension_values_df = self._dimension_values_df
         vectors_df = self._vectors_df
         if self._ignored_axis_ids:
             dimension_values_df, vectors_df = self.get_filtered_mapping_df()
-        mapped_points_df = self.execute_active_algorithm(dimension_values_df, 
+        mapped_points_df = self.execute_active_algorithm(dimension_values_df,
                                                          vectors_df)
+        MapperController.LOGGER.debug("Executing animation")
         if self._animator:
             self._animator.get_animation_sequence(self._last_mapped_points_df,
                                                   mapped_points_df)
@@ -117,15 +121,17 @@ class MapperController(GenericAlgorithmController):
         return self._last_mapped_points_df
 
     def update_dimension_values(self, dimension_values_df):
+        MapperController.LOGGER.debug("Updating dimension values")
         self._dimension_values_df = dimension_values_df
 
     def update_vector_values(self, vectors_df):
+        MapperController.LOGGER.debug("Updating vector values")
         for vector_id in vectors_df.index:
             self._vectors_df['x'][vector_id] = vectors_df['x'][vector_id]
             self._vectors_df['y'][vector_id] = vectors_df['y'][vector_id]
 
     def update_single_vector(self, axis_id, x1, y1):
-        """Updates the vectors dataframe with the new coordinates 
+        """Updates the vectors dataframe with the new coordinates
            Typically used when an axis is resized
            axis_id: (String) self explanatory
            x1: (int) self explanatory
@@ -133,6 +139,7 @@ class MapperController(GenericAlgorithmController):
         """
         # We assume that all axis start from the point (0,0)
         # Hence, all vectors are (x1 - 0), (y1 - 0)
+        MapperController.LOGGER.debug("Updating vector '%s'", axis_id)
         self._vectors_df.loc[axis_id:axis_id, 'x'] = x1
         self._vectors_df.loc[axis_id:axis_id, 'y'] = y1
 
@@ -142,4 +149,5 @@ class MapperController(GenericAlgorithmController):
             transition from the original points to the mapped ones
 
         """
+        MapperController.LOGGER.debug("Updating animator")
         self._animator = animator

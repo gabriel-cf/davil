@@ -1,5 +1,6 @@
 """File Reader
 """
+import logging
 from os.path import isfile
 import pandas as pd
 
@@ -7,7 +8,7 @@ class FileReader(object):
     """ Static class used for reading a .csv file and 
         returning a Pandas DataFrame
     """
-
+    LOGGER = logging.getLogger(__name__)
     FILE_EXTENSION = "CSV"
     DELIMITER = ';'
     USE = ("USE: Files must have .'{}' extension. "+
@@ -23,7 +24,7 @@ class FileReader(object):
             [header] --> (Boolean) True if the first line is the header
             [index_col] --> (int) column with the id / name of each product
         """
-        print file_path
+        FileReader.LOGGER.debug("Reading file '%s'", file_path)
         if (file_path.split('.')[-1].upper() == FileReader.FILE_EXTENSION
                 and isfile(file_path)):
             dataframe = None
@@ -35,5 +36,5 @@ class FileReader(object):
                                         header=None, index_col=index_col)
             return dataframe
         else:
-            raise ValueError("'{}' was not a valid file\n{}"
-                             .format(file_path, FileReader.USE))
+            raise ValueError("'%s' was not a valid file\n%s"
+                             , (file_path, FileReader.USE))
