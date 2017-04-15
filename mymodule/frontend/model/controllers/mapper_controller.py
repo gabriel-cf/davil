@@ -101,7 +101,6 @@ class MapperController(GenericAlgorithmController):
             dimension_values_df, vectors_df = self.get_filtered_mapping_df()
         mapped_points_df = self.execute_active_algorithm(dimension_values_df, 
                                                          vectors_df)
-
         if self._animator:
             self._animator.get_animation_sequence(self._last_mapped_points_df,
                                                   mapped_points_df)
@@ -110,6 +109,7 @@ class MapperController(GenericAlgorithmController):
             self._source_points.data['y'] = mapped_points_df['y']
 
         self._last_mapped_points_df = mapped_points_df
+
         return mapped_points_df
 
     def get_mapped_points(self):
@@ -120,7 +120,9 @@ class MapperController(GenericAlgorithmController):
         self._dimension_values_df = dimension_values_df
 
     def update_vector_values(self, vectors_df):
-        self._vectors_df = vectors_df
+        for vector_id in vectors_df.index:
+            self._vectors_df['x'][vector_id] = vectors_df['x'][vector_id]
+            self._vectors_df['y'][vector_id] = vectors_df['y'][vector_id]
 
     def update_single_vector(self, axis_id, x1, y1):
         """Updates the vectors dataframe with the new coordinates 

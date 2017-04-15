@@ -115,6 +115,7 @@ class StarCoordinatesView(object):
         self._cluster_controller = ClusterController(source=self._source_points)
         self._cluster_controller.update_clusters(self._dimension_values_df_norm)
         self._classification_controller = ClassificationController(self._axis_sources,
+                                                                   self._mapper_controller,
                                                                    self._cluster_controller)
 
         self._error_controller = ErrorController(self._source_points,
@@ -258,8 +259,9 @@ class StarCoordinatesView(object):
         self._execute_error_recalc()
 
     def _execute_classification(self):
-        self._vectors_df = self._classification_controller.relocate_axis(self._dimension_values_df_norm)
-        self._mapper_controller.update_vector_values(self._vectors_df)
+        vectors_df = self._classification_controller.relocate_axis()
+        self._mapper_controller.update_vector_values(vectors_df)
+        print "VECTOR VALUES UPDATED"
         self._execute_mapping()
     
     def _execute_error_recalc(self):

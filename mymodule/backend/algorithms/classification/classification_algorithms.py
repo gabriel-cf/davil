@@ -25,9 +25,9 @@ class ClassificationAlgorithms():
     def lda(values_df, classes):
         lda = LDA(n_components=2)
         lda.fit(values_df, classes)
-        ones_mx = DFMatrixUtils.get_diagonal_ones_matrix(values_df) 
-        positions_matrix = lda.transform(ones_mx)      
-        positions_df = DFMatrixUtils.to_df(positions_matrix, 
+        ones_mx = DFMatrixUtils.get_diagonal_ones_matrix(values_df)
+        positions_matrix = lda.transform(ones_mx)
+        positions_df = DFMatrixUtils.to_df(positions_matrix,
                                            index=values_df.columns,
                                            columns=['x', 'y'])
         return positions_df
