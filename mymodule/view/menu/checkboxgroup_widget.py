@@ -1,11 +1,13 @@
 """
     CheckboxGroupGenerator
 """
+import logging
 from bokeh.layouts import widgetbox
 from bokeh.models.widgets import CheckboxGroup
 
 class CheckboxGroupWidget(object):
     """Generator for bokeh CheckboxGroup widgets"""
+    LOGGER = logging.getLogger(__name__)
 
     @staticmethod
     def _checkbox_update_element(active_list, labels, view_action):
@@ -32,9 +34,8 @@ class CheckboxGroupWidget(object):
         axis_visibility_list = view.get_axis_status()
         _ = zip(*axis_visibility_list)
         axis_id_l = [element_id for element_id in _[0]]
-        print "AXIS VISIBILITY: {}".format(_[1])
+        CheckboxGroupWidget.LOGGER.debug("Axis visibility: %s", _[1])
         axis_visibility_l = [i for i in xrange(0, len(_[1])) if _[1][i]]
-        print "AXIS VISIBILITY: {}".format(axis_visibility_l)
         cb_group = CheckboxGroup(
             labels=axis_id_l,
             active=axis_visibility_l

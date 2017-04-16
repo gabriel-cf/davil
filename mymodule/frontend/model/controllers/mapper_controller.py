@@ -3,8 +3,7 @@
 """
 import logging
 from bokeh.models import ColumnDataSource
-from ....backend.algorithms.mapping.dummy_mapper import DummyMapper
-from ....backend.algorithms.mapping.star_mapper import StarMapper
+from ....backend.algorithms.mapping.mapping_algorithms import MappingAlgorithms
 from generic_algorithm_controller import GenericAlgorithmController
 
 class MapperController(GenericAlgorithmController):
@@ -21,8 +20,8 @@ class MapperController(GenericAlgorithmController):
     def _get_algorithm_dict():
         """Returns a dictionary with the shape {Algorithm_id, Algorithm}"""
         algorithm_dict = dict()
-        algorithm_dict[MapperController.STAR_MAPPER_ID] = StarMapper.map_points
-        algorithm_dict[MapperController.DUMMY_MAPPER_ID] = DummyMapper.map_points
+        algorithm_dict[MapperController.STAR_MAPPER_ID] = MappingAlgorithms.star_coordinates
+        algorithm_dict[MapperController.DUMMY_MAPPER_ID] = MappingAlgorithms.dummy_coordinates
         return algorithm_dict
 
     def __init__(self, dimension_values_df, vectors_df, source_points=None,
