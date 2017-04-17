@@ -1,11 +1,11 @@
-"""Reader Module
 """
+    Reader Module
+"""
+
 from __future__ import division
 import logging
 import numbers
-from file_reader import FileReader
-from ..algorithms.normalization.normalization_algorithms import NormalizationAlgorithms
-
+from .file_reader import FileReader
 
 class Reader(object):
     """Provides access to the data held in a DataFrame"""

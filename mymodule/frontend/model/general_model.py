@@ -4,11 +4,11 @@
 import logging
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
-from handlers.view_menu_handler import ViewMenuHandler
-from ...view.star_coordinates_view import StarCoordinatesView
-from ...view.menu.general_view_menu import GeneralViewMenu
-from ...view.menu.checkboxgroup_widget import CheckboxGroupWidget
-from ...view.menu.table_generator import TableGenerator
+from .handlers.view_menu_handler import ViewMenuHandler
+from ..view.star_coordinates_view import StarCoordinatesView
+from ..menu.general_view_menu import GeneralViewMenu
+from ..menu.checkboxgroup_widget import CheckboxGroupWidget
+from ..menu.table_generator import TableGenerator
 # Here we would set the rest of view imports
 
 class GeneralModel(object):

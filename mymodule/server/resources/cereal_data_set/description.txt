@@ -1,0 +1,18 @@
+The variables are:
+
+Cereal name;
+manufacturer (e.g.,Kellogg’s);
+type (cold/hot);
+calories (number);
+protein (g);
+fat (g);
+sodium (mg);
+dietary fiber (g);
+complex carbohydrates (g);
+sugars (g);
+display shelf (1, 2, or 3, counting from the floor);
+potassium (mg);
+vitamins and minerals (0, 25, or 100, respectively);
+weight (in ounces) of one serving (serving size);
+cups per serving.
+Manufacturers are represented by their first initial: A=American Home Food Products, G=General Mills, K=Kelloggs, N=Nabisco, P=Post, Q=Quaker Oats, R=Ralston Purina.

@@ -1,14 +1,15 @@
 """
     View and Menu Handler
 """
-
 import logging
+
 class ViewMenuHandler(object):
     """This class holds dictionaries and methods storing references
        to available axis and menu items. This architecture allows
        for the easy swapping between menus or views from the model
     """
     LOGGER = logging.getLogger(__name__)
+    
     @staticmethod
     def _get_from_alias(alias, alias_dict):
         if alias in alias_dict:

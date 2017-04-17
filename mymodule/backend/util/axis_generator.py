@@ -33,17 +33,14 @@ class AxisGenerator(object):
 
     @staticmethod
     def _generate_weights(no_weights, random_weights=False):
-        if random_weights:
-            return np.random.rand(no_weights)
-        return np.zeros(no_weights)
+        pass
 
     @staticmethod
     def generate_star_axis(axis_labels, random_weights=True):
         no_axis = len(axis_labels)
-        segment_list = AxisGenerator._subdivide_circle((0,0), no_axis)
+        segment_list = AxisGenerator._subdivide_circle((0, 0), no_axis)
         df = pd.DataFrame(segment_list, axis_labels, columns=["x0", "x1", "y0", "y1"])
         # Add weights
         weights = AxisGenerator._generate_weights(no_axis, random_weights)
         df['weight'] = pd.Series(weights, index=df.index)
         return df
-        
