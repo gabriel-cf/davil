@@ -102,7 +102,7 @@ class GeneralModel(object):
                           self._active_view.get_layout()),
                    column(self._active_menu.get_upper_right_menu_layout(),
                           self._active_view.get_checkboxes_layout()), 
-                   self._active_menu._right_menu, name='main_layout')
+                   name='main_layout')
 
     def new_add_view_action(self, name=None):
         name = name

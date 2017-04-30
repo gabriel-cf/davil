@@ -93,6 +93,8 @@ class GeneralViewMenu(object):
                                     GeneralViewMenu._widgetbox(self._error_select.widget),
                                     GeneralViewMenu._widgetbox([self._initial_size_input.widget,
                                                                 self._final_size_input.widget]),
+                                    GeneralViewMenu._get_title_div("Color by:"),
+                                    GeneralViewMenu._widgetbox(self._color_method_radio.widget),
                                     GeneralViewMenu._get_title_div("Toggle point names:"),
                                     GeneralViewMenu._widgetbox(self._point_label_radio.widget)
                                    , name='lateral_menu')
@@ -100,14 +102,12 @@ class GeneralViewMenu(object):
                                GeneralViewMenu._widgetbox(self._view_select.widget)
                                , name='upper_menu')
         self._upper_right_menu = column(GeneralViewMenu._widgetbox(self._new_view_name_input),
-                                        GeneralViewMenu._widgetbox(self._add_view_button)
+                                        GeneralViewMenu._widgetbox(self._add_view_button),
+                                        GeneralViewMenu._get_title_div("Selected category source:"),
+                                        GeneralViewMenu._widgetbox(self._category_source_dropdown.widget),
+                                        GeneralViewMenu._widgetbox(self._axis_select.widget),
+                                        GeneralViewMenu._widgetbox(self._palette_select.widget)
                                   , name='upper_right_menu')
-        self._right_menu = column(GeneralViewMenu._get_title_div("Color by:"),
-                                  GeneralViewMenu._widgetbox(self._color_method_radio.widget),
-                                  GeneralViewMenu._get_title_div("Selected category source:"),
-                                  GeneralViewMenu._widgetbox(self._category_source_dropdown.widget),
-                                  GeneralViewMenu._widgetbox(self._axis_select.widget),
-                                  GeneralViewMenu._widgetbox(self._palette_select.widget))
 
     def synchronize_view(self):
         """Every widget will execute their callback with their current values
