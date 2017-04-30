@@ -31,7 +31,7 @@ class GeneralModel(object):
         self._active_menu = None
         self._active_view = None
 
-    def add_star_coordinates_view(self, alias, file, active=True):
+    def add_star_coordinates_view(self, alias, file, active=True, sync_menu=True):
         """Will generate a a new Star Coordinates view
            file: (String) path to the source file of the view
            [active=True]: set this view as the new active view
@@ -44,6 +44,9 @@ class GeneralModel(object):
         self._view_menu_handler.add_view(alias, view)
         if active:
             self.set_active_view(alias)
+            # Synchronize the new view with the values of the menu
+            if self._active_menu and sync_menu:
+                self._active_menu.synchronize_view()
 
     def add_general_menu(self, alias, active=True):
         """Will generate a a new GeneralViewMenu
@@ -61,7 +64,9 @@ class GeneralModel(object):
         file_ = new_file
         if not file_:
             file_ = self._active_view.get_file()
-        self.add_star_coordinates_view(alias, file_)
+        # Add view back again, synchronize for file change
+        self.add_star_coordinates_view(alias, file_, sync_menu=False)
+        self._active_menu.synchronize_on_file_change()
 
     def init_layouts(self):
         GeneralModel.LOGGER.debug("Generating layouts")
@@ -79,9 +84,6 @@ class GeneralModel(object):
         new_view.redraw()
         self._active_view = new_view
         GeneralModel.LOGGER.info("Active view set to '%s'", view_alias)
-        # Synchronize the new view with the values of the menu
-        if self._active_menu:
-            self._active_menu.synchronize_view()
 
     def set_active_menu(self, menu_alias):
         self._active_menu = self._view_menu_handler.get_menu_from_alias(menu_alias)
@@ -112,7 +114,7 @@ class GeneralModel(object):
         elif self._view_menu_handler.has_view_alias(name):
             name = get_unique_name(name)
         GeneralModel.LOGGER.info("Adding new view '%s'", name)
-        self.add_star_coordinates_view(name, filename)
+        self.add_star_coordinates_view(name, filename)        
         self.init_layouts()
         return name
 
@@ -151,7 +153,7 @@ class GeneralModel(object):
     def new_file_select_action(self, filename):
         GeneralModel.LOGGER.info("Loading new file '%s'", filename)
         self.reset_active_view(filename)
-        self.init_layouts()
+        self.init_layouts()        
 
     def new_classification_action(self, new):
         GeneralModel.LOGGER.info("Classifying with '%s'", new)
@@ -163,6 +165,8 @@ class GeneralModel(object):
         # If there is already a view for that file
         if view:
             self.set_active_view(alias)
+        # Set menu values with those of the view we are switching to
+        self._active_menu.synchronize_menu()
         self.init_layouts()
 
     def new_number_of_clusters_action(self, new):

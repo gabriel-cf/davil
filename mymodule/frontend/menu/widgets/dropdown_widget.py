@@ -35,14 +35,13 @@ class DropdownWidget(AbstractWidget):
         self.widget.trigger('value', self.widget.value, self.widget.value)
 
     def update_options(self):
-        self.widget.labels = self._update_options_callback()
+        self.widget.menu = self._update_options_callback()
 
     def update_value(self):
-        active_option = self._update_value_callback()
-        self.widget.active = self.widget.labels.index(active_option)
+        self.widget.label = self._update_value_callback()
 
     def get_options(self):
-        return self.widget.labels
+        return self.widget.menu
 
     def get_value(self):
         return self.widget.active

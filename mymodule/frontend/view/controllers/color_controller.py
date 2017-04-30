@@ -136,9 +136,8 @@ class ColorController(object):
         self._map_source_points_color(palette_index_list, active_palette)
 
     def _color_points_by_categories(self):
-        ColorController.LOGGER.debug("Coloring by category")        
+        ColorController.LOGGER.debug("Coloring by category")
         categories = self._classification_controller.get_categories()
-        ColorController.LOGGER.debug("Categories: %s", categories)
         if categories is None or len(categories) == 0:
             ColorController.LOGGER.warn("No coloring was made since no categories were found")
             return

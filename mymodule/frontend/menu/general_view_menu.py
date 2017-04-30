@@ -127,8 +127,7 @@ class GeneralViewMenu(object):
         self._axis_select.trigger()
         self._category_source_dropdown.trigger()
         self._color_method_radio.trigger()
-        #self._classification_select.trigger()
-        self._axis_select.trigger()
+        self._classification_select.trigger()
 
         self._view_select.update_options()
         self._view_select.update_value()
@@ -147,17 +146,25 @@ class GeneralViewMenu(object):
         self._axis_select.update_all()
         self._category_source_dropdown.update_all()
         self._color_method_radio.update_all()
-        #self._classification_select.update_all()
+        self._classification_select.update_all()
         self._axis_select.update_all()
-
         self._view_select.update_options()
         self._view_select.update_value()
 
-    def synchronize_menu(self):
-        """Synchronizes options and values based on the current view
-           Should happen when switching back to an existing view
-        """
-        pass
+    def synchronize_on_file_change(self):
+        self._mapping_select.trigger()
+        self._normalization_select.trigger()
+        self._error_select.trigger()
+        self._clustering_select.trigger()
+        self._number_of_clusters_input.trigger()
+        self._initial_size_input.trigger()
+        self._final_size_input.trigger()
+        self._point_label_radio.trigger()
+        self._palette_select.trigger()
+        self._color_method_radio.trigger()
+
+        self._axis_select.update_all()
+        self._category_source_dropdown.update_all()
 
     def init_add_view_button(self):
         def new_view():
