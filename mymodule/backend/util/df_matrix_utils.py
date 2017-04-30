@@ -20,7 +20,7 @@ class DFMatrixUtils(object):
             v_y = y1 - y0
             return v_x, v_y
 
-        # Create new DataFrame obtaining the normalized vectors from the points
+        # Create new DataFrame obtaining the vectors from the points
         vector_matrix = []
         for _, row in axis_points_df.iterrows():
             vector_matrix.append(get_vector(row['x0'], row['x1'], row['y0'], row['y1']))
@@ -89,7 +89,7 @@ class DFMatrixUtils(object):
 
     @staticmethod
     def std_by_axis(df, axis):
-        """ df: (Number) dataframe holding the numeric values
+        """ df: (pandas.DataFrame) dataframe holding the numeric values
             axis: (int) 0 -> sum columns ; 1 -> sum rows
             Returns: (pandas.DataFrame) column with the standard deviation 
                      of the axis
@@ -103,3 +103,4 @@ class DFMatrixUtils(object):
     @staticmethod
     def to_df(matrix, index=None, columns=None):
         return pd.DataFrame(matrix, index=index, columns=columns)
+        

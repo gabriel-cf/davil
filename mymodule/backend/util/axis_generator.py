@@ -5,7 +5,6 @@ import logging
 import random
 from math import cos, sin, radians
 import pandas as pd
-import numpy as np
 
 class AxisGenerator(object):
     """Static class with methods to generate DataFrames representing axis"""
@@ -33,14 +32,21 @@ class AxisGenerator(object):
 
     @staticmethod
     def _generate_weights(no_weights, random_weights=False):
+        # TODO - implement weight generator
         pass
 
     @staticmethod
-    def generate_star_axis(axis_labels, random_weights=True):
+    def generate_star_axis(axis_labels, weight_list=None, random_weights=True):
+        """Will generate the axis with the given labels
+           axis_labels: (List<String>) unique labels of the axis
+           [weight_list=None]: (List<Number>) list of weights. TODO
+           [random_weights=True]: (Boolean) Whether the weights should be
+                randomly generated if no weight list is provided. TODO
+        """
         no_axis = len(axis_labels)
         segment_list = AxisGenerator._subdivide_circle((0, 0), no_axis)
         df = pd.DataFrame(segment_list, axis_labels, columns=["x0", "x1", "y0", "y1"])
-        # Add weights
-        weights = AxisGenerator._generate_weights(no_axis, random_weights)
-        df['weight'] = pd.Series(weights, index=df.index)
+        # TODO - add weights
+        #weights = AxisGenerator._generate_weights(no_axis, random_weights)
+        #df['weight'] = pd.Series(weights, index=df.index)
         return df

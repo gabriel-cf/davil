@@ -14,9 +14,6 @@ from ..menu.table_generator import TableGenerator
 class GeneralModel(object):
     """docstring for GeneralModel"""
     LOGGER = logging.getLogger(__name__)
-    @staticmethod
-    def _should_update(new, old):
-        return new != old
 
     @staticmethod
     def star_coordinates_init(alias, file, doc=None):
@@ -100,11 +97,10 @@ class GeneralModel(object):
     def _get_layout(self):
         return row(self._active_menu.get_lateral_menu_layout(),
                    column(self._active_menu.get_upper_menu_layout(),
-                          row(self._active_view.get_layout(),
-                              column(self._active_menu.get_upper_right_menu_layout(),
-                                     self._active_view.get_checkboxes_layout()),
-                              name='right_layout')
-                  ), name='main_layout')
+                          self._active_view.get_layout()),
+                   column(self._active_menu.get_upper_right_menu_layout(),
+                          self._active_view.get_checkboxes_layout()), 
+                   self._active_menu._right_menu, name='main_layout')
 
     def new_add_view_action(self, name=None):
         name = name
@@ -121,27 +117,32 @@ class GeneralModel(object):
         return name
 
     def new_mapping_select_action(self, new):
-        if GeneralModel._should_update(new, self._active_view.get_mapping_algorithm()):
-            GeneralModel.LOGGER.info("Updating mapping algorithm to '%s'", new)
-            self._active_view.update_mapping_algorithm(new)
+        GeneralModel.LOGGER.info("Updating mapping algorithm to '%s'", new)
+        self._active_view.update_mapping_algorithm(new)
 
     def new_normalization_select_action(self, new):
-        if GeneralModel._should_update(new, self._active_view.get_normalization_algorithm()):
-            GeneralModel.LOGGER.info("Updating normalization algorithm to '%s'", new)
-            self._active_view.update_normalization_algorithm(new)
+        GeneralModel.LOGGER.info("Updating normalization algorithm to '%s'", new)
+        self._active_view.update_normalization_algorithm(new)
 
     def new_clustering_select_action(self, new):
-        if GeneralModel._should_update(new, self._active_view.get_clustering_algorithm()):
-            GeneralModel.LOGGER.info("Updating clustering algorithm to '%s'", new)
-            self._active_view.update_clustering_algorithm(new) 
+        GeneralModel.LOGGER.info("Updating clustering algorithm to '%s'", new)
+        self._active_view.update_clustering_algorithm(new)
 
     def new_error_select_action(self, new):
         GeneralModel.LOGGER.info("Updating error algorithm to '%s'", new)
         self._active_view.update_error_algorithm(new)
 
-    def new_axis_color_select_action(self, new):
-        GeneralModel.LOGGER.info("Coloring by axis id '%s'", new)
-        self._active_view.update_axis_for_color(new)
+    def new_axis_select_action(self, new):
+        GeneralModel.LOGGER.info("Selecting axis '%s'", new)
+        self._active_view.update_selected_axis(new)
+
+    def new_category_source_select_action(self, new):
+        GeneralModel.LOGGER.info("Selecting category source '%s'", new)
+        self._active_view.update_selected_category_source(new)
+
+    def new_color_method_select(self, new): 
+        GeneralModel.LOGGER.info("Updating coloring method to '%s'", new)
+        self._active_view.update_color_method(new)
 
     def new_palette_select_action(self, new):
         GeneralModel.LOGGER.info("Coloring using palette '%s'", new)
@@ -165,14 +166,17 @@ class GeneralModel(object):
         self.init_layouts()
 
     def new_number_of_clusters_action(self, new):
-        if GeneralModel._should_update(self.get_number_of_clusters(), new):
-            self._active_view.update_number_of_clusters(new)
+        self._active_view.update_number_of_clusters(new)
 
     def new_initial_size_action(self, new):
         self._active_view.update_initial_size_input(new)
 
     def new_final_size_action(self, new):
-        self._active_view.update_final_size_input(new)    
+        self._active_view.update_final_size_input(new)
+
+    def new_color_method_action(self, new):
+        GeneralModel.LOGGER.info("Setting color method to: '%s'", new)
+        self._active_view.update_color_method(new)
 
     def new_table_action(self):
         GeneralModel.LOGGER.info("NEW TABLE")
@@ -214,17 +218,35 @@ class GeneralModel(object):
     def get_available_files(self):
         return self._active_view.get_available_files()
 
-    def get_active_classification(self):
+    def get_classification_algorithm(self):
         return self._active_view.get_classification_algorithm()
 
-    def get_classification_options(self):
-        return self._active_view.get_classification_options()
+    def get_classification_methods(self):
+        return self._active_view.get_classification_methods()
+
+    def get_selected_axis_id(self):
+        return self._active_view.get_selected_axis_id()
 
     def get_available_axis_ids(self):
         return self._active_view.get_available_axis_ids()
 
     def get_available_palettes(self):
         return self._active_view.get_available_palettes()
+
+    def get_palette(self):
+        return self._active_view.get_palette()
+
+    def get_active_color_method(self):
+        return self._active_view.get_active_color_method()
+
+    def get_available_color_methods(self):
+        return self._active_view.get_available_color_methods()
+
+    def get_available_category_sources(self):
+        return self._active_view.get_available_category_sources()
+
+    def get_active_category_source(self):
+        return self._active_view.get_active_category_source()
 
     def get_active_view_alias(self):
         return self._active_view.get_alias()

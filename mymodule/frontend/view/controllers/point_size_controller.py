@@ -32,7 +32,7 @@ class PointSizeController(object):
         return size if size >= PointSizeController.MIN_SIZE \
                     else PointSizeController.MIN_SIZE
 
-    def __init__(self, source,
+    def __init__(self, error_controller, source,
                  initial_size=DEFAULT_INITIAL_SIZE,
                  final_size=DEFAULT_FINAL_SIZE):
         """source: (ColumnDataSource) shared datasource holding the points
@@ -40,6 +40,7 @@ class PointSizeController(object):
            [initial_size=DEFAULT_INITIAL_SIZE]: (int >= 0)
            [initial_size=DEFAULT_FINAL_SIZE]: (int >= 0)
         """
+        self._error_controller = error_controller
         self._source = source
         self._m, self._c = self._calculate_line_equation(initial_size, final_size)
         self._initial_size = initial_size
@@ -52,19 +53,15 @@ class PointSizeController(object):
         new_size = PointSizeController._get_valid_size(new_size)
         self._source.data['size'] = [new_size for i in xrange(0, len(self._source.data['x']))]
 
-    def set_initial_size(self, new_size, point_error_s):
-        """new_size: (int >= MIN_SIZE) self explanatory
-           point_error_s: (pandas.Series) Series with the error for every point
-        """
+    def set_initial_size(self, new_size):
+        """new_size: (int >= MIN_SIZE) self explanatory"""        
         self._initial_size = PointSizeController._get_valid_size(new_size)
-        self.update_sizes(point_error_s)
+        self.update_sizes()
 
-    def set_final_size(self, new_size, point_error_s):
-        """new_size: (int >= MIN_SIZE) self explanatory
-           point_error_s: (pandas.Series) Series with the error for every point
-        """
+    def set_final_size(self, new_size):
+        """new_size: (int >= MIN_SIZE) self explanatory"""
         self._final_size = PointSizeController._get_valid_size(new_size)
-        self.update_sizes(point_error_s)
+        self.update_sizes()
 
     def get_initial_size(self):
         """Self explanatory"""
@@ -74,12 +71,12 @@ class PointSizeController(object):
         """Self explanatory"""
         return self._final_size
 
-    def update_sizes(self, point_error_s):
+    def update_sizes(self):
         """Normalize the source point sizes using the normalized error
-           point_error_s: (pandas.Series) Series with the error for every point
            We cannot use the error of the source because internally Bokeh turns
            it into an array.
         """
+        point_error_s = self._error_controller.get_last_point_error()
         PointSizeController.LOGGER.debug("Updating sizes: %s-%s",
                                          self._initial_size, self._final_size)
         self._m, self._c = self._calculate_line_equation(self._initial_size, self._final_size)

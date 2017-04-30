@@ -9,9 +9,9 @@ from bokeh.plotting import figure
 from bokeh.models import Range1d, Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool
 
 from ...backend.io.reader import Reader
-from ...backend.util.axis_generator import AxisGenerator
-from ...backend.util.df_matrix_utils import DFMatrixUtils
 
+from .controllers.input_data_controller import InputDataController
+from .controllers.vector_controller import VectorController
 from .controllers.mapper_controller import MapperController
 from .controllers.normalization_controller import NormalizationController
 from .controllers.classification_controller import ClassificationController
@@ -19,7 +19,7 @@ from .controllers.cluster_controller import ClusterController
 from .controllers.file_controller import FileController
 from .controllers.point_size_controller import PointSizeController
 from .controllers.error_controller import ErrorController
-from .controllers.axis_color_controller import AxisColorController
+from .controllers.color_controller import ColorController
 from .figure_element.axis_figure_element import AxisFigureElement
 from ..bokeh_extension.dragtool import DragTool
 from .animation.mapping_animator import MappingAnimator
@@ -37,6 +37,9 @@ class StarCoordinatesView(object):
     _CIRCLE_COLOR = "navy"
     _CIRCLE_ALPHA = 0.5
 
+    # The center is a constant across the application and should not be modified
+    CENTER_POINT = (0, 0)
+
     """A view with all the necessary logic for displaying it on bokeh"""
     def __init__(self, alias, filename=None, random_weights=False, width=600, height=600):
         """Creates a new Star Coordinates View object and instantiates
@@ -49,11 +52,7 @@ class StarCoordinatesView(object):
         self._height = height
         self._filename = filename
         self._reader = None
-        # Elements generated from mapping
-        self._axis_df = None
-        self._dimension_values_df = None
-        self._dimension_values_df_norm = None
-        self._vectors_df = None
+        self._selected_axis = None
         # Figure elements
         self._figure = None
         self._layout = None
@@ -66,6 +65,8 @@ class StarCoordinatesView(object):
         self._checkboxes = None
         self._table_widget = None
         # Controllers
+        self._input_data_controller = None
+        self._vector_controller = None
         self._mapper_controller = None
         self._normalization_controller = None
         self._cluster_controller = None
@@ -73,7 +74,7 @@ class StarCoordinatesView(object):
         self._axis_checkboxes = None
         self._point_size_controller = None
         self._error_controller = None
-        self._axis_color_controller = None
+        self._color_controller = None
         # Logic to initialize all the elements above
         self._init()
 
@@ -81,20 +82,18 @@ class StarCoordinatesView(object):
     def _init(self):
         """Load data from file and initialize dataframe values"""
         self._file_controller = FileController(filename=self._filename)
-        self._reader = Reader.init_from_file(self._file_controller.get_active_file())
-        # Get the dimension labels (i.e. the names of the columns with numeric values)
-        self._dimension_values_df = self._reader.get_dimension_values()
-        self._normalization_controller = NormalizationController()
-        self._dimension_values_df_norm = self._normalization_controller.normalize(self._dimension_values_df)
-        axis_ids = self._dimension_values_df_norm.columns.values.tolist()
-        self._axis_df = AxisGenerator.generate_star_axis(axis_ids,
-                                                         random_weights=self._random_weights)
-        # Get the vector dataframe from the axis dataframe
-        self._vectors_df = DFMatrixUtils.get_vectors(self._axis_df)        
+
+        raw_input_df = Reader.read_from_file(self._file_controller.get_active_file())
+        self._input_data_controller = InputDataController(raw_input_df)
+        self._dimension_values_df = self._input_data_controller.get_dimensional_values()
+        self._nominal_values_df = self._input_data_controller.get_nominal_values()
+
+        self._vector_controller = VectorController(self._input_data_controller)
+        self._normalization_controller = NormalizationController(self._input_data_controller)
+        self._normalization_controller.execute_normalization()
 
         # Initialize figure and axis
         self._figure = self._init_figure()
-
         self._axis_sources = self._init_axis()        
 
         # Add our custom drag and drop tool for resizing axis
@@ -104,33 +103,38 @@ class StarCoordinatesView(object):
                                         remap_square=self._square_mapper))
         # Initial mapping
         # Define the points source from the mapped values
-        self._mapper_controller = MapperController(self._dimension_values_df_norm,
-                                                   self._vectors_df)
+        self._mapper_controller = MapperController(self._input_data_controller,
+                                                   self._vector_controller,
+                                                   self._normalization_controller)
         mapped_points_df = self._mapper_controller.execute_mapping()
         self._source_points = ColumnDataSource(mapped_points_df)
-        self._source_points.add(mapped_points_df.index, name='name')
+        self._source_points.add(self._input_data_controller.get_element_names(), name='name')
+        self._mapper_controller.set_source_points(self._source_points)
         # We assign to the mapper controller the animator
         mapping_animator = MappingAnimator(self._source_points)
-        self._mapper_controller.update_animator(mapping_animator)
+        self._mapper_controller.set_animator(mapping_animator)
 
-        self._cluster_controller = ClusterController(source=self._source_points)
-        self._cluster_controller.update_clusters(self._dimension_values_df_norm)
-        self._classification_controller = ClassificationController(self._axis_sources,
-                                                                   self._mapper_controller,
-                                                                   self._cluster_controller)
+        self._cluster_controller = ClusterController(self._normalization_controller)
+        self._cluster_controller.execute_clustering()
+        self._classification_controller = ClassificationController(self._input_data_controller,
+                                                                   self._cluster_controller,
+                                                                   self._normalization_controller,
+                                                                   self._axis_sources)
+        self._error_controller = ErrorController(self._normalization_controller,
+                                                 self._vector_controller,
+                                                 self._mapper_controller,
+                                                 self._source_points,
+                                                 self._axis_sources)
+        self._error_controller.calculate_error()
 
-        self._error_controller = ErrorController(self._source_points,
-                                                 self._axis_sources,
-                                                 self._normalization_controller)
-        _, point_error_s = self._error_controller.calculate_error(self._dimension_values_df_norm,
-                                                                  self._vectors_df,
-                                                                  mapped_points_df)
-
-        self._point_size_controller = PointSizeController(self._source_points)
-        self._point_size_controller.update_sizes(point_error_s)
-
-        self._axis_color_controller = AxisColorController(self._source_points,
-                                                          self._dimension_values_df_norm)
+        self._point_size_controller = PointSizeController(self._error_controller,
+                                                          self._source_points)
+        self._point_size_controller.update_sizes()
+        self._color_controller = ColorController(self._input_data_controller,
+                                                 self._normalization_controller,
+                                                 self._classification_controller,
+                                                 self._source_points)
+        self._color_controller.update_colors()
         self._init_points(self._source_points)
         self._layout = column(self._figure)
 
@@ -142,7 +146,9 @@ class StarCoordinatesView(object):
                                                     self._square_mapper.glyph.x,
                                                     self._square_mapper.glyph.y))
             modified_axis_id = self._square_mapper.glyph.name
-            self._mapper_controller.update_single_vector(modified_axis_id, self._square_mapper.glyph.x, self._square_mapper.glyph.y)
+            self._vector_controller.update_single_vector(modified_axis_id,
+                                                         self._square_mapper.glyph.x,
+                                                         self._square_mapper.glyph.y)
             # The axis position won't be persisted across views unless we
             # update the source's value on the python's side
             for source in self._axis_sources:
@@ -221,14 +227,14 @@ class StarCoordinatesView(object):
                     (AxisFigureElement[]) list of generated axis elements
         """
         sources_list = []
+        vectors_df = self._vector_controller.get_vectors()
+        x0, y0 = StarCoordinatesView.CENTER_POINT
         # Segments and squares
-        for i in xrange(0, len(self._axis_df['x0'])):
-            x0 = self._axis_df['x0'][i]
-            y0 = self._axis_df['y0'][i]
-            x1 = self._axis_df['x1'][i]
-            y1 = self._axis_df['y1'][i]
+        for i in xrange(0, len(vectors_df['x'])):
+            x1 = vectors_df['x'][i]
+            y1 = vectors_df['y'][i]
             error = 0
-            name = self._axis_df.index.values[i]
+            name = vectors_df.index.values[i]
             source = ColumnDataSource(dict(x0=[x0],
                                            y0=[y0],
                                            x1=[x1],
@@ -256,24 +262,28 @@ class StarCoordinatesView(object):
                             source=source_points)
 
     def _execute_mapping(self):
-        self._mapped_points = self._mapper_controller.execute_mapping()
+        self._mapper_controller.execute_mapping()
         self._execute_error_recalc()
 
+    def _execute_clustering(self):
+        self._cluster_controller.execute_clustering()
+        if self._classification_controller.in_clustering_mode():
+            if self._color_controller.in_category_mode():
+                self._color_controller.update_colors()
+            self._execute_classification()            
+
     def _execute_classification(self):
-        vectors_df = self._classification_controller.relocate_axis()
-        self._mapper_controller.update_vector_values(vectors_df)
-        self._execute_mapping()
-    
+        if self._classification_controller.in_active_mode():
+            vectors_df = self._classification_controller.relocate_axis()
+            self._vector_controller.update_vector_values(vectors_df)
+            self._execute_mapping()
+
     def _execute_error_recalc(self):
-        mapped_points_df = self._mapper_controller.get_mapped_points()
-        _, point_error_s = self._error_controller.calculate_error(self._dimension_values_df_norm,
-                                                                  self._vectors_df,
-                                                                  mapped_points_df)
-        self._point_size_controller.update_sizes(point_error_s)
+        self._error_controller.calculate_error()
+        self._point_size_controller.update_sizes()
 
     def _execute_normalization(self):
-        self._dimension_values_df_norm = self._normalization_controller.normalize(self._dimension_values_df)
-        self._mapper_controller.update_dimension_values(self._dimension_values_df_norm)
+        self._normalization_controller.execute_normalization()
         self._execute_mapping()
 
     def _update_layout(self):
@@ -289,7 +299,7 @@ class StarCoordinatesView(object):
         # Redraw axis elements
         for source in self._axis_sources:
             name = source.data['name'][0]
-            is_visible = self._mapper_controller.is_axis_visible(name)
+            is_visible = self._input_data_controller.is_label_active(name)
             self._add_axis_element(source, name, is_visible)
         # Redraw points    
         self._init_points(self._source_points)
@@ -310,39 +320,52 @@ class StarCoordinatesView(object):
 
     def update_clustering_algorithm(self, new):
         self._cluster_controller.update_algorithm(new)
-        self._cluster_controller.update_clusters(self._dimension_values_df_norm)
-        self._execute_classification()
+        self._execute_clustering()        
 
     def update_error_algorithm(self, new):
         self._error_controller.update_algorithm(new)
-        self._execute_error_recalc()    
+        self._execute_error_recalc()
 
-    def update_axis_for_color(self, new):
-        self._axis_color_controller.update_colors(new)
+    def update_selected_axis(self, new):
+        self._selected_axis = new
+        self._color_controller.update_selected_axis(new)
+        if self._color_controller.in_axis_mode():
+            self._color_controller.update_colors()
+
+    def update_selected_category_source(self, new):
+        self._classification_controller.update_active_source(new)
+        if self._color_controller.in_category_mode():
+            self._color_controller.update_colors()
+        self._execute_classification()        
+
+    def update_color_method(self, new):
+        self._color_controller.update_method(new)
+        self._color_controller.update_colors()
 
     def update_palette(self, new):
-        self._axis_color_controller.update_palette(new)
+        self._color_controller.update_palette(new)
+        if self._color_controller.in_axis_mode():
+            self._color_controller.update_colors()
 
     def update_axis_visibility(self, axis_id, is_visible):
         if not axis_id in self._axis_elements:
             ValueError("Could not update the visibility of the axis '{}'\
                         because it is not a valid axis".format(axis_id))
-        self._mapper_controller.update_axis_status(axis_id, is_visible)
+        self._input_data_controller.update_label_status(axis_id, is_visible)
+        # Tries to hide the axis element. If a change is made then execute mapping
         if self._axis_elements[axis_id].visible(is_visible):
             self._execute_mapping()
 
     def update_number_of_clusters(self, new):
-        self._cluster_controller.update_number_of_clusters(new)        
-        self._cluster_controller.update_clusters(self._dimension_values_df)
-        self._execute_classification()
+        # Will update the cluster categories too
+        self._cluster_controller.update_number_of_clusters(new)
+        self._execute_clustering()
 
     def update_initial_size_input(self, new):
-        point_error_s = self._error_controller.get_last_point_error()
-        self._point_size_controller.set_initial_size(new, point_error_s)
+        self._point_size_controller.set_initial_size(new)
 
     def update_final_size_input(self, new):
-        point_error_s = self._error_controller.get_last_point_error()
-        self._point_size_controller.set_final_size(new, point_error_s)    
+        self._point_size_controller.set_final_size(new)    
 
     # GET methods
     def get_alias(self):
@@ -357,8 +380,8 @@ class StarCoordinatesView(object):
     def get_classification_algorithm(self):
         return self._classification_controller.get_active_algorithm_id()
 
-    def get_classification_options(self):
-        return self._classification_controller.get_all_options()
+    def get_classification_methods(self):
+        return self._classification_controller.get_available_methods()
     
     def get_normalization_algorithm(self):
         return self._normalization_controller.get_active_algorithm_id()
@@ -376,11 +399,11 @@ class StarCoordinatesView(object):
         return self._error_controller.get_active_algorithm_id()
 
     def get_error_options(self):
-        return self._error_controller.get_all_options()
+        return self._error_controller.get_all_options()    
 
     def get_axis_status(self):
         """Returns a zipped list of [(axis_id, visible), ..]"""
-        return self._mapper_controller.get_axis_status()
+        return self._input_data_controller.get_dimensional_labels_status()
 
     def get_number_of_clusters(self):
         return self._cluster_controller.get_number_of_clusters()
@@ -398,13 +421,31 @@ class StarCoordinatesView(object):
         return self._file_controller.get_available_files()
 
     def get_dimension_values_df(self):
-        return self._dimension_values_df
+        return self._input_data_controller.get_dimensional_values()
 
     def get_available_axis_ids(self):
-        return self._dimension_values_df_norm.columns.tolist()
+        return self._color_controller.get_available_axis_ids()
+
+    def get_selected_axis_id(self):
+        return self._color_controller.get_selected_axis_id()
+
+    def get_active_color_method(self):
+        return self._color_controller.get_active_color_method()
+
+    def get_available_color_methods(self):
+        return self._color_controller.get_available_color_methods()
+
+    def get_available_category_sources(self):
+        return self._classification_controller.get_available_category_sources()
+
+    def get_active_category_source(self):
+        return self._classification_controller.get_active_source()
+        
+    def get_palette(self):
+        return self._color_controller.get_active_palette()
 
     def get_available_palettes(self):
-        return self._axis_color_controller.get_available_palettes()
+        return self._color_controller.get_available_palettes()
 
     def get_layout(self):
         self._update_layout()
