@@ -178,8 +178,11 @@ class GeneralModel(object):
         GeneralModel.LOGGER.info("Setting color method to: '%s'", new)
         self._active_view.update_color_method(new)
 
-    def new_table_action(self):
-        GeneralModel.LOGGER.info("NEW TABLE")
+    def new_point_label_visibility_action(self, new):
+        GeneralModel.LOGGER.info("Setting labels visibility to: '%s'", new)
+        self._active_view.update_point_label_visibility(new)
+
+    ######################################################################
 
     def get_axis_status(self):
         """Calls the get_axis_status method of the active view
@@ -262,3 +265,9 @@ class GeneralModel(object):
 
     def get_final_size(self):
         return self._active_view.get_final_size()
+
+    def get_point_label_visibility(self):
+        return self._active_view.get_point_label_visibility()
+
+    def get_point_label_options(self):
+        return self._active_view.get_point_label_options()

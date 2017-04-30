@@ -83,6 +83,7 @@ class GeneralViewMenu(object):
         self._new_view_name_input = self.init_view_name_input()
         self._category_source_dropdown = self.init_category_source_dropdown()
         self._color_method_radio = self.init_color_method_radio()
+        self._point_label_radio = self.init_point_label_radio()
 
         self._lateral_menu = column(GeneralViewMenu._widgetbox(self._file_select.widget),
                                     GeneralViewMenu._widgetbox(self._mapping_select.widget),
@@ -91,7 +92,9 @@ class GeneralViewMenu(object):
                                     GeneralViewMenu._widgetbox(self._number_of_clusters_input.widget),
                                     GeneralViewMenu._widgetbox(self._error_select.widget),
                                     GeneralViewMenu._widgetbox([self._initial_size_input.widget,
-                                                                self._final_size_input.widget])
+                                                                self._final_size_input.widget]),
+                                    GeneralViewMenu._get_title_div("Toggle point names:"),
+                                    GeneralViewMenu._widgetbox(self._point_label_radio.widget)
                                    , name='lateral_menu')
         self._upper_menu = row(GeneralViewMenu._widgetbox(self._classification_select.widget),
                                GeneralViewMenu._widgetbox(self._view_select.widget)
@@ -118,6 +121,7 @@ class GeneralViewMenu(object):
         self._number_of_clusters_input.trigger()
         self._initial_size_input.trigger()
         self._final_size_input.trigger()
+        self._point_label_radio.trigger()
         self._palette_select.trigger()
 
         self._axis_select.trigger()
@@ -137,6 +141,7 @@ class GeneralViewMenu(object):
         self._number_of_clusters_input.update_all()
         self._initial_size_input.update_all()
         self._final_size_input.update_all()
+        self._point_label_radio.update_all()
         self._palette_select.update_all()
 
         self._axis_select.update_all()
@@ -264,6 +269,14 @@ class GeneralViewMenu(object):
         update_value_callback = self._model.get_active_color_method
         update_options_callback = self._model.get_available_color_methods
         on_change_callback = self._model.new_color_method_action
+
+        return RadioWidget.init_radio_widget(update_value_callback, update_options_callback,
+                                             on_change_callback)
+
+    def init_point_label_radio(self):
+        update_value_callback = self._model.get_point_label_visibility
+        update_options_callback = self._model.get_point_label_options
+        on_change_callback = self._model.new_point_label_visibility_action
 
         return RadioWidget.init_radio_widget(update_value_callback, update_options_callback,
                                              on_change_callback)

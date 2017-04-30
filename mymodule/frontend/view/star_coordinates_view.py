@@ -37,6 +37,8 @@ class StarCoordinatesView(object):
     _CIRCLE_COLOR = "navy"
     _CIRCLE_ALPHA = 0.5
 
+    _POINT_LABEL_SIZE = '7pt'
+
     # The center is a constant across the application and should not be modified
     CENTER_POINT = (0, 0)
 
@@ -261,6 +263,13 @@ class StarCoordinatesView(object):
                             alpha=StarCoordinatesView._CIRCLE_ALPHA,
                             source=source_points)
 
+        self._labels_points = LabelSet(x='x', y='y', text='name', name='name', level='glyph',
+                                 x_offset=5, y_offset=5, text_font_size='0pt', source=source_points,
+                                 render_mode='canvas')
+
+        self._figure.add_layout(self._labels_points)        
+        #aaaa.visible=False
+
     def _execute_mapping(self):
         self._mapper_controller.execute_mapping()
         self._execute_error_recalc()
@@ -355,6 +364,12 @@ class StarCoordinatesView(object):
         # Tries to hide the axis element. If a change is made then execute mapping
         if self._axis_elements[axis_id].visible(is_visible):
             self._execute_mapping()
+
+    def update_point_label_visibility(self, new):
+        if new == 'ON':
+            self._labels_points.text_font_size = StarCoordinatesView._POINT_LABEL_SIZE
+        else:
+            self._labels_points.text_font_size = '0pt'
 
     def update_number_of_clusters(self, new):
         # Will update the cluster categories too
@@ -453,6 +468,14 @@ class StarCoordinatesView(object):
 
     def get_checkboxes_layout(self):
         return self._checkboxes.get_widget()
+
+    def get_point_label_visibility(self):
+        if self._labels_points.text_font_size == StarCoordinatesView._POINT_LABEL_SIZE:
+            return 'ON'
+        return 'OFF'
+
+    def get_point_label_options(self):
+        return ['ON', 'OFF']
 
     def set_checkboxes(self, checkboxes):
         self._checkboxes = checkboxes
