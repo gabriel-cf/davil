@@ -18,8 +18,8 @@ class DragToolView extends GestureTool.View
     canvas = @plot_view.canvas
     vx = canvas.sx_to_vx(e.bokeh.sx)
     vy = canvas.sy_to_vy(e.bokeh.sy)
-    x = frame.get('x_mappers').default.map_from_target(vx)
-    y = frame.get('y_mappers').default.map_from_target(vy)
+    x = frame.x_mappers['default'].map_from_target(vx)
+    y = frame.y_mappers['default'].map_from_target(vy)
     min_distance = null
     closer_source = null
     active_sources = @model.sources.data.active_sources
@@ -38,8 +38,8 @@ class DragToolView extends GestureTool.View
     canvas = @plot_view.canvas
     vx = canvas.sx_to_vx(e.bokeh.sx)
     vy = canvas.sy_to_vy(e.bokeh.sy)
-    x = frame.get('x_mappers').default.map_from_target(vx)
-    y = frame.get('y_mappers').default.map_from_target(vy)
+    x = frame.x_mappers['default'].map_from_target(vx)
+    y = frame.y_mappers['default'].map_from_target(vy)
     active_source.data.x1[0] = x
     active_source.data.y1[0] = y
 

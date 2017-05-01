@@ -117,7 +117,7 @@ class StarCoordinatesView(object):
                                                    self._normalization_controller)
         mapped_points_df = self._mapper_controller.execute_mapping()
         self._source_points = ColumnDataSource(mapped_points_df)
-        self._source_points.add(self._input_data_controller.get_element_names(), name='name')
+        self._source_points.add(self._input_data_controller.get_element_names(), name='name')        
         self._set_unique_source_points_names()
 
         self._mapper_controller.set_source_points(self._source_points)
@@ -131,6 +131,7 @@ class StarCoordinatesView(object):
                                                                    self._cluster_controller,
                                                                    self._normalization_controller,
                                                                    self._axis_sources)
+        self._source_points.add(self._classification_controller.get_categories(), name='category')
         self._error_controller = ErrorController(self._normalization_controller,
                                                  self._vector_controller,
                                                  self._mapper_controller,
@@ -207,6 +208,7 @@ class StarCoordinatesView(object):
         self._hover_tool = HoverTool()
         figure_.add_tools(self._hover_tool)
         self._set_hover_tooltips(['name', 'error'] + self._input_data_controller.get_nominal_labels() + self._input_data_controller.get_dimensional_labels())        
+
         return figure_
 
     def _set_hover_tooltips(self, attributes):
@@ -316,6 +318,7 @@ class StarCoordinatesView(object):
                             size='size',
                             color='color',
                             alpha=StarCoordinatesView._CIRCLE_ALPHA,
+                            legend='category',
                             source=source_points)
 
         self._labels_points = LabelSet(x='x', y='y', text='name', name='name', level='glyph',
@@ -340,6 +343,7 @@ class StarCoordinatesView(object):
             vectors_df = self._classification_controller.relocate_axis()
             self._vector_controller.update_vector_values(vectors_df)
             self._execute_mapping()
+        self._color_controller.update_legend()
 
     def _execute_error_recalc(self):
         self._error_controller.calculate_error()

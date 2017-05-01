@@ -90,12 +90,25 @@ class ColorController(object):
         #if not method_id in self.get_available_color_methods():
         #    raise ValueError("The selected coloring method '{}' is not known".format(method_id))
         self._active_method = method_id
+        self.update_legend()
 
     def update_selected_axis(self, axis_id):
         ColorController.LOGGER.debug("Updating axis ID to '%s'", axis_id)
         if not axis_id in self.get_available_axis_ids():
             raise ValueError("'{}' is not a valid axis".format(axis_id))
         self._selected_axis_id = axis_id
+
+    def update_legend(self):
+        ColorController.LOGGER.debug("Updating legends")
+        categories = []
+        if self.in_category_mode():
+            categories = self._classification_controller.get_categories()
+            
+        if categories is None or len(categories) == 0\
+           or len(categories) != len(self._source_points.data['name']):
+            categories = ['N/A' for i in xrange(0, len(self._source_points.data['name']))]
+
+        self._source_points.data['category'] = categories
 
     def get_available_axis_ids(self):
         return [ColorController.NONE_AXIS_ID]\
