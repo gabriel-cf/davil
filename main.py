@@ -5,5 +5,5 @@
 
 from mymodule.frontend.model.general_model import GeneralModel
 
-file_path = "main.csv"
+file_path = "cereal.csv"
 model = GeneralModel.star_coordinates_init("SC", file_path)

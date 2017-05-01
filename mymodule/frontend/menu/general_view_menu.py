@@ -10,6 +10,7 @@ from .widgets.slider_widget import SliderWidget
 from .widgets.radio_widget import RadioWidget
 from .widgets.dropdown_widget import DropdownWidget
 from .widgets.autocomplete_input_widget import AutocompleteInputWidget
+from .widgets.checkbox_group_widget import CheckboxGroupWidget
 
 class GeneralViewMenu(object):
     """Basic menu with the principal elements applicable to any view"""
@@ -68,7 +69,8 @@ class GeneralViewMenu(object):
         self._category_source_dropdown = self.init_category_source_dropdown()
         self._color_method_radio = self.init_color_method_radio()
         self._point_label_radio = self.init_point_label_radio()
-        self._item_search_input = self.init_item_search_input()        
+        self._item_search_input = self.init_item_search_input()
+        self._axis_checkboxes = self.init_axis_checkboxgroup_widget()
 
         self._left_menu = column(GeneralViewMenu._widgetbox(self._file_select.widget),
                                     GeneralViewMenu._widgetbox(self._mapping_select.widget),
@@ -91,7 +93,8 @@ class GeneralViewMenu(object):
                                         GeneralViewMenu._get_title_div("Selected category source:"),
                                         GeneralViewMenu._widgetbox(self._category_source_dropdown.widget),
                                         GeneralViewMenu._widgetbox(self._axis_select.widget),
-                                        GeneralViewMenu._widgetbox(self._palette_select.widget)                                        
+                                        GeneralViewMenu._widgetbox(self._palette_select.widget),
+                                        GeneralViewMenu._widgetbox(self._axis_checkboxes.widget)
                                   , name='upper_right_menu')
         self._outer_right_menu = column(GeneralViewMenu._widgetbox(self._item_search_input.widget)
                                  , name='right_menu')
@@ -111,17 +114,19 @@ class GeneralViewMenu(object):
         self._point_label_radio.trigger()
         self._palette_select.trigger()
 
+        self._axis_checkboxes.trigger()
         self._axis_select.trigger()
         self._category_source_dropdown.trigger()
         self._color_method_radio.trigger()
         self._classification_select.trigger()
 
-        self._item_search_input.trigger()
+        self._item_search_input.trigger()        
 
         self._view_select.update_options()
         self._view_select.update_value()
 
     def synchronize_menu(self):
+        self._axis_checkboxes.update_all()
         self._mapping_select.update_all()
         self._normalization_select.update_all()
         self._error_select.update_all()
@@ -136,11 +141,12 @@ class GeneralViewMenu(object):
         self._category_source_dropdown.update_all()
         self._color_method_radio.update_all()
         self._classification_select.update_all()
-        self._axis_select.update_all()
         self._view_select.update_all()
         self._item_search_input.update_all()
 
     def synchronize_on_file_change(self):
+        self._axis_checkboxes.update_all()
+
         self._mapping_select.trigger()
         self._normalization_select.trigger()
         self._error_select.trigger()
@@ -225,9 +231,9 @@ class GeneralViewMenu(object):
                                                update_options_callback, on_change_callback)
 
     def init_classification_select(self):
-        def new_classification(new):            
+        def new_classification(new):
             self._model.new_classification_action(new)
-            self._synchronize_sources()
+            self._category_source_dropdown.update_options()
         title = "Axis classification method:"
         update_value_callback = self._model.get_classification_algorithm
         update_options_callback = self._model.get_classification_methods
@@ -248,17 +254,17 @@ class GeneralViewMenu(object):
                                                update_options_callback, on_change_callback)
 
     def init_category_source_dropdown(self):
-        def new_category_source(new):
-            self._model.new_category_source_select_action(new)
-            self._synchronize_classification()            
-        #menu_items = self._get_category_source_menu_items()
-        #active_source = self._model.get_active_category_source()
-        #dropdown = Dropdown(label=active_source, menu=menu_items)
-        #dropdown.on_change('value', new_category_source)
-
         update_value_callback = self._model.get_active_category_source
-        update_options_callback = self._get_category_source_menu_items
-        on_change_callback = new_category_source
+        def update_options_callback():
+            menu_items = []
+            category_methods_mx = self._model.get_available_category_sources()
+            for method_subset in category_methods_mx:
+                menu_items += ([(method, method) for method in method_subset])
+                menu_items.append(None)
+            return menu_items
+        def on_change_callback(new):
+            self._model.new_category_source_select_action(new)
+            self._classification_select.update_options()
         return DropdownWidget.init_dropdown_widget(update_value_callback,
                                                    update_options_callback,
                                                    on_change_callback)
@@ -319,9 +325,20 @@ class GeneralViewMenu(object):
                                                                 update_options_callback,
                                                                 on_change_callback,
                                                                 title='Find your item:')
-        #AutocompleteInput(completions=self._model.get_select_point_options(), title='Find your item:')        
-        #self._item_search_input.on_change('value', lambda attr, old, new: self._model.new_select_point_action(new))
-        #pass
+
+    def init_axis_checkboxgroup_widget(self):
+        def on_change_callback(new):
+            self._model.new_axis_checkboxgroup_action(new)
+            self._category_source_dropdown.update_options()
+            self._classification_select.update_options()
+        update_value_callback = self._model.get_checkboxes_active_axis_ids
+        update_options_callback = self._model.get_axis_checkboxes_options
+
+        return CheckboxGroupWidget.init_checkbox_widget(update_value_callback,
+                                                        update_options_callback,
+                                                        on_change_callback)
+
+    ####################################################################################
 
     def get_upper_menu_layout(self):
         return self._upper_menu
@@ -333,20 +350,4 @@ class GeneralViewMenu(object):
         return self._outer_right_menu
 
     def get_left_menu_layout(self):
-        return self._left_menu
-
-    def _synchronize_classification(self):
-        """Synchronize classification methods with sources"""
-        self._classification_select.update_options()
-
-    def _synchronize_sources(self):
-        GeneralViewMenu.LOGGER.debug("Syncing sources")
-        self._category_source_dropdown.menu = self._get_category_source_menu_items()
-
-    def _get_category_source_menu_items(self):
-        menu_items = []
-        category_methods_mx = self._model.get_available_category_sources()
-        for method_subset in category_methods_mx:
-            menu_items += ([(method, method) for method in method_subset])
-            menu_items.append(None)
-        return menu_items
+        return self._left_menu    

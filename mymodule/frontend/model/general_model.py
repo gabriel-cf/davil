@@ -7,9 +7,6 @@ from bokeh.layouts import row, column
 from .handlers.view_menu_handler import ViewMenuHandler
 from ..view.star_coordinates_view import StarCoordinatesView
 from ..menu.general_view_menu import GeneralViewMenu
-from ..menu.checkboxgroup_widget import CheckboxGroupWidget
-from ..menu.table_generator import TableGenerator
-# Here we would set the rest of view imports
 
 class GeneralModel(object):
     """docstring for GeneralModel"""
@@ -37,10 +34,6 @@ class GeneralModel(object):
            [active=True]: set this view as the new active view
         """
         view = StarCoordinatesView(alias, file)
-        checkboxgroup = CheckboxGroupWidget(view)
-        table = TableGenerator.init_table(view)
-        view.set_checkboxes(checkboxgroup)
-        view.set_table(table)
         self._view_menu_handler.add_view(alias, view)
         if active:
             self.set_active_view(alias)
@@ -75,7 +68,6 @@ class GeneralModel(object):
             self._active_root = layout
             self._doc.add_root(layout)
         else:
-            self._update_checkboxes_layout(self._active_view)
             self._update_view_layout(self._active_view)            
 
     def set_active_view(self, view_alias):
@@ -91,18 +83,13 @@ class GeneralModel(object):
     def _update_view_layout(self, new_view):
         layout = curdoc().get_model_by_name('view')
         layout.children = new_view.get_layout().children
-
-    def _update_checkboxes_layout(self, new_view):
-        layout = curdoc().get_model_by_name('checkboxes')
-        layout.children = new_view.get_checkboxes_layout().children
   
     def _get_layout(self):
         return row(self._active_menu.get_left_menu_layout(),
                    column(self._active_menu.get_upper_menu_layout(),
                           self._active_view.get_layout()),
                    column(row(self._active_menu.get_upper_right_menu_layout(),
-                              self._active_menu.get_outer_right_menu_layout()),
-                          row(self._active_view.get_checkboxes_layout())),
+                              self._active_menu.get_outer_right_menu_layout())),
                    name='main_layout')
 
     def new_add_view_action(self, name=None):
@@ -191,6 +178,10 @@ class GeneralModel(object):
         GeneralModel.LOGGER.info("Selecting point '%s'", new)
         self._active_view.update_selected_point(new)
 
+    def new_axis_checkboxgroup_action(self, new):
+        GeneralModel.LOGGER.info("Updating axis with pair '%s'", new)
+        self._active_view.update_axis_visibility(new)
+
     ######################################################################
 
     def get_axis_status(self):
@@ -241,6 +232,15 @@ class GeneralModel(object):
 
     def get_available_axis_ids(self):
         return self._active_view.get_available_axis_ids()
+
+    def get_checkboxes_active_axis_ids(self):
+        return self._active_view.get_checkboxes_active_axis_ids()
+
+    def get_axis_checkboxes_options(self):
+        return self._active_view.get_axis_checkboxes_options()
+
+    def get_checkboxes_axis_ids(self):
+        return self._active_view.get_checkboxes_axis_ids()
 
     def get_available_palettes(self):
         return self._active_view.get_available_palettes()

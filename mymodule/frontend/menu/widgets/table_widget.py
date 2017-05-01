@@ -2,6 +2,8 @@
     Table generator
 """
 
+# TODO - Extend from AbstractWidget
+
 from bokeh.models.widgets import DataTable, TableColumn
 from bokeh.models import ColumnDataSource
 

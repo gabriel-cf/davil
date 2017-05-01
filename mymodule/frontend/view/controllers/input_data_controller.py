@@ -123,3 +123,6 @@ class InputDataController(object):
 
     def is_dimensional_label(self, label):
         return label in self.get_dimensional_labels()
+
+    def is_dimensional_and_active(self, source):
+        return self.is_dimensional_label(source) and self.is_label_active(source)

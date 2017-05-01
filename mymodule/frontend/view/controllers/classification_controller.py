@@ -14,7 +14,7 @@ class ClassificationController(AbstractAlgorithmController):
     LOGGER = logging.getLogger(__name__)
 
     CLUSTER_SOURCE_ID = 'Clustering'
-    NONE_SOURCE_ID = 'None'    
+    NONE_SOURCE_ID = 'None'
 
     def __init__(self, input_data_controller, cluster_controller, normalization_controller,
                  axis_sources, algorithm_id=None):
@@ -77,7 +77,8 @@ class ClassificationController(AbstractAlgorithmController):
         def filter_sources(source_l):
             def lda_rule(source):
                 if self._is_LDA_active():
-                    return self._get_number_of_categories(source) > 2
+                    return self._get_number_of_categories(source) > 2\
+                           and not self._input_data_controller.is_dimensional_and_active(source)
                 return True
             return [source for source in source_l if lda_rule(source)]
             
@@ -100,7 +101,9 @@ class ClassificationController(AbstractAlgorithmController):
                                               "'%s' and number of categories '%s'",
                                               self.get_active_source(), number_of_categories)
         available_methods = self.get_all_options()
-        if number_of_categories < 3 and LDA_ID in available_methods:
+        if (self._input_data_controller.is_dimensional_and_active(self._active_source)\
+           or number_of_categories < 3)\
+           and LDA_ID in available_methods:
             available_methods.remove(LDA_ID)
 
         ClassificationController.LOGGER.debug("Returning available methods '%s'",
@@ -160,3 +163,5 @@ class ClassificationController(AbstractAlgorithmController):
     def _get_number_of_categories(self, source):
         n_categories = len(set(self.get_categories(source=source)))
         return n_categories
+
+

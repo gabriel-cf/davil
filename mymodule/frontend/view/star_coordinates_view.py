@@ -339,11 +339,11 @@ class StarCoordinatesView(object):
             self._execute_classification()            
 
     def _execute_classification(self):
+        self._color_controller.update_legend()
         if self._classification_controller.in_active_mode():
             vectors_df = self._classification_controller.relocate_axis()
             self._vector_controller.update_vector_values(vectors_df)
-            self._execute_mapping()
-        self._color_controller.update_legend()
+            self._execute_mapping()        
 
     def _execute_error_recalc(self):
         self._error_controller.calculate_error()
@@ -417,7 +417,8 @@ class StarCoordinatesView(object):
         if self._color_controller.in_axis_mode():
             self._color_controller.update_colors()
 
-    def update_axis_visibility(self, axis_id, is_visible):
+    def update_axis_visibility(self, new):
+        axis_id, is_visible = new
         if not axis_id in self._axis_elements:
             ValueError("Could not update the visibility of the axis '{}'\
                         because it is not a valid axis".format(axis_id))
@@ -510,6 +511,12 @@ class StarCoordinatesView(object):
 
     def get_available_axis_ids(self):
         return self._color_controller.get_available_axis_ids()
+
+    def get_axis_checkboxes_options(self):
+        return self._input_data_controller.get_dimensional_labels()
+
+    def get_checkboxes_active_axis_ids(self):
+        return self._input_data_controller.get_dimensional_labels(filtered=True)
 
     def get_selected_axis_id(self):
         return self._color_controller.get_selected_axis_id()
