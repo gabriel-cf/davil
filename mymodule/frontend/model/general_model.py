@@ -97,11 +97,12 @@ class GeneralModel(object):
         layout.children = new_view.get_checkboxes_layout().children
   
     def _get_layout(self):
-        return row(self._active_menu.get_lateral_menu_layout(),
+        return row(self._active_menu.get_left_menu_layout(),
                    column(self._active_menu.get_upper_menu_layout(),
                           self._active_view.get_layout()),
-                   column(self._active_menu.get_upper_right_menu_layout(),
-                          self._active_view.get_checkboxes_layout()), 
+                   column(row(self._active_menu.get_upper_right_menu_layout(),
+                              self._active_menu.get_outer_right_menu_layout()),
+                          row(self._active_view.get_checkboxes_layout())),
                    name='main_layout')
 
     def new_add_view_action(self, name=None):
@@ -185,6 +186,10 @@ class GeneralModel(object):
     def new_point_label_visibility_action(self, new):
         GeneralModel.LOGGER.info("Setting labels visibility to: '%s'", new)
         self._active_view.update_point_label_visibility(new)
+
+    def new_select_point_action(self, new):
+        GeneralModel.LOGGER.info("Selecting point '%s'", new)
+        self._active_view.update_selected_point(new)
 
     ######################################################################
 
@@ -275,3 +280,9 @@ class GeneralModel(object):
 
     def get_point_label_options(self):
         return self._active_view.get_point_label_options()
+
+    def get_select_point_options(self):
+        return self._active_view.get_point_values()
+
+    def get_select_point_value(self):
+        return self._active_view.get_selected_point()

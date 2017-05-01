@@ -13,6 +13,10 @@ class ColorController(object):
        available when an axis is selected
     """
     LOGGER = logging.getLogger(__name__)
+    
+    POINT_SELECTED_COLOR = 'red'
+    POINT_UNSELECTED_COLOR = '#d3d3d3'
+
     INFERNO_PALETTE_ID = 'inferno'
     GREY_PALETTE_ID = 'grey'
     VIRIDIS_PALETTE_ID = 'viridis'
@@ -37,7 +41,7 @@ class ColorController(object):
     AXIS_METHOD_ID = 'Axis'
     NONE_METHOD_ID = 'None'
     NONE_AXIS_ID = 'None'
-    DEFAULT_METHOD_ID = NONE_METHOD_ID
+    DEFAULT_METHOD_ID = NONE_METHOD_ID    
 
     @staticmethod
     def _get_axis_palette_dict():
@@ -60,6 +64,9 @@ class ColorController(object):
         self._selected_axis_id = ColorController.NONE_AXIS_ID
         self.update_palette(palette_id)
         self._active_method = ColorController.DEFAULT_METHOD_ID
+        # Prevents any coloring when a user has selected a valid point
+        # Note that the name must be unique
+        self._selected_point_name = None
 
     def update_palette(self, palette_id):
         if not palette_id in self._palette_dict:
@@ -69,6 +76,9 @@ class ColorController(object):
 
     def update_colors(self):        
         """Update points' color accoring to selected method and axis or categories"""
+        if self._selected_point_name:
+            ColorController.LOGGER.warn("Cannot update colors while a point is selected")
+            return
         if self.in_category_mode():
             self._color_points_by_categories()
         elif self.in_axis_mode():
@@ -107,6 +117,23 @@ class ColorController(object):
         return [ColorController.AXIS_METHOD_ID,
                 ColorController.CATEGORY_METHOD_ID,
                 ColorController.NONE_METHOD_ID]
+
+    def select_point(self, point_name):
+        self._selected_point_name = point_name
+        self._update_colors_by_point(point_name)
+
+    def unselect_point(self):
+        self._selected_point_name = None
+        self.update_colors()
+
+    def get_selected_point(self):
+        return self._selected_point_name
+
+    def _update_colors_by_point(self, point_name):        
+        self._source_points.data['color'] = [ColorController.POINT_UNSELECTED_COLOR\
+                                             if name != point_name\
+                                             else ColorController.POINT_SELECTED_COLOR\
+                                             for name in self._source_points.data['name']]
 
     def in_axis_mode(self):
         return self._active_method == ColorController.AXIS_METHOD_ID

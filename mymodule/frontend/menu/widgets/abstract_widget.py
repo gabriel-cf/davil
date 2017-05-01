@@ -59,7 +59,9 @@ class AbstractWidget(object):
         """
         if callback:
             try:
-                return callback()
+                value = callback()
+                if not value is None: 
+                    return value
             except Exception as e:
                 cls.LOGGER.warn("Could not determine value, assigning None")
                 cls.LOGGER.debug(traceback.format_exc())

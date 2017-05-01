@@ -3,7 +3,7 @@
     http://localhost:5006/starcoordinatesview
 """
 from os import path
-from flask import Flask, redirect, render_template, request, flash
+from flask import Flask, redirect, render_template, request, flash, url_for
 from bokeh.application import Application
 from bokeh.application.handlers import FunctionHandler
 from bokeh.embed import autoload_server
@@ -29,6 +29,7 @@ bokeh_app = Application(FunctionHandler(modify_doc))
 io_loop = IOLoop.current()
 
 server = Server({'/datavisualization': bokeh_app}, io_loop=io_loop, allow_websocket_origin=["localhost:5000"])
+# Might need if we upgrade to 0.12.4
 #server.start()
 
 
@@ -39,9 +40,7 @@ def bokeh_server():
                                   url="http://localhost:5006")
 
     file_upload = render_template('uploader.html')
-    #file_upload = "<html> <body> <form action=\"http://localhost:5000/uploader\" method=\"POST\" enctype=\"multipart/form-data\"> <input type=\"file\" name=\"file\"/> <input type=\"submit\"/> </form> </body></html>"
-
-    html = "<head><body><div>{}</div>{}</body></head>".format(file_upload, bokeh_embed)
+    html = "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"/static/bokeh_style.css\"><body><div>{}</div>{}</body></head>".format(file_upload, bokeh_embed)
 
     return html
 

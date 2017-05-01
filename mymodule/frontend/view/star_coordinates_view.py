@@ -118,6 +118,7 @@ class StarCoordinatesView(object):
         mapped_points_df = self._mapper_controller.execute_mapping()
         self._source_points = ColumnDataSource(mapped_points_df)
         self._source_points.add(self._input_data_controller.get_element_names(), name='name')
+        self._set_unique_source_points_names()
 
         self._mapper_controller.set_source_points(self._source_points)
         # We assign to the mapper controller the animator
@@ -161,6 +162,14 @@ class StarCoordinatesView(object):
                 StarCoordinatesView\
                 ._set_source_attribute(axis_source, label,\
                                        [StarCoordinatesView._N_A for i in values])
+        for label in self._input_data_controller.get_dimensional_labels():
+            values = self._input_data_controller.get_column_from_raw_input(label)
+            StarCoordinatesView._set_source_attribute(self._source_points, label, values)
+            #Additionally, set 'N/A' to the axis
+            for axis_source in self._axis_sources:
+                StarCoordinatesView\
+                ._set_source_attribute(axis_source, label,\
+                                       [StarCoordinatesView._N_A for i in values])
 
     def _init_square_mapper(self):
         def remap(attr, old, new):
@@ -197,7 +206,7 @@ class StarCoordinatesView(object):
         figure_.toolbar.active_scroll = wheel_zoom_tool
         self._hover_tool = HoverTool()
         figure_.add_tools(self._hover_tool)
-        self._set_hover_tooltips(['name', 'error'] + self._input_data_controller.get_nominal_labels())        
+        self._set_hover_tooltips(['name', 'error'] + self._input_data_controller.get_nominal_labels() + self._input_data_controller.get_dimensional_labels())        
         return figure_
 
     def _set_hover_tooltips(self, attributes):
@@ -280,6 +289,24 @@ class StarCoordinatesView(object):
 
         return sources_list
 
+    def _set_unique_source_points_names(self):
+        """Due to limitations when searching for a point, we need to guarantee
+           that all names are unique. Second repeated name will be name_2, third
+           name_3 and so on so forth.
+        """
+        new_names = []
+        counter_dict = dict()
+        for i in xrange(0, len(self._source_points.data['name'])):
+            name = self._source_points.data['name'][i]
+            if name in counter_dict:
+                new_name = "{}_{}".format(name, counter_dict[name])
+                counter_dict[name] += 1
+                name = new_name
+            else:
+                counter_dict[name] = 2 #2 because repeated one should display as name_2  
+            new_names.append(name)
+        self._source_points.data['name'] = new_names
+
     def _init_points(self, source_points):
         """Will draw the circles representing the dots on the plot
            source_points: (ColumnDataSource) x, y, size and color for each point
@@ -324,6 +351,9 @@ class StarCoordinatesView(object):
 
     def _update_layout(self):
         self._layout = row(self._figure, name='view')
+
+    def _is_valid_point(self, name):
+        return name in self._source_points.data['name']
 
     # PUBLIC methods available to the model
     def redraw(self):
@@ -407,7 +437,16 @@ class StarCoordinatesView(object):
         self._point_size_controller.set_initial_size(new)
 
     def update_final_size_input(self, new):
-        self._point_size_controller.set_final_size(new)    
+        self._point_size_controller.set_final_size(new)
+
+    def update_selected_point(self, new):
+        """Updates the color based on the point if valid
+           if not, returns to previous color settings  
+        """
+        if self._is_valid_point(new):
+            self._color_controller.select_point(new)
+        else:
+            self._color_controller.unselect_point()
 
     # GET methods
     def get_alias(self):
@@ -488,6 +527,13 @@ class StarCoordinatesView(object):
 
     def get_available_palettes(self):
         return self._color_controller.get_available_palettes()
+
+    def get_point_values(self):
+        # TODO - Move to Point Controller when implemented
+        return [name for name in self._source_points.data['name']]
+
+    def get_selected_point(self):
+        return self._color_controller.get_selected_point()
 
     def get_layout(self):
         self._update_layout()

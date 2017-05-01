@@ -4,11 +4,12 @@
 
 import logging
 from bokeh.layouts import widgetbox, row, column
-from bokeh.models.widgets import Select, Button, TextInput, Slider, Dropdown, RadioButtonGroup, Div
+from bokeh.models.widgets import Button, TextInput, Div
 from .widgets.select_widget import SelectWidget
 from .widgets.slider_widget import SliderWidget
 from .widgets.radio_widget import RadioWidget
 from .widgets.dropdown_widget import DropdownWidget
+from .widgets.autocomplete_input_widget import AutocompleteInputWidget
 
 class GeneralViewMenu(object):
     """Basic menu with the principal elements applicable to any view"""
@@ -24,23 +25,6 @@ class GeneralViewMenu(object):
     @staticmethod
     def _widgetbox(widgets_list, width=WIDGETBOX_WIDTH):
         return widgetbox(widgets_list, responsive=True)
-
-    @staticmethod
-    def _init_select_widget(title, value, options, on_change_callback):
-        """Generic function that creates a Select widget
-           title: (String) self descriptive
-           value: (String) default selected option
-           options: (String[]) self descriptive
-           on_change_callback: (Func(String) this is the code to be executed
-                                when a new selection is made)
-        """
-        select = Select(title=title,
-                        value=value,
-                        options=GeneralViewMenu._sort_options(options))
-        # We pass to the widget an anonymous function with the required parameters
-        # for bokeh's on_change method and only the 'new' selected to our function
-        select.on_change('value', lambda attr, old, new: on_change_callback(new))
-        return select
 
     @staticmethod
     def _trigger(widget):
@@ -84,8 +68,9 @@ class GeneralViewMenu(object):
         self._category_source_dropdown = self.init_category_source_dropdown()
         self._color_method_radio = self.init_color_method_radio()
         self._point_label_radio = self.init_point_label_radio()
+        self._item_search_input = self.init_item_search_input()        
 
-        self._lateral_menu = column(GeneralViewMenu._widgetbox(self._file_select.widget),
+        self._left_menu = column(GeneralViewMenu._widgetbox(self._file_select.widget),
                                     GeneralViewMenu._widgetbox(self._mapping_select.widget),
                                     GeneralViewMenu._widgetbox(self._normalization_select.widget),
                                     GeneralViewMenu._widgetbox(self._clustering_select.widget),
@@ -97,7 +82,7 @@ class GeneralViewMenu(object):
                                     GeneralViewMenu._widgetbox(self._color_method_radio.widget),
                                     GeneralViewMenu._get_title_div("Toggle point names:"),
                                     GeneralViewMenu._widgetbox(self._point_label_radio.widget)
-                                   , name='lateral_menu')
+                                   , name='left_menu')
         self._upper_menu = row(GeneralViewMenu._widgetbox(self._classification_select.widget),
                                GeneralViewMenu._widgetbox(self._view_select.widget)
                                , name='upper_menu')
@@ -106,8 +91,10 @@ class GeneralViewMenu(object):
                                         GeneralViewMenu._get_title_div("Selected category source:"),
                                         GeneralViewMenu._widgetbox(self._category_source_dropdown.widget),
                                         GeneralViewMenu._widgetbox(self._axis_select.widget),
-                                        GeneralViewMenu._widgetbox(self._palette_select.widget)
+                                        GeneralViewMenu._widgetbox(self._palette_select.widget)                                        
                                   , name='upper_right_menu')
+        self._outer_right_menu = column(GeneralViewMenu._widgetbox(self._item_search_input.widget)
+                                 , name='right_menu')
 
     def synchronize_view(self):
         """Every widget will execute their callback with their current values
@@ -129,6 +116,8 @@ class GeneralViewMenu(object):
         self._color_method_radio.trigger()
         self._classification_select.trigger()
 
+        self._item_search_input.trigger()
+
         self._view_select.update_options()
         self._view_select.update_value()
 
@@ -148,8 +137,8 @@ class GeneralViewMenu(object):
         self._color_method_radio.update_all()
         self._classification_select.update_all()
         self._axis_select.update_all()
-        self._view_select.update_options()
-        self._view_select.update_value()
+        self._view_select.update_all()
+        self._item_search_input.update_all()
 
     def synchronize_on_file_change(self):
         self._mapping_select.trigger()
@@ -163,6 +152,8 @@ class GeneralViewMenu(object):
         self._palette_select.trigger()
         self._color_method_radio.trigger()
 
+        self._item_search_input.update_all()
+        self._classification_select.update_all()
         self._axis_select.update_all()
         self._category_source_dropdown.update_all()
 
@@ -320,14 +311,29 @@ class GeneralViewMenu(object):
                                value=value)
         return text_input
 
+    def init_item_search_input(self):
+        update_value_callback = self._model.get_select_point_value
+        update_options_callback = self._model.get_select_point_options
+        on_change_callback = self._model.new_select_point_action
+        return AutocompleteInputWidget.init_autocomplete_widget(update_value_callback,
+                                                                update_options_callback,
+                                                                on_change_callback,
+                                                                title='Find your item:')
+        #AutocompleteInput(completions=self._model.get_select_point_options(), title='Find your item:')        
+        #self._item_search_input.on_change('value', lambda attr, old, new: self._model.new_select_point_action(new))
+        #pass
+
     def get_upper_menu_layout(self):
         return self._upper_menu
 
     def get_upper_right_menu_layout(self):
         return self._upper_right_menu
 
-    def get_lateral_menu_layout(self):
-        return self._lateral_menu
+    def get_outer_right_menu_layout(self):
+        return self._outer_right_menu
+
+    def get_left_menu_layout(self):
+        return self._left_menu
 
     def _synchronize_classification(self):
         """Synchronize classification methods with sources"""
