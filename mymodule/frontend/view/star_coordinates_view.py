@@ -39,8 +39,14 @@ class StarCoordinatesView(object):
 
     _POINT_LABEL_SIZE = '7pt'
 
+    _N_A = 'N/A'
+
     # The center is a constant across the application and should not be modified
     CENTER_POINT = (0, 0)
+
+    @staticmethod
+    def _set_source_attribute(source, attr_name, attr_list):        
+        source.add(attr_list, name=attr_name)
 
     """A view with all the necessary logic for displaying it on bokeh"""
     def __init__(self, alias, filename=None, random_weights=False, width=600, height=600):
@@ -58,6 +64,7 @@ class StarCoordinatesView(object):
         # Figure elements
         self._figure = None
         self._layout = None
+        self._hover_tool = None
         self._drag_tool_sources = None
         self._axis_sources = []
         self._axis_elements = dict()
@@ -111,6 +118,7 @@ class StarCoordinatesView(object):
         mapped_points_df = self._mapper_controller.execute_mapping()
         self._source_points = ColumnDataSource(mapped_points_df)
         self._source_points.add(self._input_data_controller.get_element_names(), name='name')
+
         self._mapper_controller.set_source_points(self._source_points)
         # We assign to the mapper controller the animator
         mapping_animator = MappingAnimator(self._source_points)
@@ -136,9 +144,23 @@ class StarCoordinatesView(object):
                                                  self._normalization_controller,
                                                  self._classification_controller,
                                                  self._source_points)
-        self._color_controller.update_colors()
+        self._color_controller.update_colors()  
+
+        # Add the nominal columns to the source_points
+        self._set_nominal_values()
+
         self._init_points(self._source_points)
         self._layout = column(self._figure)
+
+    def _set_nominal_values(self):
+        for label in self._input_data_controller.get_nominal_labels():
+            values = self._input_data_controller.get_column_from_raw_input(label)
+            StarCoordinatesView._set_source_attribute(self._source_points, label, values)
+            #Additionally, set 'N/A' to the axis
+            for axis_source in self._axis_sources:
+                StarCoordinatesView\
+                ._set_source_attribute(axis_source, label,\
+                                       [StarCoordinatesView._N_A for i in values])
 
     def _init_square_mapper(self):
         def remap(attr, old, new):
@@ -173,13 +195,19 @@ class StarCoordinatesView(object):
         figure_ = figure(tools=[wheel_zoom_tool, pan_tool, resize_tool, save_tool, reset_tool],
                          width=self._width, height=self._height)
         figure_.toolbar.active_scroll = wheel_zoom_tool
-        hover = HoverTool(
-            tooltips=[
-                ("name", "@name"),
-                ("error", "@error")
-            ])
-        figure_.add_tools(hover)
+        self._hover_tool = HoverTool()
+        figure_.add_tools(self._hover_tool)
+        self._set_hover_tooltips(['name', 'error'] + self._input_data_controller.get_nominal_labels())        
         return figure_
+
+    def _set_hover_tooltips(self, attributes):
+        if not self._hover_tool.tooltips:
+            raise ValueError('Cannot set tooltips to non-existing hover tool')
+        custom_tooltips = []        
+        for attribute in attributes:
+            custom_tooltips.append((str(attribute), "@{}".format(attribute)))
+        
+        self._hover_tool.tooltips = custom_tooltips
 
     def _generate_drag_tool_sources(self, axis_sources):
         """Create a source of sources. This Data Structure will allow the Drag Tool
@@ -267,8 +295,7 @@ class StarCoordinatesView(object):
                                  x_offset=5, y_offset=5, text_font_size='0pt', source=source_points,
                                  render_mode='canvas')
 
-        self._figure.add_layout(self._labels_points)        
-        #aaaa.visible=False
+        self._figure.add_layout(self._labels_points)
 
     def _execute_mapping(self):
         self._mapper_controller.execute_mapping()
