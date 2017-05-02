@@ -76,7 +76,7 @@ class PointSizeController(object):
            We cannot use the error of the source because internally Bokeh turns
            it into an array.
         """
-        point_error_s = self._error_controller.get_last_point_error()
+        point_error_s = self._error_controller.get_last_point_error(normalized=True)
         PointSizeController.LOGGER.debug("Updating sizes: %s-%s",
                                          self._initial_size, self._final_size)
         self._m, self._c = self._calculate_line_equation(self._initial_size, self._final_size)

@@ -25,6 +25,8 @@ class ErrorController(AbstractAlgorithmController):
         self._axis_sources = axis_sources
         self._last_axis_error_s = None
         self._last_point_error_s = None
+        self._last_axis_error_s_norm = None
+        self._last_point_error_s_norm = None
 
     def calculate_error(self):
         """values_df_norm: (pandas.DataFrame) product X dimension_value
@@ -41,10 +43,10 @@ class ErrorController(AbstractAlgorithmController):
                                                        vectors_df,
                                                        mapped_points_df)
         # Normalize the error values at DataFrame level (i.e. comparing all matrix values)
-        axis_error_df = self._normalization_controller\
-                        .normalize_feature_scaling(axis_error_df, df_level=True)
-        point_error_df = self._normalization_controller\
-                        .normalize_feature_scaling(point_error_df, df_level=True)
+        self._last_axis_error_s_norm = self._normalization_controller\
+                                        .normalize_feature_scaling(axis_error_df, df_level=True)[0]
+        self._last_point_error_s_norm = self._normalization_controller\
+                                        .normalize_feature_scaling(point_error_df, df_level=True)[0]
 
         point_error_s = point_error_df[0]
         axis_error_s = axis_error_df[0]
@@ -69,16 +71,24 @@ class ErrorController(AbstractAlgorithmController):
         self._last_point_error_s = point_error_s
         return axis_error_s, point_error_s
 
-    def get_last_axis_error(self):
+    def get_last_axis_error(self, normalized=False):
         """Returns (pandas.Series) last calculated error value for each axis"""
-        if self._last_axis_error_s is None or self._last_axis_error_s.empty:
+        last_axis_error = self._last_axis_error_s
+        if normalized:
+            last_axis_error = self._last_axis_error_s_norm
+
+        if last_axis_error is None or last_axis_error.empty:
             ErrorController.LOGGER.warn("Attempted to retrieve the latest axis error \
                    calculation but there is none")
-        return self._last_axis_error_s
+        return last_axis_error
 
-    def get_last_point_error(self):
+    def get_last_point_error(self, normalized=False):
         """Returns (pandas.Series) last calculated error value for each point"""
-        if self._last_point_error_s is None or self._last_point_error_s.empty:
+        last_point_error = self._last_axis_error_s
+        if normalized:
+            last_point_error = self._last_point_error_s_norm
+
+        if last_point_error is None or last_point_error.empty:
             ErrorController.LOGGER.warn("Attempted to retrieve the latest point error \
                    calculation but there is none")
-        return self._last_point_error_s
+        return last_point_error
