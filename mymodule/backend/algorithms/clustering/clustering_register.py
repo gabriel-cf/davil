@@ -11,7 +11,7 @@ class ClusteringRegister(object):
         Class that registers the available algorithms
     """
     LOGGER = logging.getLogger(__name__)
-    # dictionary with the shape {Algorithm_id, Algorithm} 
+    # dictionary with the shape {Algorithm_id, Algorithm}
     # holding all registered algorithms
     ALGORITHM_DIC = dict({
         DUMMY_ID: dummy,
