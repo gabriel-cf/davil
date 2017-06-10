@@ -1,12 +1,12 @@
 """
-    Generic algorithm controller
+    RadioWidget
 """
 import logging
 from bokeh.models.widgets import RadioButtonGroup
 from .abstract_widget import AbstractWidget
 
 class RadioWidget(AbstractWidget):
-    """Select class holding the common methods for widgets
+    """Radio class holding the common methods for widgets
     """
     LOGGER = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class RadioWidget(AbstractWidget):
         """
         def wrapped_on_change_callback(attr, old, new):
             """Bokeh on_change callback wrapper. The new value holds the active
-               index of the new selected option and needs to be translated
+               index of the newly selected option and needs to be translated
             """
             option = self.widget.labels[new]
             callback(option)

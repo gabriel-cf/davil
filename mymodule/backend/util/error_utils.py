@@ -4,14 +4,14 @@
 
 class ErrorUtils(object):
     """Class holding common utils for error algorithms"""
-    
+
     @staticmethod
     def get_general_error_df(values_df, vectors_df, mapped_points_df):
-        """ 
-            values_df: (pandas.DataFrame) product X dimension_value
-            vectors_df: (pandas.DataFrame) dimension X v_x,v_y columns
-            mapped_points_df: (pandas.DataFrame) product X x,y columns
-            Returns: (pandas.DataFrame) product X x,y columns where each cell contains
+        """
+            values_df: (pandas.DataFrame) product_id X dimensional_value
+            vectors_df: (pandas.DataFrame) dimension X (v_x,v_y) columns
+            mapped_points_df: (pandas.DataFrame) product_id X (x,y) columns
+            Returns: (pandas.DataFrame) product_id X (x,y) columns where each cell contains
             the absolute error value for that point on that coordenate component
         """
         def get_column_error(column, vectors_df, mapped_points_df_t):

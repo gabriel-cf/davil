@@ -7,6 +7,8 @@ import numpy as np
 def calculate_line_equation(x0x1, y0y1):
     """Being the equation of the line: y = mx + c where m and c are
        constants, this method will return the (int) 'm' and 'c' constants
+       x0x1: (Tuple(int, int)): holding the point X coordinates
+       y0y1: (Tuple(int, int)): holding the point Y coordinates
        Returns:
        'm': (int) calculated p constant for each point
        'c': (int) calculated c constant for each point

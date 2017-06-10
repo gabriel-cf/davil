@@ -10,8 +10,6 @@ FEATURE_SCALING_ID = "Feature Scaling"
 def feature_scaling(df, df_level=False):
     """Feature scaling normalization
        df: (pandas.DataFrame) dataframe with the values to normalize
-       [maximum=None]: (Number) Maximum value
-       [minimum=None]: (Number) Minimum value
        [df_level=False]: (Boolean) Whether values maximum/minimum
        should be taken from dataframe or column level
     """

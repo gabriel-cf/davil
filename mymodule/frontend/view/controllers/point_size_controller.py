@@ -5,7 +5,7 @@ import logging
 from ....backend.util.line_equation import calculate_line_equation
 
 class PointSizeController(object):
-    """Object capable of setting sizes to points
+    """Controller capable of setting sizes to points
        If there is an error value for the point, it will scale the size
        of the point between the size set for the minimum error and the size
        set for the maximum error, using a line function shaped by the points
@@ -48,27 +48,25 @@ class PointSizeController(object):
 
     def set_single_size(self, new_size):
         """Sets a common size for all the source points
-           new_size: (int) self explanatory
+           new_size: (int)
         """
         new_size = PointSizeController._get_valid_size(new_size)
         self._source.data['size'] = [new_size for i in xrange(0, len(self._source.data['x']))]
 
     def set_initial_size(self, new_size):
-        """new_size: (int >= MIN_SIZE) self explanatory"""        
+        """new_size: (int >= MIN_SIZE)"""
         self._initial_size = PointSizeController._get_valid_size(new_size)
         self.update_sizes()
 
     def set_final_size(self, new_size):
-        """new_size: (int >= MIN_SIZE) self explanatory"""
+        """new_size: (int >= MIN_SIZE)"""
         self._final_size = PointSizeController._get_valid_size(new_size)
         self.update_sizes()
 
     def get_initial_size(self):
-        """Self explanatory"""
         return self._initial_size
 
     def get_final_size(self):
-        """Self explanatory"""
         return self._final_size
 
     def update_sizes(self):

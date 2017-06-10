@@ -1,5 +1,5 @@
 """
-    Generic algorithm controller
+    SliderWidget
 """
 import logging
 from bokeh.models.widgets import Slider
@@ -22,7 +22,7 @@ class SliderWidget(AbstractWidget):
         return SliderWidget(slider, update_value_callback)
 
     def __init__(self, widget, update_value_callback):
-        super(SliderWidget, self).__init__(widget)        
+        super(SliderWidget, self).__init__(widget)
         self._update_value_callback = update_value_callback
 
     def trigger(self):

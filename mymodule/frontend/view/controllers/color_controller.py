@@ -13,7 +13,7 @@ class ColorController(object):
        available when an axis is selected
     """
     LOGGER = logging.getLogger(__name__)
-    
+
     POINT_SELECTED_COLOR = 'red'
     POINT_UNSELECTED_COLOR = '#d3d3d3'
 
@@ -26,8 +26,7 @@ class ColorController(object):
     INFERNO_PALETTE = inferno(256)
     VIRIDIS_PALETTE = viridis(256)
     # 23 RGB colors from Red to Pink for Clustering categorization
-    # This palette is not for axis and should not show up in the list
-    # of available palettes on the web application
+    # Keep this list as reference for testing purposes
     #CATEGORY_PALETTE = ['#ff0000', '#ff4000', '#ff8000', '#ffbf00',
     #                    '#ffff00', '#bfff00', '#80ff00', '#40ff00',
     #                    '#00ff00', '#00ff40', '#00ff80', '#00ffbf',
@@ -41,7 +40,7 @@ class ColorController(object):
     AXIS_METHOD_ID = 'Axis'
     NONE_METHOD_ID = 'None'
     NONE_AXIS_ID = 'None'
-    DEFAULT_METHOD_ID = NONE_METHOD_ID    
+    DEFAULT_METHOD_ID = NONE_METHOD_ID
 
     @staticmethod
     def _get_axis_palette_dict():
@@ -53,7 +52,7 @@ class ColorController(object):
             ColorController.NONE_PALETTE_ID: ColorController.NONE_PALETTE
             })
 
-    def __init__(self, input_data_controller, normalization_controller, classification_controller, 
+    def __init__(self, input_data_controller, normalization_controller, classification_controller,
                  source_points, palette_id=NONE_PALETTE_ID):
         self._palette_dict = ColorController._get_axis_palette_dict()
         self._input_data_controller = input_data_controller
@@ -74,7 +73,7 @@ class ColorController(object):
         else:
             self._active_palette_id = palette_id
 
-    def update_colors(self):        
+    def update_colors(self):
         """Update points' color accoring to selected method and axis or categories"""
         if self._selected_point_name:
             ColorController.LOGGER.warn("Cannot update colors while a point is selected")
@@ -85,10 +84,8 @@ class ColorController(object):
             self._color_points_by_axis()
         else:
             self._color_points_by_initial_settings()
-        
+
     def update_method(self, method_id):
-        #if not method_id in self.get_available_color_methods():
-        #    raise ValueError("The selected coloring method '{}' is not known".format(method_id))
         self._active_method = method_id
         self.update_legend()
 
@@ -103,7 +100,7 @@ class ColorController(object):
         categories = []
         if self.in_category_mode():
             categories = self._classification_controller.get_categories()
-            
+
         if categories is None or len(categories) == 0\
            or len(categories) != len(self._source_points.data['name']):
             categories = ['N/A' for i in xrange(0, len(self._source_points.data['name']))]
@@ -142,7 +139,7 @@ class ColorController(object):
     def get_selected_point(self):
         return self._selected_point_name
 
-    def _update_colors_by_point(self, point_name):        
+    def _update_colors_by_point(self, point_name):
         self._source_points.data['color'] = [ColorController.POINT_UNSELECTED_COLOR\
                                              if name != point_name\
                                              else ColorController.POINT_SELECTED_COLOR\
@@ -216,6 +213,7 @@ class ColorController(object):
         # Once we have the categories indexed, we normalize and multiply
         # by the length of the palette in order to distribute the values
         #return palette_index_list
+        # _ is what you use when you run out of ideas for names
         _ = self._normalization_controller\
                 .normalize_feature_scaling(DataFrame(palette_index_list))
 

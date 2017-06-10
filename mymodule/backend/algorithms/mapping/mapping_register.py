@@ -13,8 +13,8 @@ class MappingRegister(object):
     # dictionary with the shape {Algorithm_id, Algorithm}
     # holding all registered algorithms
     ALGORITHM_DIC = dict({
-        STAR_COORDINATES_ID: star_coordinates,
-        DUMMY_COORDINATES_ID: dummy_coordinates
+        STAR_COORDINATES_ID: star_coordinates
+        #DUMMY_COORDINATES_ID: dummy_coordinates # For demonstration and testing purposes
         })
 
     @staticmethod

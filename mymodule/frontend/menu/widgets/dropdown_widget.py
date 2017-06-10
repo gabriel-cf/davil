@@ -1,18 +1,18 @@
 """
-    Generic algorithm controller
+    DropdownWidget
 """
 import logging
 from bokeh.models.widgets import Dropdown
 from .abstract_widget import AbstractWidget
 
 class DropdownWidget(AbstractWidget):
-    """Select class holding the common methods for widgets
+    """Dropdown class holding the common methods for widgets
     """
     LOGGER = logging.getLogger(__name__)
 
     @classmethod
     def init_dropdown_widget(cls, update_value_callback, update_options_callback,
-                           on_change_callback, value=None, options=None):
+                             on_change_callback, value=None, options=None):
 
         if not value:
             value = cls.get_value_or_none(update_value_callback)

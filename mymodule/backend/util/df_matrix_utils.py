@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 
 class DFMatrixUtils(object):
-    """Static methods for performing operations on a dataframe matrix"""
+    """Static methods for performing operations on a dataframe object"""
 
     @staticmethod
     def get_vectors(axis_points_df):
@@ -91,16 +91,21 @@ class DFMatrixUtils(object):
     def std_by_axis(df, axis):
         """ df: (pandas.DataFrame) dataframe holding the numeric values
             axis: (int) 0 -> sum columns ; 1 -> sum rows
-            Returns: (pandas.DataFrame) column with the standard deviation 
+            Returns: (pandas.DataFrame) column with the standard deviation
                      of the axis
         """
         return pd.DataFrame(df.std(axis))
 
     @staticmethod
     def get_diagonal_ones_matrix(df):
+        """Returns: (pandas.DataFrame) dataframe holding a diagonal matrix
+        """
         return np.diag(np.ones(len(df.columns)))
 
     @staticmethod
     def to_df(matrix, index=None, columns=None):
+        """ [index=None]: (List<Object>) elements to be used as row identifiers
+            [columns=None]: (List<Object>) elements to be used as column identifiers
+            Returns: (pandas.DataFrame) dataframe holding the matrix
+        """
         return pd.DataFrame(matrix, index=index, columns=columns)
-        

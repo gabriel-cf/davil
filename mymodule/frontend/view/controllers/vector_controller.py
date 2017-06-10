@@ -36,7 +36,7 @@ class VectorController(object):
         return self._vectors_df
 
     def update_vector_values(self, new_vectors):
-        #TODO - Use update_single_vector implementation
+        #TODO gchicafernandez - Use update_single_vector implementation
         VectorController.LOGGER.debug("Updating vector values")
         for vector_id in new_vectors.index:
             self._vectors_df['x'][vector_id] = new_vectors['x'][vector_id]
@@ -45,9 +45,9 @@ class VectorController(object):
     def update_single_vector(self, axis_id, x1, y1):
         """Updates the vectors dataframe with the new coordinates
            Typically used when an axis is resized
-           axis_id: (String) self explanatory
-           x1: (int) self explanatory
-           y1: (int) self explanatory
+           axis_id: (String)
+           x1: (int)
+           y1: (int)
         """
         # We assume that all axis start from the point (0,0)
         # Hence, all vectors are (x1 - 0), (y1 - 0)

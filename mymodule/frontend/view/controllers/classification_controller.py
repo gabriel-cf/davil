@@ -7,7 +7,7 @@ from ....backend.algorithms.classification.lda_classification import LDA_ID
 from .abstract_algorithm_controller import AbstractAlgorithmController
 
 class ClassificationController(AbstractAlgorithmController):
-    """Controls the position of the axis according to their decomposed values
+    """Controls the position of the axis according to their decomposed values.
        It can be configured with dimensionality reduction algorithms such as
        PCA or LDA
     """
@@ -28,12 +28,12 @@ class ClassificationController(AbstractAlgorithmController):
         self._cluster_controller = cluster_controller
         self._normalization_controller = normalization_controller
         self._axis_sources = axis_sources
-        self._active_source = ClassificationController.NONE_SOURCE_ID        
+        self._active_source = ClassificationController.NONE_SOURCE_ID
 
     def relocate_axis(self):
-        """Executes the classification algorithm and bases on the results
-           relocates the axis on the plot. When using LDA, the list of categories
-           must have been specified beforehand
+        """Executes the classification algorithm and based on the results
+           relocates the axis on the plot. When using LDA, or any supervised method
+           the list of categories must have been specified beforehand
         """
         if not self.has_active_algorithm():
             ClassificationController.LOGGER.warn("Could not execute relocation"
@@ -68,7 +68,6 @@ class ClassificationController(AbstractAlgorithmController):
         """Updates the classification source
            source_id: (String) one of the source ids provided by this class
         """
-        #if source_id in self.get_available_category_sources():
         self._active_source = source_id
 
     def get_available_category_sources(self):
@@ -81,14 +80,14 @@ class ClassificationController(AbstractAlgorithmController):
                            and not self._input_data_controller.is_dimensional_and_active(source)
                 return True
             return [source for source in source_l if lda_rule(source)]
-            
+
         methods_mx = []
         methods_mx.append([ClassificationController.NONE_SOURCE_ID])
         methods_mx.append(filter_sources([ClassificationController.CLUSTER_SOURCE_ID]))
         methods_mx.append(filter_sources(self._input_data_controller.get_nominal_labels()))
         methods_mx.append(filter_sources(self._input_data_controller.get_dimensional_labels()))
         return methods_mx
-    
+
     def get_available_methods(self):
         """Refresh the list of available classification methods based on the
            number of categories. Some methods may need more than two categories
@@ -163,5 +162,3 @@ class ClassificationController(AbstractAlgorithmController):
     def _get_number_of_categories(self, source):
         n_categories = len(set(self.get_categories(source=source)))
         return n_categories
-
-

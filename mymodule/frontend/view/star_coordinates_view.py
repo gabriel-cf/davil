@@ -6,7 +6,8 @@ from __future__ import division
 import logging
 from bokeh.layouts import row, column
 from bokeh.plotting import figure
-from bokeh.models import Range1d, Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool, PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool
+from bokeh.models import Label, ColumnDataSource, LabelSet, HoverTool, WheelZoomTool,\
+                         PanTool, PolySelectTool, TapTool, ResizeTool, SaveTool, ResetTool
 
 from ...backend.io.reader import Reader
 
@@ -25,6 +26,9 @@ from ..bokeh_extension.dragtool import DragTool
 from .animation.mapping_animator import MappingAnimator
 
 class StarCoordinatesView(object):
+    """A Star Coordinates oriented view with all the necessary logic
+       to interact with it and displaying it on bokeh
+    """
     LOGGER = logging.getLogger(__name__)
     _SEGMENT_COLOR = "#F4A582"
     _SEGMENT_WIDTH = 2
@@ -33,22 +37,30 @@ class StarCoordinatesView(object):
     _SQUARE_COLOR = "#74ADD1"
     _SQUARE_ALPHA = 0.5
 
-    _CIRCLE_SIZE = 5
-    _CIRCLE_COLOR = "navy"
     _CIRCLE_ALPHA = 0.5
 
     _POINT_LABEL_SIZE = '7pt'
 
     _N_A = 'N/A'
 
+    POINT_LABEL_OPTIONS = ['ON', 'OFF']
+
     # The center is a constant across the application and should not be modified
     CENTER_POINT = (0, 0)
 
     @staticmethod
-    def _set_source_attribute(source, attr_name, attr_list):        
+    def _set_source_attribute(source, attr_name, attr_list):
         source.add(attr_list, name=attr_name)
 
-    """A view with all the necessary logic for displaying it on bokeh"""
+    @staticmethod
+    def _generate_drag_tool_sources(axis_sources):
+        """Create a source of sources. This Data Structure will allow the Drag Tool
+           to go through all the available axis
+        """
+        drag_tool_sources = ColumnDataSource(dict(active_sources=[]))
+        drag_tool_sources.data['active_sources'] = [source for source in axis_sources]
+        return drag_tool_sources
+
     def __init__(self, alias, filename=None, random_weights=False, width=600, height=600):
         """Creates a new Star Coordinates View object and instantiates
            its elements
@@ -71,6 +83,7 @@ class StarCoordinatesView(object):
         self._square_mapper = None
         self._source_points = None
         self._mapped_points = None
+        self._labels_points = None
         self._checkboxes = None
         self._table_widget = None
         # Controllers
@@ -103,10 +116,10 @@ class StarCoordinatesView(object):
 
         # Initialize figure and axis
         self._figure = self._init_figure()
-        self._axis_sources = self._init_axis()        
+        self._axis_sources = self._init_axis()
 
         # Add our custom drag and drop tool for resizing axis
-        self._drag_tool_sources = self._generate_drag_tool_sources(self._axis_sources)
+        self._drag_tool_sources = StarCoordinatesView._generate_drag_tool_sources(self._axis_sources)
         self._square_mapper = self._init_square_mapper()
         self._figure.add_tools(DragTool(sources=self._drag_tool_sources,
                                         remap_square=self._square_mapper))
@@ -117,7 +130,7 @@ class StarCoordinatesView(object):
                                                    self._normalization_controller)
         mapped_points_df = self._mapper_controller.execute_mapping()
         self._source_points = ColumnDataSource(mapped_points_df)
-        self._source_points.add(self._input_data_controller.get_element_names(), name='name')        
+        self._source_points.add(self._input_data_controller.get_element_names(), name='name')
         self._set_unique_source_points_names()
 
         self._mapper_controller.set_source_points(self._source_points)
@@ -146,7 +159,7 @@ class StarCoordinatesView(object):
                                                  self._normalization_controller,
                                                  self._classification_controller,
                                                  self._source_points)
-        self._color_controller.update_colors()  
+        self._color_controller.update_colors()
 
         # Add the nominal columns to the source_points
         self._set_nominal_values()
@@ -175,10 +188,10 @@ class StarCoordinatesView(object):
     def _init_square_mapper(self):
         def remap(attr, old, new):
             StarCoordinatesView.LOGGER.debug("Remap - Drag && Drop")
-            StarCoordinatesView.LOGGER.debug("axis: {}; x: {}; y: {}"\
-                                            .format(self._square_mapper.glyph.name,
-                                                    self._square_mapper.glyph.x,
-                                                    self._square_mapper.glyph.y))
+            StarCoordinatesView.LOGGER.debug("axis: %s; x: %s; y: %s",\
+                                             self._square_mapper.glyph.name,
+                                             self._square_mapper.glyph.x,
+                                             self._square_mapper.glyph.y)
             modified_axis_id = self._square_mapper.glyph.name
             self._vector_controller.update_single_vector(modified_axis_id,
                                                          self._square_mapper.glyph.x,
@@ -207,26 +220,20 @@ class StarCoordinatesView(object):
         figure_.toolbar.active_scroll = wheel_zoom_tool
         self._hover_tool = HoverTool()
         figure_.add_tools(self._hover_tool)
-        self._set_hover_tooltips(['name', 'error'] + self._input_data_controller.get_nominal_labels() + self._input_data_controller.get_dimensional_labels())        
+        self._set_hover_tooltips(['name', 'error']\
+            + self._input_data_controller.get_nominal_labels()\
+            + self._input_data_controller.get_dimensional_labels())
 
         return figure_
 
     def _set_hover_tooltips(self, attributes):
         if not self._hover_tool.tooltips:
             raise ValueError('Cannot set tooltips to non-existing hover tool')
-        custom_tooltips = []        
+        custom_tooltips = []
         for attribute in attributes:
             custom_tooltips.append((str(attribute), "@{}".format(attribute)))
-        
-        self._hover_tool.tooltips = custom_tooltips
 
-    def _generate_drag_tool_sources(self, axis_sources):
-        """Create a source of sources. This Data Structure will allow the Drag Tool
-           to go through all the available axis
-        """
-        drag_tool_sources = ColumnDataSource(dict(active_sources=[]))
-        drag_tool_sources.data['active_sources'] = [source for source in axis_sources]
-        return drag_tool_sources
+        self._hover_tool.tooltips = custom_tooltips
 
     def _add_axis_element(self, source, name, is_visible):
         segment = self._figure.segment(x0='x0',
@@ -305,7 +312,7 @@ class StarCoordinatesView(object):
                 counter_dict[name] += 1
                 name = new_name
             else:
-                counter_dict[name] = 2 #2 because repeated one should display as name_2  
+                counter_dict[name] = 2 #2 because repeated one should display as name_2
             new_names.append(name)
         self._source_points.data['name'] = new_names
 
@@ -322,8 +329,8 @@ class StarCoordinatesView(object):
                             source=source_points)
 
         self._labels_points = LabelSet(x='x', y='y', text='name', name='name', level='glyph',
-                                 x_offset=5, y_offset=5, text_font_size='0pt', source=source_points,
-                                 render_mode='canvas')
+                                       x_offset=5, y_offset=5, text_font_size='0pt',
+                                       source=source_points, render_mode='canvas')
 
         self._figure.add_layout(self._labels_points)
 
@@ -336,14 +343,14 @@ class StarCoordinatesView(object):
         if self._classification_controller.in_clustering_mode():
             if self._color_controller.in_category_mode():
                 self._color_controller.update_colors()
-            self._execute_classification()            
+            self._execute_classification()
 
     def _execute_classification(self):
         self._color_controller.update_legend()
         if self._classification_controller.in_active_mode():
             vectors_df = self._classification_controller.relocate_axis()
             self._vector_controller.update_vector_values(vectors_df)
-            self._execute_mapping()        
+            self._execute_mapping()
 
     def _execute_error_recalc(self):
         self._error_controller.calculate_error()
@@ -371,7 +378,7 @@ class StarCoordinatesView(object):
             name = source.data['name'][0]
             is_visible = self._input_data_controller.is_label_active(name)
             self._add_axis_element(source, name, is_visible)
-        # Redraw points    
+        # Redraw points
         self._init_points(self._source_points)
         #self._checkboxes.update_view(self)
 
@@ -390,7 +397,7 @@ class StarCoordinatesView(object):
 
     def update_clustering_algorithm(self, new):
         self._cluster_controller.update_algorithm(new)
-        self._execute_clustering()        
+        self._execute_clustering()
 
     def update_error_algorithm(self, new):
         self._error_controller.update_algorithm(new)
@@ -406,7 +413,7 @@ class StarCoordinatesView(object):
         self._classification_controller.update_active_source(new)
         if self._color_controller.in_category_mode():
             self._color_controller.update_colors()
-        self._execute_classification()        
+        self._execute_classification()
 
     def update_color_method(self, new):
         self._color_controller.update_method(new)
@@ -446,7 +453,7 @@ class StarCoordinatesView(object):
 
     def update_selected_point(self, new):
         """Updates the color based on the point if valid
-           if not, returns to previous color settings  
+           if not, returns to previous color settings
         """
         if self._is_valid_point(new):
             self._color_controller.select_point(new)
@@ -455,7 +462,7 @@ class StarCoordinatesView(object):
 
     # GET methods
     def get_alias(self):
-      return self._alias
+        return self._alias
 
     def get_mapping_algorithm(self):
         return self._mapper_controller.get_active_algorithm_id()
@@ -468,7 +475,7 @@ class StarCoordinatesView(object):
 
     def get_classification_methods(self):
         return self._classification_controller.get_available_methods()
-    
+
     def get_normalization_algorithm(self):
         return self._normalization_controller.get_active_algorithm_id()
 
@@ -485,7 +492,7 @@ class StarCoordinatesView(object):
         return self._error_controller.get_active_algorithm_id()
 
     def get_error_options(self):
-        return self._error_controller.get_all_options()    
+        return self._error_controller.get_all_options()
 
     def get_axis_status(self):
         """Returns a zipped list of [(axis_id, visible), ..]"""
@@ -532,7 +539,7 @@ class StarCoordinatesView(object):
 
     def get_active_category_source(self):
         return self._classification_controller.get_active_source()
-        
+
     def get_palette(self):
         return self._color_controller.get_active_palette()
 
@@ -540,7 +547,7 @@ class StarCoordinatesView(object):
         return self._color_controller.get_available_palettes()
 
     def get_point_values(self):
-        # TODO - Move to Point Controller when implemented
+        # TODO gchicafernandez - Move to Point Controller when implemented
         return [name for name in self._source_points.data['name']]
 
     def get_selected_point(self):
@@ -559,13 +566,9 @@ class StarCoordinatesView(object):
         return 'OFF'
 
     def get_point_label_options(self):
-        return ['ON', 'OFF']
+        return StarCoordinatesView.POINT_LABEL_OPTIONS
 
     def set_checkboxes(self, checkboxes):
         self._checkboxes = checkboxes
         self._checkboxes.update_view(self)
-        self._update_layout()
-
-    def set_table(self, table):
-        self._table_widget = table
         self._update_layout()

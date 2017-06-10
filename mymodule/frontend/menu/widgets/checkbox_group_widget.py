@@ -1,5 +1,5 @@
 """
-    Generic algorithm controller
+    CheckboxGroupWidget
 """
 import logging
 from bokeh.models.widgets import CheckboxGroup
@@ -17,7 +17,6 @@ class CheckboxGroupWidget(AbstractWidget):
     @classmethod
     def init_checkbox_widget(cls, update_value_callback, update_options_callback,
                              on_change_callback, value=None, options=None):
-
         if not options:
             options = cls.get_value_or_none(update_options_callback)
             if options == cls.NONE:
@@ -55,7 +54,7 @@ class CheckboxGroupWidget(AbstractWidget):
         self.widget.active = CheckboxGroupWidget._translate_to_active_list(id_values, options)
 
     def update_all(self):
-        # Switch normal order
+        # Override to switch normal order
         self.update_options()
         self.update_value()
 
@@ -66,7 +65,7 @@ class CheckboxGroupWidget(AbstractWidget):
         return self.widget.active
 
     def _wrap_on_change_callback(self, callback):
-        """Wraps the function and sets the label to the new selected value
+        """Wraps the function and sets the label to the newly selected value
         """
         def wrapped_on_change_callback(new):
             """Bokeh on_change callback wrapper.
@@ -75,7 +74,7 @@ class CheckboxGroupWidget(AbstractWidget):
             options = self.widget.labels
             new_active_list = new
             for i in xrange(0, len(options)):
-                # If it was before and now it is not or vice versa
+                # If it was active before and now it is not or vice versa
                 is_active = i in new_active_list
                 was_active = i in self._last_active_list
                 if (is_active and not was_active)\

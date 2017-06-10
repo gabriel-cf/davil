@@ -6,9 +6,8 @@ from ....backend.algorithms.error.error_register import ErrorRegister
 from ....backend.algorithms.error.absolute_sum_error import ABSOLUTE_SUM_ID
 from .abstract_algorithm_controller import AbstractAlgorithmController
 
-
 class ErrorController(AbstractAlgorithmController):
-    """Controls the clustering of the values for the values dataframe"""
+    """Controls the error value of the points"""
     LOGGER = logging.getLogger(__name__)
 
     def __init__(self, normalization_controller, vector_controller, mapper_controller,

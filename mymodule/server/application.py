@@ -2,6 +2,10 @@
     This script will launch the view for Star Coordinates on
     http://localhost:5006/starcoordinatesview
 """
+
+# TODO gchicafernandez
+#   Define HTML templates
+#   Break logic into several flask modules
 from os import path
 from flask import Flask, redirect, render_template, request, flash, url_for
 from bokeh.application import Application

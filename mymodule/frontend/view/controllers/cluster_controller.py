@@ -3,7 +3,7 @@
 """
 import logging
 from ....backend.algorithms.clustering.clustering_register import ClusteringRegister
-from ....backend.algorithms.clustering.dummy_clustering import DUMMY_ID
+from ....backend.algorithms.clustering.kmeans_clustering import KMEANS_ID
 from .abstract_algorithm_controller import AbstractAlgorithmController
 
 class ClusterController(AbstractAlgorithmController):
@@ -13,7 +13,7 @@ class ClusterController(AbstractAlgorithmController):
     def __init__(self, normalization_controller, algorithm_id=None, n_clusters=3):
         algorithm_dict = ClusteringRegister.get_algorithm_dict()
         super(ClusterController, self).\
-              __init__(DUMMY_ID,
+              __init__(KMEANS_ID,
                        algorithm_dict,
                        active_algorithm_id=algorithm_id,
                        none_algorithm=True)
@@ -48,8 +48,8 @@ class ClusterController(AbstractAlgorithmController):
     def get_number_of_clusters(self):
         return self._n_clusters
 
-    def get_categories(self):        
-        active_algorithm_id = self.get_active_algorithm_id() 
+    def get_categories(self):
+        active_algorithm_id = self.get_active_algorithm_id()
         pair_key = (active_algorithm_id, self._n_clusters)
         if not pair_key in self._clustering_dic:
             ClusterController.LOGGER.warn("""No categories were found for pair

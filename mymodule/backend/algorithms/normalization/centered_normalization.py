@@ -10,7 +10,7 @@ CENTERED_ID = "Centered"
 def centered(df, df_level=False):
     """ Will normalize the DataFrame according to their mean and
         maximum and minimum values by substracting the mean.
-        df: (pandas.DataFrame) dataframe with the values to normalize
+        df: (pandas.DataFrame) any dataframe of numeric values to normalize
         [df_level=False]: (Boolean) Whether values maximum/minimum/mean
         should be taken from dataframe or column level
     """

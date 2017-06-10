@@ -14,7 +14,7 @@ class ClusteringRegister(object):
     # dictionary with the shape {Algorithm_id, Algorithm}
     # holding all registered algorithms
     ALGORITHM_DIC = dict({
-        DUMMY_ID: dummy,
+        #DUMMY_ID: dummy,
         KMEANS_ID: kmeans
         })
 

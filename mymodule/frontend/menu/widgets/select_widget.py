@@ -1,5 +1,5 @@
 """
-    Generic algorithm controller
+    SelectWidget
 """
 import logging
 from bokeh.models.widgets import Select
@@ -12,13 +12,13 @@ class SelectWidget(AbstractWidget):
     LOGGER = logging.getLogger(__name__)
 
     @classmethod
-    def init_select_widget(cls, title, update_value_callback, update_options_callback, 
+    def init_select_widget(cls, title, update_value_callback, update_options_callback,
                            on_change_callback, value=None, options=None):
         if not value:
             value = cls.get_value_or_none(update_value_callback)
         if not options:
             options = cls.get_value_or_none(update_options_callback)
-            
+
         select = Select(title=title,
                         value=value,
                         options=cls._sort_options(options))

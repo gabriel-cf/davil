@@ -25,14 +25,8 @@ class GeneralViewMenu(object):
 
     @staticmethod
     def _widgetbox(widgets_list, width=WIDGETBOX_WIDTH):
+        # TODO gchicafernandez - Responsive does not work, check it
         return widgetbox(widgets_list, responsive=True)
-
-    @staticmethod
-    def _trigger(widget):
-        if isinstance(widget, RadioButtonGroup):
-            widget.trigger('active', widget.active, widget.active)
-        else:
-            widget.trigger('value', widget.value, widget.value)
 
     @staticmethod
     def _sort_options(options):
@@ -73,18 +67,18 @@ class GeneralViewMenu(object):
         self._axis_checkboxes = self.init_axis_checkboxgroup_widget()
 
         self._left_menu = column(GeneralViewMenu._widgetbox(self._file_select.widget),
-                                    GeneralViewMenu._widgetbox(self._mapping_select.widget),
-                                    GeneralViewMenu._widgetbox(self._normalization_select.widget),
-                                    GeneralViewMenu._widgetbox(self._clustering_select.widget),
-                                    GeneralViewMenu._widgetbox(self._number_of_clusters_input.widget),
-                                    GeneralViewMenu._widgetbox(self._error_select.widget),
-                                    GeneralViewMenu._widgetbox([self._initial_size_input.widget,
-                                                                self._final_size_input.widget]),
-                                    GeneralViewMenu._get_title_div("Color by:"),
-                                    GeneralViewMenu._widgetbox(self._color_method_radio.widget),
-                                    GeneralViewMenu._get_title_div("Toggle point names:"),
-                                    GeneralViewMenu._widgetbox(self._point_label_radio.widget)
-                                   , name='left_menu')
+                                 GeneralViewMenu._widgetbox(self._mapping_select.widget),
+                                 GeneralViewMenu._widgetbox(self._normalization_select.widget),
+                                 GeneralViewMenu._widgetbox(self._clustering_select.widget),
+                                 GeneralViewMenu._widgetbox(self._number_of_clusters_input.widget),
+                                 GeneralViewMenu._widgetbox(self._error_select.widget),
+                                 GeneralViewMenu._widgetbox([self._initial_size_input.widget,
+                                                             self._final_size_input.widget]),
+                                 GeneralViewMenu._get_title_div("Color by:"),
+                                 GeneralViewMenu._widgetbox(self._color_method_radio.widget),
+                                 GeneralViewMenu._get_title_div("Toggle point names:"),
+                                 GeneralViewMenu._widgetbox(self._point_label_radio.widget)
+                                 , name='left_menu')
         self._upper_menu = row(GeneralViewMenu._widgetbox(self._classification_select.widget),
                                GeneralViewMenu._widgetbox(self._view_select.widget)
                                , name='upper_menu')
@@ -95,9 +89,11 @@ class GeneralViewMenu(object):
                                         GeneralViewMenu._widgetbox(self._axis_select.widget),
                                         GeneralViewMenu._widgetbox(self._palette_select.widget),
                                         GeneralViewMenu._widgetbox(self._axis_checkboxes.widget)
-                                  , name='upper_right_menu')
+                                        , name='upper_right_menu')
         self._outer_right_menu = column(GeneralViewMenu._widgetbox(self._item_search_input.widget)
-                                 , name='right_menu')
+                                        , name='right_menu')
+
+    ########################## SYNCHRONIZE METHODS #############################
 
     def synchronize_view(self):
         """Every widget will execute their callback with their current values
@@ -120,7 +116,7 @@ class GeneralViewMenu(object):
         self._color_method_radio.trigger()
         self._classification_select.trigger()
 
-        self._item_search_input.trigger()        
+        self._item_search_input.trigger()
 
         self._view_select.update_options()
         self._view_select.update_value()
@@ -163,6 +159,8 @@ class GeneralViewMenu(object):
         self._axis_select.update_all()
         self._category_source_dropdown.update_all()
 
+    ########################## INIT WIDGET METHODS #############################
+
     def init_add_view_button(self):
         def new_view():
             self._model.new_add_view_action(self._new_view_name_input.value)
@@ -178,7 +176,7 @@ class GeneralViewMenu(object):
         update_value_callback = self._model.get_mapping_algorithm
         update_options_callback = self._model.get_mapping_options
         on_change_callback = self._model.new_mapping_select_action
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_normalization_select(self):
@@ -186,7 +184,7 @@ class GeneralViewMenu(object):
         update_value_callback = self._model.get_normalization_algorithm
         update_options_callback = self._model.get_normalization_options
         on_change_callback = self._model.new_normalization_select_action
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_clustering_select(self):
@@ -195,7 +193,7 @@ class GeneralViewMenu(object):
         update_options_callback = self._model.get_clustering_options
         on_change_callback = self._model.new_clustering_select_action
 
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_error_select(self):
@@ -203,7 +201,7 @@ class GeneralViewMenu(object):
         update_value_callback = self._model.get_error_algorithm
         update_options_callback = self._model.get_error_options
         on_change_callback = self._model.new_error_select_action
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_axis_select(self):
@@ -211,15 +209,15 @@ class GeneralViewMenu(object):
         update_value_callback = self._model.get_selected_axis_id
         update_options_callback = self._model.get_available_axis_ids
         on_change_callback = self._model.new_axis_select_action
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_palette_select(self):
         title = "Palette:"
         update_value_callback = self._model.get_palette
-        update_options_callback = self._model.get_available_palettes      
+        update_options_callback = self._model.get_available_palettes
         on_change_callback = self._model.new_palette_select_action
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_file_select(self):
@@ -227,7 +225,7 @@ class GeneralViewMenu(object):
         update_value_callback = self._model.get_file
         update_options_callback = self._model.get_available_files
         on_change_callback = self._model.new_file_select_action
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_classification_select(self):
@@ -238,7 +236,7 @@ class GeneralViewMenu(object):
         update_value_callback = self._model.get_classification_algorithm
         update_options_callback = self._model.get_classification_methods
         on_change_callback = new_classification
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_view_select(self):
@@ -249,8 +247,8 @@ class GeneralViewMenu(object):
         title = "Active view:"
         update_value_callback = self._model.get_active_view_alias
         update_options_callback = self._model.get_available_views
-        on_change_callback = select_view 
-        return SelectWidget.init_select_widget(title, update_value_callback, 
+        on_change_callback = select_view
+        return SelectWidget.init_select_widget(title, update_value_callback,
                                                update_options_callback, on_change_callback)
 
     def init_category_source_dropdown(self):
@@ -291,6 +289,8 @@ class GeneralViewMenu(object):
                              self._model.new_number_of_clusters_action(int(new))
         # LDA will not divide the space under n_components + 1 (n_components = 2)
         # Hence: start = 3; end = 7 (max number of colors for categories)
+        # TODO gchicafernandez - Now that LDA and the category input is synchronized, this might
+        # no necessary anymore
         return SliderWidget.init_slider_widget(update_value_callback, on_change_callback,
                                                title="Number of clusters", start=3,
                                                end=7, step=1)
@@ -338,7 +338,7 @@ class GeneralViewMenu(object):
                                                         update_options_callback,
                                                         on_change_callback)
 
-    ####################################################################################
+    ############################## GET METHODS #################################
 
     def get_upper_menu_layout(self):
         return self._upper_menu
@@ -350,4 +350,4 @@ class GeneralViewMenu(object):
         return self._outer_right_menu
 
     def get_left_menu_layout(self):
-        return self._left_menu    
+        return self._left_menu

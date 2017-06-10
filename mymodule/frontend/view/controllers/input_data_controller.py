@@ -16,7 +16,7 @@ class InputDataController(object):
            Returns: (pandas.DataFrame) DataFrame holding the nominal values
                     (pandas.DataFrame) DataFrame holding the numeric values
         """
-        #TODO - Rename repeated labels to guarantee uniqueness
+        #TODO gchicafernandez - Rename repeated labels to guarantee uniqueness
         dimensional_labels = []
         nominal_labels = []
         for i in xrange(len(raw_input_df.columns)):

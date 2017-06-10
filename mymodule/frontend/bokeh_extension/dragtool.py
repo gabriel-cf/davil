@@ -2,6 +2,10 @@ from bokeh.models import Tool, ColumnDataSource
 from bokeh.core.properties import Instance
 from bokeh.models.renderers import GlyphRenderer
 
+##################################################
+######THIS DOES NOT WORK IN > Bokeh 0.12.3########
+###Due to a change in the CoffeeScript compiler###
+##################################################
 class DragTool(Tool):
     __implementation__ = """
 _ = require "underscore"
@@ -45,7 +49,7 @@ class DragToolView extends GestureTool.View
 
     active_source.trigger('change')
 
-  _pan_end: (e) ->    
+  _pan_end: (e) ->
     @model.remap_square.glyph.name = active_source.data['name'][0]
     @model.remap_square.glyph.x = active_source.data['x1'][0]
     @model.remap_square.glyph.y = active_source.data['y1'][0]
@@ -53,7 +57,7 @@ class DragToolView extends GestureTool.View
     @model.remap_square.trigger('change')
 
     return null
-    
+
 class DragTool extends GestureTool.Model
   default_view: DragToolView
   type: "DragTool"
@@ -72,4 +76,3 @@ module.exports =
 
     sources = Instance(ColumnDataSource)
     remap_square = Instance(GlyphRenderer)
-

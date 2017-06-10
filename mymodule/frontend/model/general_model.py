@@ -9,7 +9,10 @@ from ..view.star_coordinates_view import StarCoordinatesView
 from ..menu.general_view_menu import GeneralViewMenu
 
 class GeneralModel(object):
-    """docstring for GeneralModel"""
+    """The general Model places itself in the middle between the views
+       and the menus. It controls which view and which menu is active,
+       passing calls from one to another
+    """
     LOGGER = logging.getLogger(__name__)
 
     @staticmethod
@@ -21,7 +24,7 @@ class GeneralModel(object):
         return model
 
     def __init__(self, doc=None):
-        self._doc = doc if doc else curdoc()        
+        self._doc = doc if doc else curdoc()
         # Handler with the logic for adding and retrieving views and menus
         self._view_menu_handler = ViewMenuHandler()
         self._active_root = None
@@ -51,7 +54,7 @@ class GeneralModel(object):
             self.set_active_menu(alias)
 
     def reset_active_view(self, new_file=None):
-        # TODO - find a way to destroy the current view
+        # TODO gchicafernandez - find a way to destroy the current view
         alias = self._active_view.get_alias()
         self._view_menu_handler.remove_view(alias)
         file_ = new_file
@@ -68,7 +71,7 @@ class GeneralModel(object):
             self._active_root = layout
             self._doc.add_root(layout)
         else:
-            self._update_view_layout(self._active_view)            
+            self._update_view_layout(self._active_view)
 
     def set_active_view(self, view_alias):
         new_view = self._view_menu_handler.get_view_from_alias(view_alias)
@@ -83,7 +86,7 @@ class GeneralModel(object):
     def _update_view_layout(self, new_view):
         layout = curdoc().get_model_by_name('view')
         layout.children = new_view.get_layout().children
-  
+
     def _get_layout(self):
         return row(self._active_menu.get_left_menu_layout(),
                    column(self._active_menu.get_upper_menu_layout(),
@@ -102,7 +105,7 @@ class GeneralModel(object):
         elif self._view_menu_handler.has_view_alias(name):
             name = get_unique_name(name)
         GeneralModel.LOGGER.info("Adding new view '%s'", name)
-        self.add_star_coordinates_view(name, filename)        
+        self.add_star_coordinates_view(name, filename)
         self.init_layouts()
         return name
 
@@ -130,7 +133,7 @@ class GeneralModel(object):
         GeneralModel.LOGGER.info("Selecting category source '%s'", new)
         self._active_view.update_selected_category_source(new)
 
-    def new_color_method_select(self, new): 
+    def new_color_method_select(self, new):
         GeneralModel.LOGGER.info("Updating coloring method to '%s'", new)
         self._active_view.update_color_method(new)
 
@@ -141,7 +144,7 @@ class GeneralModel(object):
     def new_file_select_action(self, filename):
         GeneralModel.LOGGER.info("Loading new file '%s'", filename)
         self.reset_active_view(filename)
-        self.init_layouts()        
+        self.init_layouts()
 
     def new_classification_action(self, new):
         GeneralModel.LOGGER.info("Classifying with '%s'", new)

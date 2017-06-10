@@ -27,12 +27,12 @@ class AxisGenerator(object):
             y1 = y0 + r * sin_
             segment = [x0, x1, y0, y1]
             segment_list.append(segment)
-        
+
         return segment_list
 
     @staticmethod
     def _generate_weights(no_weights, random_weights=False):
-        # TODO - implement weight generator
+        # TODO gchicafernandez - implement weight generator
         pass
 
     @staticmethod
@@ -46,7 +46,7 @@ class AxisGenerator(object):
         no_axis = len(axis_labels)
         segment_list = AxisGenerator._subdivide_circle((0, 0), no_axis)
         df = pd.DataFrame(segment_list, axis_labels, columns=["x0", "x1", "y0", "y1"])
-        # TODO - add weights
+        # TODO gchicafernandez - add weights
         #weights = AxisGenerator._generate_weights(no_axis, random_weights)
         #df['weight'] = pd.Series(weights, index=df.index)
         return df
