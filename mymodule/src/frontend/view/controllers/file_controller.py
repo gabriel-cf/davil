@@ -7,7 +7,7 @@ from os import path, listdir
 class FileController(object):
     """Controller for selecting the input file"""
     LOGGER = logging.getLogger(__name__)
-    DEFAULT_DIRECTORY = path.abspath(path.relpath(path.join('mymodule', 'server', 'resources')))
+    DEFAULT_DIRECTORY = path.abspath(path.relpath(path.join('mymodule', 'src', 'server', 'resources')))
     AVAILABLE_EXTENSIONS = ["CSV"]
 
     @staticmethod
