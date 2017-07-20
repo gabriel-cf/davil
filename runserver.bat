@@ -1,1 +1,1 @@
-python -m mymodule.server.application
+python -m mymodule.src.server.application
