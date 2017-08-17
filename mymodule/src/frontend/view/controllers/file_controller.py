@@ -4,6 +4,7 @@
 import logging
 from os import path, listdir
 
+
 class FileController(object):
     """Controller for selecting the input file"""
     LOGGER = logging.getLogger(__name__)

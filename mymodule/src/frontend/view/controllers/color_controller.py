@@ -27,7 +27,7 @@ class ColorController(object):
     VIRIDIS_PALETTE = viridis(256)
     # 23 RGB colors from Red to Pink for Clustering categorization
     # Keep this list as reference for testing purposes
-    #CATEGORY_PALETTE = ['#ff0000', '#ff4000', '#ff8000', '#ffbf00',
+    # CATEGORY_PALETTE = ['#ff0000', '#ff4000', '#ff8000', '#ffbf00',
     #                    '#ffff00', '#bfff00', '#80ff00', '#40ff00',
     #                    '#00ff00', '#00ff40', '#00ff80', '#00ffbf',
     #                    '#00ffff', '#00bfff', '#0080ff', '#0040ff',
@@ -53,12 +53,12 @@ class ColorController(object):
             })
 
     def __init__(self, input_data_controller, normalization_controller, classification_controller,
-                 source_points, palette_id=NONE_PALETTE_ID):
+                 point_controller, palette_id=NONE_PALETTE_ID):
         self._palette_dict = ColorController._get_axis_palette_dict()
         self._input_data_controller = input_data_controller
         self._normalization_controller = normalization_controller
         self._classification_controller = classification_controller
-        self._source_points = source_points
+        self._point_controller = point_controller
         self._active_palette_id = ColorController.NONE_PALETTE_ID
         self._selected_axis_id = ColorController.NONE_AXIS_ID
         self.update_palette(palette_id)
@@ -68,7 +68,7 @@ class ColorController(object):
         self._selected_point_name = None
 
     def update_palette(self, palette_id):
-        if not palette_id in self._palette_dict:
+        if palette_id not in self._palette_dict:
             ColorController.LOGGER.warn("Palette id '%s' is not known", palette_id)
         else:
             self._active_palette_id = palette_id
@@ -91,21 +91,23 @@ class ColorController(object):
 
     def update_selected_axis(self, axis_id):
         ColorController.LOGGER.debug("Updating axis ID to '%s'", axis_id)
-        if not axis_id in self.get_available_axis_ids():
+        if axis_id not in self.get_available_axis_ids():
             raise ValueError("'{}' is not a valid axis".format(axis_id))
         self._selected_axis_id = axis_id
 
     def update_legend(self):
-        ColorController.LOGGER.debug("Updating legends")
+        ColorController.LOGGER.debug("Updating categories")
         categories = []
         if self.in_category_mode():
             categories = self._classification_controller.get_categories()
 
-        if categories is None or len(categories) == 0\
-           or len(categories) != len(self._source_points.data['name']):
-            categories = ['N/A' for i in xrange(0, len(self._source_points.data['name']))]
+        expected_no_categories = self._point_controller.get_number_of_points()
+        if categories is None \
+                or len(categories) == 0 \
+                or len(categories) != expected_no_categories:
+            categories = ['N/A' for i in range(0, expected_no_categories)]
 
-        self._source_points.data['category'] = categories
+        self._point_controller.update_categories(categories)
 
     def get_available_axis_ids(self):
         return [ColorController.NONE_AXIS_ID]\
@@ -140,10 +142,12 @@ class ColorController(object):
         return self._selected_point_name
 
     def _update_colors_by_point(self, point_name):
-        self._source_points.data['color'] = [ColorController.POINT_UNSELECTED_COLOR\
-                                             if name != point_name\
-                                             else ColorController.POINT_SELECTED_COLOR\
-                                             for name in self._source_points.data['name']]
+        new_colors = [ColorController.POINT_UNSELECTED_COLOR\
+                      if name != point_name\
+                      else ColorController.POINT_SELECTED_COLOR\
+                      for name in self._point_controller.get_point_names()]
+
+        self._point_controller.update_colors(new_colors)
 
     def in_axis_mode(self):
         return self._active_method == ColorController.AXIS_METHOD_ID
@@ -169,7 +173,7 @@ class ColorController(object):
         column_norm = self._normalization_controller\
                       .normalize_feature_scaling(values_df)[self._selected_axis_id]
         palette_index_list = (column_norm * len(active_palette) - 1).astype(int)
-        # map index with color in the palette and assign to the source_points
+        # map index with color in the palette and assign to points
         self._map_source_points_color(palette_index_list, active_palette)
 
     def _color_points_by_categories(self):
@@ -192,8 +196,9 @@ class ColorController(object):
                                          "higher indexes will be assigned the "
                                          "highest palette value"),
                                         max_index_list, max_index_palette)
-        self._source_points.data['color'] = [palette[min(max_index_palette, index)] \
-                                             for index in palette_index_list]
+        new_colors = [palette[min(max_index_palette, index)]
+                      for index in palette_index_list]
+        self._point_controller.update_colors(new_colors)
 
     def _get_palette(self):
         return self._palette_dict[self._active_palette_id]
@@ -212,7 +217,8 @@ class ColorController(object):
             palette_index_list.append(category_dict[category])
         # Once we have the categories indexed, we normalize and multiply
         # by the length of the palette in order to distribute the values
-        #return palette_index_list
+        # return palette_index_list
+
         # _ is what you use when you run out of ideas for names
         _ = self._normalization_controller\
                 .normalize_feature_scaling(DataFrame(palette_index_list))
