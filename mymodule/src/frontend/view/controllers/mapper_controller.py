@@ -13,7 +13,7 @@ class MapperController(AbstractAlgorithmController):
     """
     LOGGER = logging.getLogger(__name__)
 
-    def __init__(self, input_data_controller, vector_controller, normalization_controller,
+    def __init__(self, input_data_controller, point_controller, vector_controller, normalization_controller,
                  source_points=None, mapping_id=None, animator=None):
         algorithm_dict = MappingRegister.get_algorithm_dict()
         super(MapperController, self).__init__(STAR_COORDINATES_ID,
@@ -21,9 +21,9 @@ class MapperController(AbstractAlgorithmController):
                                                active_algorithm_id=mapping_id,
                                                none_algorithm=False)
         self._input_data_controller = input_data_controller
+        self._point_controller = point_controller
         self._vector_controller = vector_controller
         self._normalization_controller = normalization_controller
-        self._source_points = source_points
         self._animator = animator
         self._last_mapped_points_df = None
 
@@ -39,13 +39,12 @@ class MapperController(AbstractAlgorithmController):
         MapperController.LOGGER.debug("Mapping with %s", self.get_active_algorithm_id())
         mapped_points_df = self.execute_active_algorithm(dimension_values_df_norm,
                                                          vectors_df)
-        if self._animator:
+        if self._animator and self._last_mapped_points_df is not None:
             MapperController.LOGGER.debug("Executing animation")
             self._animator.get_animation_sequence(self._last_mapped_points_df,
                                                   mapped_points_df)
         self._last_mapped_points_df = mapped_points_df
-        if self._source_points:
-            self._update_source_points(mapped_points_df)
+        self._point_controller.update_coordinates(mapped_points_df['x'], mapped_points_df['y'])
 
         return mapped_points_df
 
@@ -58,10 +57,3 @@ class MapperController(AbstractAlgorithmController):
         """
         MapperController.LOGGER.debug("Updating animator")
         self._animator = animator
-
-    def set_source_points(self, source_points):
-        self._source_points = source_points
-
-    def _update_source_points(self, mapped_points_df):
-        self._source_points.data['x'] = mapped_points_df['x']
-        self._source_points.data['y'] = mapped_points_df['y']

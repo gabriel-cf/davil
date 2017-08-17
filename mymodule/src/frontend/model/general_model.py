@@ -285,7 +285,7 @@ class GeneralModel(object):
         return self._active_view.get_point_label_options()
 
     def get_select_point_options(self):
-        return self._active_view.get_point_values()
+        return self._active_view.get_point_names()
 
     def get_select_point_value(self):
         return self._active_view.get_selected_point()

@@ -32,7 +32,7 @@ class PointSizeController(object):
         return size if size >= PointSizeController.MIN_SIZE \
                     else PointSizeController.MIN_SIZE
 
-    def __init__(self, error_controller, source,
+    def __init__(self, error_controller, point_controller,
                  initial_size=DEFAULT_INITIAL_SIZE,
                  final_size=DEFAULT_FINAL_SIZE):
         """source: (ColumnDataSource) shared datasource holding the points
@@ -41,7 +41,7 @@ class PointSizeController(object):
            [initial_size=DEFAULT_FINAL_SIZE]: (int >= 0)
         """
         self._error_controller = error_controller
-        self._source = source
+        self._point_controller = point_controller
         self._m, self._c = self._calculate_line_equation(initial_size, final_size)
         self._initial_size = initial_size
         self._final_size = final_size
@@ -51,7 +51,8 @@ class PointSizeController(object):
            new_size: (int)
         """
         new_size = PointSizeController._get_valid_size(new_size)
-        self._source.data['size'] = [new_size for i in xrange(0, len(self._source.data['x']))]
+        no_points = self._point_controller.get_number_of_points()
+        self._point_controller.update_sizes([new_size for i in range(0, no_points)])
 
     def set_initial_size(self, new_size):
         """new_size: (int >= MIN_SIZE)"""
@@ -78,4 +79,4 @@ class PointSizeController(object):
         PointSizeController.LOGGER.debug("Updating sizes: %s-%s",
                                          self._initial_size, self._final_size)
         self._m, self._c = self._calculate_line_equation(self._initial_size, self._final_size)
-        self._source.data['size'] = self._m * point_error_s + self._c
+        self._point_controller.update_sizes(self._m * point_error_s + self._c)

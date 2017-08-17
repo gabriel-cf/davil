@@ -9,13 +9,12 @@ class ViewMenuHandler(object):
        for the easy swapping between menus or views from the model
     """
     LOGGER = logging.getLogger(__name__)
-    
+
     @staticmethod
     def _get_from_alias(alias, alias_dict):
         if alias in alias_dict:
             return alias_dict[alias]
         return None
-        #raise ValueError("No element could not be found with given alias '{}'".format(alias))
 
     @staticmethod
     def _add_with_alias(alias, alias_dict, element, override=False):
@@ -38,7 +37,7 @@ class ViewMenuHandler(object):
         self._menus = dict()
         self._views = dict()
         # Should we track here the active menu/view?
-    
+
     def get_menu_from_alias(self, alias):
         return ViewMenuHandler._get_from_alias(alias, self._menus)
 
@@ -63,7 +62,7 @@ class ViewMenuHandler(object):
 
     def get_available_views(self):
         return self._views.keys()
-    
+
     def get_available_menus(self):
         return self._menus.keys()
 

@@ -1,14 +1,15 @@
-from bokeh.models import Tool, ColumnDataSource
-from bokeh.core.properties import Instance
-from bokeh.models.renderers import GlyphRenderer
-
 ##################################################
 ######THIS DOES NOT WORK IN > Bokeh 0.12.3########
 ###Due to a change in the CoffeeScript compiler###
 ##################################################
+
+from bokeh.models import Tool, ColumnDataSource
+from bokeh.core.properties import Instance
+from bokeh.models.renderers import GlyphRenderer
+
+
 class DragTool(Tool):
     __implementation__ = """
-_ = require "underscore"
 GestureTool = require "models/tools/gestures/gesture_tool"
 p = require "core/properties"
 class DragToolView extends GestureTool.View
@@ -31,7 +32,7 @@ class DragToolView extends GestureTool.View
       a = x - active_sources[i].data.x1
       b = y - active_sources[i].data.y1
       d = Math.sqrt(a**2 + b**2)
-      if (min_distance == null || d <= min_distance)
+      if (min_distance == null || d < min_distance)
         min_distance = d
         closer_source = active_sources[i]
     active_source = closer_source
@@ -53,7 +54,7 @@ class DragToolView extends GestureTool.View
     @model.remap_square.glyph.name = active_source.data['name'][0]
     @model.remap_square.glyph.x = active_source.data['x1'][0]
     @model.remap_square.glyph.y = active_source.data['y1'][0]
-    @model.remap_square.visible = ! @model.remap_square.visible
+    @model.remap_square.visible = !@model.remap_square.visible
     @model.remap_square.trigger('change')
 
     return null
