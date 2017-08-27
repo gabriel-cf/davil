@@ -7,7 +7,7 @@
 #   Define HTML templates
 #   Break logic into several flask modules
 from os import path
-from flask import Flask, redirect, render_template, request, flash, url_for
+from flask import Flask, redirect, render_template, request, Markup
 from bokeh.application import Application
 from bokeh.application.handlers import FunctionHandler
 from bokeh.embed import autoload_server
@@ -36,15 +36,13 @@ server = Server({'/datavisualization': bokeh_app}, io_loop=io_loop, allow_websoc
 # Might need if we upgrade to 0.12.4
 #server.start()
 
-
 @app.route('/')
 def bokeh_server():
     bokeh_embed = autoload_server(model=None,
                                   app_path="/datavisualization",
                                   url="http://localhost:5006")
 
-    file_upload = render_template('uploader.html')
-    html = "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"/static/bokeh_style.css\"><body><div>{}</div>{}</body></head>".format(file_upload, bokeh_embed)
+    html = render_template('index.html', bokeh_embed=Markup(bokeh_embed))
 
     return html
 
@@ -53,7 +51,6 @@ def upload_file():
     if request.method == 'POST':
         f = request.files['file']
         f.save(path.join(app.config['UPLOAD_FOLDER'], 'main.csv'))
-        file_upload_success = True
     return redirect('/')
 
 if __name__ == '__main__':

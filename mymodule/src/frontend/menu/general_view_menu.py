@@ -73,11 +73,7 @@ class GeneralViewMenu(object):
                                  GeneralViewMenu._widgetbox(self._number_of_clusters_input.widget),
                                  GeneralViewMenu._widgetbox(self._error_select.widget),
                                  GeneralViewMenu._widgetbox([self._initial_size_input.widget,
-                                                             self._final_size_input.widget]),
-                                 GeneralViewMenu._get_title_div("Color by:"),
-                                 GeneralViewMenu._widgetbox(self._color_method_radio.widget),
-                                 GeneralViewMenu._get_title_div("Toggle point names:"),
-                                 GeneralViewMenu._widgetbox(self._point_label_radio.widget)
+                                                             self._final_size_input.widget])
                                  , name='left_menu')
         self._upper_menu = row(GeneralViewMenu._widgetbox(self._classification_select.widget),
                                GeneralViewMenu._widgetbox(self._view_select.widget)
@@ -88,6 +84,10 @@ class GeneralViewMenu(object):
                                         GeneralViewMenu._widgetbox(self._category_source_dropdown.widget),
                                         GeneralViewMenu._widgetbox(self._axis_select.widget),
                                         GeneralViewMenu._widgetbox(self._palette_select.widget),
+                                        GeneralViewMenu._get_title_div("Color by:"),
+                                        GeneralViewMenu._widgetbox(self._color_method_radio.widget),
+                                        GeneralViewMenu._get_title_div("Toggle point names:"),
+                                        GeneralViewMenu._widgetbox(self._point_label_radio.widget),
                                         GeneralViewMenu._widgetbox(self._axis_checkboxes.widget)
                                         , name='upper_right_menu')
         self._outer_right_menu = column(GeneralViewMenu._widgetbox(self._item_search_input.widget)
