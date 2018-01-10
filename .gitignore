@@ -1,5 +1,5 @@
 .ipynb_checkpoints*
 *.pyc
 mymodule/resources/cereal_data_set/*
-*.doc*
-*.pdf*
+.idea/
+

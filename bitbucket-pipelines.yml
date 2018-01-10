@@ -10,6 +10,4 @@ pipelines:
     - step:
         script: # Modify the commands below to build your repository.
           - pip install -r requirements.txt
-    - step:
-        script:
-          - ./runtests.sh
+          - bash ./runtests.sh
