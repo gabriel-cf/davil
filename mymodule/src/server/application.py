@@ -1,14 +1,10 @@
 """
-    This script will launch the view for Star Coordinates on
-    http://localhost:5006/starcoordinatesview
+    This script will launch the Flask app on
+    http://localhost:5000
 """
 
-# TODO gchicafernandez
-#   Define HTML templates
-#   Break logic into several flask modules
 from os import path
 from os import getenv
-import socket
 from flask import Flask, redirect, render_template, request, Markup
 from bokeh.application import Application
 from bokeh.application.handlers import FunctionHandler
@@ -24,10 +20,20 @@ app.config['UPLOAD_FOLDER'] = path.join(path.dirname(path.realpath(__file__)), '
 Logger.init_logging()
 
 # BOKEH_IP is the same as the Docker VM
-host = getenv('BOKEH_IP')
+LOCALHOST = '127.0.0.1'
+BOKEH_DEFAULT_ACCESS_ADDRESS = LOCALHOST
+BOKEH_DEFAULT_LISTENING_ADDRESS = LOCALHOST
+FLASK_DEFAULT_ADDRESS = LOCALHOST
 
-if not host:
-    host = '127.0.0.1'
+# Default to Docker Settings
+bokeh_access_address = getenv('BOKEH_IP')
+flask_listening_address = '0.0.0.0'
+bokeh_listening_address = '0.0.0.0'
+
+if not bokeh_access_address: # DEV (localhost)
+    bokeh_access_address = BOKEH_DEFAULT_ACCESS_ADDRESS
+    bokeh_listening_address = BOKEH_DEFAULT_LISTENING_ADDRESS
+    flask_listening_address = FLASK_DEFAULT_ADDRESS
 
 def modify_doc(doc):
     filename = "cereal.csv"
@@ -37,7 +43,8 @@ bokeh_app = Application(FunctionHandler(modify_doc))
 
 io_loop = IOLoop.current()
 
-server = Server({'/datavisualization': bokeh_app}, io_loop=io_loop, address="0.0.0.0", allow_websocket_origin=["*"], host=["*"])
+server = Server({'/datavisualization': bokeh_app}, io_loop=io_loop, address=bokeh_listening_address,
+                allow_websocket_origin=["*"], host=["*"])
 # Might need if we upgrade to 0.12.4
 #server.start()
 
@@ -45,7 +52,7 @@ server = Server({'/datavisualization': bokeh_app}, io_loop=io_loop, address="0.0
 def bokeh_server():
     bokeh_embed = autoload_server(model=None,
                                   app_path="/datavisualization",
-                                  url="http://{}:5006".format(host))
+                                  url="http://{}:5006".format(bokeh_access_address))
 
     html = render_template('index.html', bokeh_embed=Markup(bokeh_embed))
 
@@ -64,8 +71,8 @@ if __name__ == '__main__':
     from bokeh.util.browser import view
     # Serve the Flask app
     http_server = HTTPServer(WSGIContainer(app))
-    http_server.listen(5000, address='0.0.0.0')
-    io_loop.add_callback(view, "http://0.0.0.0:5000/")
+    http_server.listen(5000, address=flask_listening_address)
+    io_loop.add_callback(view, "http://{}:5000/".format(flask_listening_address))
     io_loop.start()
     print "Server started"
     app.run(debug=True)

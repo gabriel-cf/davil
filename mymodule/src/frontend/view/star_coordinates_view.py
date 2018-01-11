@@ -26,6 +26,7 @@ from .figure_element.axis_figure_element import AxisFigureElement
 from ..bokeh_extension.dragtool import DragTool
 from .animation.mapping_animator import MappingAnimator
 
+
 class StarCoordinatesView(object):
     """A Star Coordinates oriented view with all the necessary logic
        to interact with it and displaying it on bokeh
