@@ -18,11 +18,11 @@ By automatically positioning the axis, the tool also allows to perform automatic
 Built in Python2.7, it uses Bokeh Server 0.12.3 as a base framwework for visualizing data in the browser and Flask to upload files and embed Bokeh into the website.
 
 # Running DaVil
-The easiest way to run DaViL is by running its Docker image as it follows, replacing the value for the BOKEH_IP with your Docker VM one (`docker-machine env` would show it):
+The easiest way to run DaViL is by running its Docker image as it follows, replacing the value for the DOCKER_IP with your Docker VM one (`docker-machine env` would show it):
 
-`docker run -d -p 5000:5000 -e BOKEH_IP=<YourDockerVMIP> --net=host niloxx/davil:0.1`
+`docker run -d -p 5000:5000 -e DOCKER_IP=<YourDockerVMIP> --net=host niloxx/davil:0.1`
 
-e.g: `docker run -d -p 5000:5000 -e BOKEH_IP=192.168.99.100 --net=host niloxx/davil:0.1`
+e.g: `docker run -d -p 5000:5000 -e DOCKER_IP=192.168.99.100 --net=host niloxx/davil:0.1`
 
 If you cannot run Docker, then simply follow the instructions on the next step to install the DEV version and run it.
 
@@ -41,3 +41,7 @@ Then simply run:
 
 Now, time to test it: go to the root directory of the project and run the server:
 `runserver.bat` or `./runserver.sh` if you are on Linux
+
+Load one of the test files from the `sample_files` root directory.
+
+**Enjoy!**
