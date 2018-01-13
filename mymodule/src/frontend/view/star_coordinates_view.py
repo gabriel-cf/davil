@@ -386,6 +386,16 @@ class StarCoordinatesView(object):
         if self._axis_elements[axis_id].visible(is_visible):
             self._execute_mapping()
 
+    def update_hover_tips_visibility(self, new):
+        axis_id, is_visible = new
+        if not axis_id in self._axis_elements:
+            ValueError("Could not update the visibility of the axis '{}'\
+                        because it is not a valid axis".format(axis_id))
+        self._input_data_controller.update_label_status(axis_id, is_visible)
+        # Tries to hide the axis element. If a change is made then execute mapping
+        if self._axis_elements[axis_id].visible(is_visible):
+            self._execute_mapping()
+
     def update_point_label_visibility(self, new):
         if new == 'ON':
             self._labels_points.text_font_size = StarCoordinatesView._POINT_LABEL_SIZE

@@ -65,6 +65,7 @@ class GeneralViewMenu(object):
         self._point_label_radio = self.init_point_label_radio()
         self._item_search_input = self.init_item_search_input()
         self._axis_checkboxes = self.init_axis_checkboxgroup_widget()
+        self._hover_tips_checkboxes = self.init_hover_tips_selection_checkboxgroup_widget()
 
         self._left_menu = column(GeneralViewMenu._widgetbox(self._file_select.widget),
                                  GeneralViewMenu._widgetbox(self._mapping_select.widget),
@@ -90,7 +91,8 @@ class GeneralViewMenu(object):
                                         GeneralViewMenu._widgetbox(self._point_label_radio.widget),
                                         GeneralViewMenu._widgetbox(self._axis_checkboxes.widget)
                                         , name='upper_right_menu')
-        self._outer_right_menu = column(GeneralViewMenu._widgetbox(self._item_search_input.widget)
+        self._outer_right_menu = column(GeneralViewMenu._widgetbox(self._item_search_input.widget),
+                                        GeneralViewMenu._widgetbox(self._hover_tips_checkboxes.widget)
                                         , name='right_menu')
 
     ########################## SYNCHRONIZE METHODS #############################
@@ -333,6 +335,16 @@ class GeneralViewMenu(object):
             self._classification_select.update_options()
         update_value_callback = self._model.get_checkboxes_active_axis_ids
         update_options_callback = self._model.get_axis_checkboxes_options
+
+        return CheckboxGroupWidget.init_checkbox_widget(update_value_callback,
+                                                        update_options_callback,
+                                                        on_change_callback)
+
+    def init_hover_tips_selection_checkboxgroup_widget(self):
+        def on_change_callback(new):
+            self._model.new_hover_tips_checkboxgroup_action(new) # TODO
+        update_value_callback = self._model.get_checkboxes_active_hover_tips_ids # TODO
+        update_options_callback = self._model.get_hover_tips_checkboxes_options # TODO
 
         return CheckboxGroupWidget.init_checkbox_widget(update_value_callback,
                                                         update_options_callback,
