@@ -89,11 +89,13 @@ class GeneralViewMenu(object):
                                         GeneralViewMenu._widgetbox(self._color_method_radio.widget),
                                         GeneralViewMenu._get_title_div("Toggle point names:"),
                                         GeneralViewMenu._widgetbox(self._point_label_radio.widget),
+                                        GeneralViewMenu._get_title_div("Active axes:"),
                                         GeneralViewMenu._widgetbox(self._axis_checkboxes.widget)
                                         , name='upper_right_menu')
         self._outer_right_menu = column(GeneralViewMenu._widgetbox(self._item_search_input.widget),
+                                        GeneralViewMenu._get_title_div("Active hover tips:"),
                                         GeneralViewMenu._widgetbox(self._hover_tips_checkboxes.widget)
-                                        , name='right_menu')
+                                        , name='right_menu')    
 
     ########################## SYNCHRONIZE METHODS #############################
 
@@ -113,6 +115,7 @@ class GeneralViewMenu(object):
         self._palette_select.trigger()
 
         self._axis_checkboxes.trigger()
+        self._hover_tips_checkboxes.trigger()
         self._axis_select.trigger()
         self._category_source_dropdown.trigger()
         self._color_method_radio.trigger()
@@ -125,6 +128,7 @@ class GeneralViewMenu(object):
 
     def synchronize_menu(self):
         self._axis_checkboxes.update_all()
+        self._hover_tips_checkboxes.update_all()
         self._mapping_select.update_all()
         self._normalization_select.update_all()
         self._error_select.update_all()
@@ -140,10 +144,11 @@ class GeneralViewMenu(object):
         self._color_method_radio.update_all()
         self._classification_select.update_all()
         self._view_select.update_all()
-        self._item_search_input.update_all()
+        self._item_search_input.update_all()        
 
     def synchronize_on_file_change(self):
         self._axis_checkboxes.update_all()
+        self._hover_tips_checkboxes.update_all()
 
         self._mapping_select.trigger()
         self._normalization_select.trigger()
@@ -342,9 +347,9 @@ class GeneralViewMenu(object):
 
     def init_hover_tips_selection_checkboxgroup_widget(self):
         def on_change_callback(new):
-            self._model.new_hover_tips_checkboxgroup_action(new) # TODO
-        update_value_callback = self._model.get_checkboxes_active_hover_tips_ids # TODO
-        update_options_callback = self._model.get_hover_tips_checkboxes_options # TODO
+            self._model.new_hover_tips_checkboxgroup_action(new)
+        update_value_callback = self._model.get_hover_tips_active_ids
+        update_options_callback = self._model.get_hover_tips_options
 
         return CheckboxGroupWidget.init_checkbox_widget(update_value_callback,
                                                         update_options_callback,

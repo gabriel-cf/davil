@@ -22,6 +22,7 @@ from .controllers.point_size_controller import PointSizeController
 from .controllers.point_controller import PointController
 from .controllers.error_controller import ErrorController
 from .controllers.color_controller import ColorController
+from .controllers.hover_controller import HoverController
 from .figure_element.axis_figure_element import AxisFigureElement
 from ..bokeh_extension.dragtool import DragTool
 from .animation.mapping_animator import MappingAnimator
@@ -54,7 +55,7 @@ class StarCoordinatesView(object):
     def _set_source_attribute(source, attr_name, attr_list):
         source.add(attr_list, name=attr_name)
 
-    def __init__(self, alias, filename=None, width=600, height=600):
+    def __init__(self, alias, filename=None, width=800, height=800):
         """Creates a new Star Coordinates View object and instantiates
            its elements
         """
@@ -89,6 +90,7 @@ class StarCoordinatesView(object):
         self._point_size_controller = None
         self._error_controller = None
         self._color_controller = None
+        self._hover_controller = None
         # Logic to initialize all the elements from above
         self._init()
 
@@ -198,10 +200,15 @@ class StarCoordinatesView(object):
         figure_ = figure(tools=[wheel_zoom_tool, pan_tool, resize_tool, save_tool, reset_tool],
                          width=self._width, height=self._height)
         figure_.toolbar.active_scroll = wheel_zoom_tool
-        hover_tool = HoverTool()
-        figure_.add_tools(hover_tool)
-        # TODO gchicafernandez: remove when hover controller has been implemented
-        hover_tool.tooltips = [('name', '@name'), ('error', '@error')]
+        
+        hover_tips = ['name'] \
+                    + self._input_data_controller.get_nominal_labels() \
+                    + self._input_data_controller.get_dimensional_labels()
+
+        if self._hover_controller is None:
+            self._hover_controller = HoverController(figure_, properties=hover_tips)
+        else:
+            self._hover_controller.set_new_figure(figure_)
 
         return figure_
 
@@ -387,14 +394,10 @@ class StarCoordinatesView(object):
             self._execute_mapping()
 
     def update_hover_tips_visibility(self, new):
-        axis_id, is_visible = new
-        if not axis_id in self._axis_elements:
-            ValueError("Could not update the visibility of the axis '{}'\
-                        because it is not a valid axis".format(axis_id))
-        self._input_data_controller.update_label_status(axis_id, is_visible)
-        # Tries to hide the axis element. If a change is made then execute mapping
-        if self._axis_elements[axis_id].visible(is_visible):
-            self._execute_mapping()
+        hover_tip, is_visible = new
+        if (not is_visible and self._hover_controller.is_active_property(hover_tip))\
+            or (is_visible and not self._hover_controller.is_active_property(hover_tip)):
+            self._hover_controller.toggle_property(hover_tip)
 
     def update_point_label_visibility(self, new):
         if new == 'ON':
@@ -489,6 +492,12 @@ class StarCoordinatesView(object):
 
     def get_selected_axis_id(self):
         return self._color_controller.get_selected_axis_id()
+
+    def get_hover_tips_active_ids(self):
+        return self._hover_controller.get_active_properties()
+
+    def get_hover_tips_options(self):
+        return self._hover_controller.get_available_properties()
 
     def get_active_color_method(self):
         return self._color_controller.get_active_color_method()

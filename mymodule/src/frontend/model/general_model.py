@@ -185,6 +185,10 @@ class GeneralModel(object):
         GeneralModel.LOGGER.info("Updating axis with pair '%s'", new)
         self._active_view.update_axis_visibility(new)
 
+    def new_hover_tips_checkboxgroup_action(self, new):
+        GeneralModel.LOGGER.info("Updating hover tips with pair '%s'", new)
+        self._active_view.update_hover_tips_visibility(new)
+
     ######################################################################
 
     def get_axis_status(self):
@@ -239,11 +243,17 @@ class GeneralModel(object):
     def get_checkboxes_active_axis_ids(self):
         return self._active_view.get_checkboxes_active_axis_ids()
 
-    def get_axis_checkboxes_options(self):
-        return self._active_view.get_axis_checkboxes_options()
-
     def get_checkboxes_axis_ids(self):
         return self._active_view.get_checkboxes_axis_ids()
+
+    def get_axis_checkboxes_options(self):
+        return self._active_view.get_axis_checkboxes_options()    
+
+    def get_hover_tips_active_ids(self):
+        return self._active_view.get_hover_tips_active_ids()
+
+    def get_hover_tips_options(self):
+        return self._active_view.get_hover_tips_options()
 
     def get_available_palettes(self):
         return self._active_view.get_available_palettes()
