@@ -11,6 +11,7 @@ from bokeh.embed import autoload_server
 from bokeh.server.server import Server
 from tornado.ioloop import IOLoop
 from .logger.logger import Logger
+import logging
 from ..frontend.model.general_model import GeneralModel
 
 app = Flask(__name__)
@@ -20,27 +21,26 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Initialize logging
 Logger.init_logging()
+LOGGER = logging.getLogger(__name__)
 
-# BOKEH_IP is the same as the Docker VM
 LOCALHOST = '127.0.0.1'
+DEFAULT_LISTENING_ADDRESS = '0.0.0.0'
+# SERVICE_HOST = hostname of the service running the application (it should be 'localhost' in local machines)
+DEFAULT_ACCESS_ADDRESS = getenv('SERVICE_HOST')
+
+if not DEFAULT_ACCESS_ADDRESS:
+    DEFAULT_ACCESS_ADDRESS = LOCALHOST
+
 BOKEH_PORT = '5006'
 FLASK_PORT = '5000'
-DEFAULT_ACCESS_ADDRESS = LOCALHOST
-BOKEH_DEFAULT_LISTENING_ADDRESS = LOCALHOST
-FLASK_DEFAULT_ADDRESS = LOCALHOST
 BOKEH_APP_PATH='/datavisualization'
 
 # Default to Docker Settings
-bokeh_access_address = flask_access_address = getenv('DOCKER_IP')
-flask_listening_address = '0.0.0.0'
-bokeh_listening_address = '0.0.0.0'
+bokeh_access_address = flask_access_address_local = DEFAULT_ACCESS_ADDRESS
+flask_listening_address = DEFAULT_LISTENING_ADDRESS
+bokeh_listening_address = DEFAULT_LISTENING_ADDRESS
 
-if not bokeh_access_address:  # Set DEV addresses if not in Docker
-    bokeh_access_address = flask_access_address = DEFAULT_ACCESS_ADDRESS
-    bokeh_listening_address = BOKEH_DEFAULT_LISTENING_ADDRESS
-    flask_listening_address = FLASK_DEFAULT_ADDRESS
-
-UPLOADER_URL = 'http://{}:{}/uploader'.format(flask_access_address, FLASK_PORT)
+UPLOADER_URL = 'http://{}:{}/uploader'.format(flask_access_address_local, FLASK_PORT)
 
 
 def get_files():
@@ -70,22 +70,27 @@ def init_bokeh_server():
 
 @app.route('/')
 def bokeh_server():
+    LOGGER.info("bokeh_server::START")
     bokeh_embed = ''
     if get_files():
+        LOGGER.info("Rendering Bokeh with sample files from %s", UPLOAD_FOLDER)
         init_bokeh_server()
         bokeh_embed = autoload_server(model=None,
                                       app_path=BOKEH_APP_PATH,
                                       url="http://{}:{}".format(bokeh_access_address, BOKEH_PORT))
 
+    LOGGER.info("bokeh_server::END")
     return render_template('index.html', uploader_url=Markup(UPLOADER_URL), bokeh_embed=Markup(bokeh_embed))
 
 
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
+    LOGGER.info("upload_file::START")
     if request.method == 'POST':
         f = request.files['file']
         f.save(path.join(app.config['UPLOAD_FOLDER'], f.filename))
 
+    LOGGER.info("upload_file::END")
     return redirect('/')
 
 if __name__ == '__main__':
@@ -93,7 +98,11 @@ if __name__ == '__main__':
     from tornado.wsgi import WSGIContainer
     from bokeh.util.browser import view
     # Serve the Flask app
+    LOGGER.info("Initializing WSGI Container")
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(FLASK_PORT, address=flask_listening_address)
-    io_loop.add_callback(view, "http://{}:{}/".format(flask_listening_address, FLASK_PORT))
+    access_url = "http://{}:{}/".format(flask_listening_address, FLASK_PORT)
+    LOGGER.info("Initializing IO Loop")
+    io_loop.add_callback(view, access_url)
+    LOGGER.info("Flask ready on address {}".format(access_url))
     io_loop.start()

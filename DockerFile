@@ -1,12 +1,12 @@
 FROM python:2.7-slim
-WORKDIR /app
-ADD . /app
 RUN apt-get update
 RUN apt-get install -y curl
 RUN curl -sL https://deb.nodesource.com/setup_8.x
 RUN apt-get install -y nodejs
 RUN apt-get install -y build-essential
+RUN pip install --upgrade pip
+WORKDIR /app
+ADD . /app
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
-# Expose Flask port
 EXPOSE 5000 5006
 CMD ["python", "-m", "mymodule.src.server.application"]
