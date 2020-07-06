@@ -3,3 +3,4 @@
 mymodule/resources/cereal_data_set/*
 .idea/
 mymodule/src/server/resources/*
+.vscode/
